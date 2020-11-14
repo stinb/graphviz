@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Minimum version of Flex required to build Graphviz is now 2.5.2
 - Minimum version of Bison required to build Graphviz is now 3.0
 - Minimum version of CMake required to build Graphviz using CMake is now 3.1
+- Vestiges of Qt4 support have been removed
 
 ### Fixed
 - gvpr: line numbers in gvpr errors/warnings are incorrect #1594
@@ -67,6 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - sfdp craches #236
 - fdp segmentation fault with GK=0 #1290
 - fdp crash #1865
+- gvedit compilation errors out, but works if manually compiled with qt5 #1862
 
 ## [2.44.1] - 2020-06-29
 
