@@ -19,8 +19,7 @@
  * Adaptagrams repository.
  */
 
-#ifndef SEEN_REMOVEOVERLAP_BLOCK_H
-#define SEEN_REMOVEOVERLAP_BLOCK_H
+#pragma once
 
 #include <vector>
 #include <iostream>
@@ -72,5 +71,3 @@ private:
 	void addVariable(Variable *v);
 	void setUpConstraintHeap(PairingHeap<Constraint*>* &h,bool in);
 };
-
-#endif // SEEN_REMOVEOVERLAP_BLOCK_H
