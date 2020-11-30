@@ -12,7 +12,7 @@ include_directories(
     ${RXSPENCER_INCLUDE_DIRS}
 )
 
-add_library(gvc SHARED
+add_library(gvc STATIC
     # Header files
     gvc.h
     gvcext.h
@@ -58,7 +58,7 @@ target_link_libraries(gvc
     xdot
     ${EXPAT_LIBRARIES}
     ${RXSPENCER_LIBRARIES}
-    ${ZLIB_LIBRARIES}
+    zlib
     ${MATH_LIB}
 )
 

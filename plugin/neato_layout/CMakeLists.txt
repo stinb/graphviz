@@ -7,7 +7,7 @@ include_directories(
     ${GRAPHVIZ_LIB_DIR}/pathplan
 )
 
-add_library(gvplugin_neato_layout SHARED
+add_library(gvplugin_neato_layout STATIC
     # Source files
 	gvplugin_neato_layout.c
 	gvlayout_neato_layout.c
