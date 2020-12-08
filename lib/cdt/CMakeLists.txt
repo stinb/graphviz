@@ -2,7 +2,7 @@ add_definitions(-DEXPORT_CDT)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(cdt SHARED
+add_library(cdt STATIC
     # Header files
     cdt.h
     dthdr.h

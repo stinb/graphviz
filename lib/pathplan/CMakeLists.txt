@@ -2,7 +2,7 @@ add_definitions(-D_BLD_pathplan -DPATHPLAN_EXPORTS)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(pathplan SHARED
+add_library(pathplan STATIC
     # Header files
     pathgeom.h
     pathplan.h

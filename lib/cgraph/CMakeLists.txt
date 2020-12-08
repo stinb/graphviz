@@ -37,7 +37,7 @@ include_directories(
     ${GRAPHVIZ_LIB_DIR}/cdt
 )
 
-add_library(cgraph SHARED
+add_library(cgraph STATIC
     # Header files
     agxbuf.h
     cghdr.h
