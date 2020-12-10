@@ -23,7 +23,7 @@ extern "C" {
 
 #ifdef _WIN32
 #   ifdef EXPORT_XDOT
-#       define XDOT_API __declspec(dllexport)
+#       define XDOT_API extern
 #   else
 #       define XDOT_API __declspec(dllimport)
 #   endif

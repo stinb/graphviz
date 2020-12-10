@@ -17,7 +17,7 @@ extern "C" {
 
 #ifdef _WIN32
 #   ifdef EXPORT_CDT
-#       define CDT_API __declspec(dllexport)
+#       define CDT_API extern
 #   else
 #       define CDT_API __declspec(dllimport)
 #   endif
