@@ -169,7 +169,10 @@ struct Agdesc_s {		/* graph descriptor */
     unsigned has_cmpnd:1;	/* if may contain collapsed nodes */
 };
 
-/* disciplines for external resources needed by libgraph */
+/** @defgroup cgraph_disc disciplines
+ *  @brief disciplines for external resources needed by libgraph
+ *  @{
+ */
 
 /// memory allocator discipline, independent of other resources
 
@@ -216,6 +219,7 @@ CGRAPH_API extern Agiddisc_t AgIdDisc;
 CGRAPH_API extern Agiodisc_t AgIoDisc;
 
 CGRAPH_API extern Agdisc_t AgDefaultDisc;
+/// @}
 
 struct Agdstate_s {
     void *mem;
