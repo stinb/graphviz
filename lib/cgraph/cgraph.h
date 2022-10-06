@@ -436,7 +436,8 @@ CGRAPH_API void aginternalmapclearlocalnames(Agraph_t * g);
 
 /// @endcond
 
-/* error handling */
+/// @defgroup cgraph_err error handling
+/// @{
 typedef enum { AGWARN, AGERR, AGMAX, AGPREV } agerrlevel_t;
 typedef int (*agusererrf) (char*);
 CGRAPH_API agerrlevel_t agseterr(agerrlevel_t);
@@ -448,6 +449,7 @@ CGRAPH_API void agwarningf(const char *fmt, ...) PRINTF_LIKE(1, 2);
 CGRAPH_API int agerrors(void);
 CGRAPH_API int agreseterrors(void);
 CGRAPH_API agusererrf agseterrf(agusererrf);
+/// @}
 
 #undef PRINTF_LIKE
 
