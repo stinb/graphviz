@@ -333,7 +333,8 @@ CGRAPH_API int agdeledge(Agraph_t * g, Agedge_t * arg_e);
 CGRAPH_API int agobjkind(void *);
 /// @}
 
-/* strings */
+/// @defgroup cgraph_attr strings, symbols, attributes and records
+/// @{
 CGRAPH_API char *agstrdup(Agraph_t *, const char *);
 CGRAPH_API char *agstrdup_html(Agraph_t *, const char *);
 CGRAPH_API int aghtmlstr(const char *);
@@ -390,6 +391,7 @@ CGRAPH_API int agset(void *obj, char *name, const char *value);
 CGRAPH_API int agxset(void *obj, Agsym_t * sym, const char *value);
 CGRAPH_API int agsafeset(void* obj, char* name, const char* value,
                          const char* def);
+/// @}
 
 /// @defgroup cgraph_subgraph definitions for subgraphs
 /// @{
