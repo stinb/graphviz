@@ -290,7 +290,8 @@ CGRAPH_API int agisundirected(Agraph_t * g);
 CGRAPH_API int agisstrict(Agraph_t * g);
 CGRAPH_API int agissimple(Agraph_t * g);
 
-/* nodes */
+/// @defgroup cgraph_node nodes
+/// @{
 CGRAPH_API Agnode_t *agnode(Agraph_t * g, char *name, int createflag);
 CGRAPH_API Agnode_t *agidnode(Agraph_t * g, IDTYPE id, int createflag);
 CGRAPH_API Agnode_t *agsubnode(Agraph_t * g, Agnode_t * n, int createflag);
@@ -301,6 +302,7 @@ CGRAPH_API Agnode_t *agprvnode(Agraph_t * g, Agnode_t * n);
 
 CGRAPH_API Agsubnode_t *agsubrep(Agraph_t * g, Agnode_t * n);
 CGRAPH_API int agnodebefore(Agnode_t *u, Agnode_t *v); /* we have no shame */
+/// @}
 
 /* edges */
 CGRAPH_API Agedge_t *agedge(Agraph_t * g, Agnode_t * t, Agnode_t * h,
