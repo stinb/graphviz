@@ -1,6 +1,7 @@
 /**
  * @file
  * @brief @ref textspan_t, @ref textfont_t, @ref PostscriptAlias
+ * @ingroup public_apis
  */
 
 /*************************************************************************

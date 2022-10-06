@@ -1,6 +1,7 @@
 /**
  * @file
  * @brief Graphviz context library
+ * @ingroup public_apis
  */
 
 /*************************************************************************

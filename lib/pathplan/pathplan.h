@@ -1,6 +1,7 @@
 /**
  * @file
  * @brief finds and smooths shortest paths
+ * @ingroup public_apis
  */
 
 /*************************************************************************

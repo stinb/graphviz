@@ -1,6 +1,7 @@
 /**
  * @file
  * @brief geometric types and macros (e.g. points and boxes)
+ * @ingroup public_apis
  *
  * with application to, but no specific dependence on graphs
  */
