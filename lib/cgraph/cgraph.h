@@ -389,12 +389,14 @@ CGRAPH_API int agxset(void *obj, Agsym_t * sym, const char *value);
 CGRAPH_API int agsafeset(void* obj, char* name, const char* value,
                          const char* def);
 
-/* definitions for subgraphs */
+/// @defgroup cgraph_subgraph definitions for subgraphs
+/// @{
 CGRAPH_API Agraph_t *agsubg(Agraph_t * g, char *name, int cflag);	/* constructor */
 CGRAPH_API Agraph_t *agidsubg(Agraph_t * g, IDTYPE id, int cflag);	/* constructor */
 CGRAPH_API Agraph_t *agfstsubg(Agraph_t * g);
 CGRAPH_API Agraph_t *agnxtsubg(Agraph_t * subg);
 CGRAPH_API Agraph_t *agparent(Agraph_t * g);
+/// @}
 
 /* set cardinality */
 CGRAPH_API int agnnodes(Agraph_t * g);
