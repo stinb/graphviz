@@ -402,12 +402,14 @@ CGRAPH_API Agraph_t *agnxtsubg(Agraph_t * subg);
 CGRAPH_API Agraph_t *agparent(Agraph_t * g);
 /// @}
 
-/* set cardinality */
+/// @defgroup card set cardinality
+/// @{
 CGRAPH_API int agnnodes(Agraph_t * g);
 CGRAPH_API int agnedges(Agraph_t * g);
 CGRAPH_API int agnsubg(Agraph_t * g);
 CGRAPH_API int agdegree(Agraph_t * g, Agnode_t * n, int in, int out);
 CGRAPH_API int agcountuniqedges(Agraph_t * g, Agnode_t * n, int in, int out);
+/// @}
 
 /* memory */
 CGRAPH_API void *agalloc(Agraph_t * g, size_t size);
