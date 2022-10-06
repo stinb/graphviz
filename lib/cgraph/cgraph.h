@@ -304,7 +304,8 @@ CGRAPH_API Agsubnode_t *agsubrep(Agraph_t * g, Agnode_t * n);
 CGRAPH_API int agnodebefore(Agnode_t *u, Agnode_t *v); /* we have no shame */
 /// @}
 
-/* edges */
+/// @defgroup cgraph_edge edges
+/// @{
 CGRAPH_API Agedge_t *agedge(Agraph_t * g, Agnode_t * t, Agnode_t * h,
 			char *name, int createflag);
 CGRAPH_API Agedge_t *agidedge(Agraph_t * g, Agnode_t * t, Agnode_t * h,
@@ -316,6 +317,7 @@ CGRAPH_API Agedge_t *agfstout(Agraph_t * g, Agnode_t * n);
 CGRAPH_API Agedge_t *agnxtout(Agraph_t * g, Agedge_t * e);
 CGRAPH_API Agedge_t *agfstedge(Agraph_t * g, Agnode_t * n);
 CGRAPH_API Agedge_t *agnxtedge(Agraph_t * g, Agedge_t * e, Agnode_t * n);
+/// @}
 
 /* generic */
 CGRAPH_API Agraph_t *agraphof(void* obj);
