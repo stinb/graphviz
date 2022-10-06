@@ -477,7 +477,8 @@ CGRAPH_API extern Agdesc_t Agstrictdirected;
 CGRAPH_API extern Agdesc_t Agundirected;
 CGRAPH_API extern Agdesc_t Agstrictundirected;
 
-/* fast graphs */
+/// @defgroup cgraph_fast fast graphs
+/// @{
 void agflatten(Agraph_t * g, int flag);
 typedef Agsubnode_t	Agnoderef_t;
 typedef Dtlink_t	Agedgeref_t;
@@ -504,6 +505,7 @@ typedef Dtlink_t	Agedgeref_t;
 and edges are embedded in main graph objects but allocated separately in subgraphs */
 #define AGSNMAIN(sn)        ((sn)==(&((sn)->node->mainsub)))
 #define EDGEOF(sn,rep)		(AGSNMAIN(sn)?((Agedge_t*)((unsigned char*)(rep) - offsetof(Agedge_t,seq_link))) : ((Dthold_t*)(rep))->obj)
+/// @}
 
 #ifdef __cplusplus
 }
