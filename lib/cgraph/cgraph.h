@@ -171,7 +171,7 @@ struct Agdesc_s {		/* graph descriptor */
 
 /* disciplines for external resources needed by libgraph */
 
-///  memory allocator discipline, independent of other resources
+/// memory allocator discipline, independent of other resources
 
 struct Agmemdisc_s {
     void *(*open) (Agdisc_t*);
