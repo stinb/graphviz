@@ -411,7 +411,8 @@ CGRAPH_API int agdegree(Agraph_t * g, Agnode_t * n, int in, int out);
 CGRAPH_API int agcountuniqedges(Agraph_t * g, Agnode_t * n, int in, int out);
 /// @}
 
-/* memory */
+/// @defgroup cgmem memory
+/// @{
 CGRAPH_API void *agalloc(Agraph_t * g, size_t size);
 CGRAPH_API void *agrealloc(Agraph_t * g, void *ptr, size_t oldsize,
 		       size_t size);
@@ -422,6 +423,7 @@ CGRAPH_API void aginternalmapclearlocalnames(Agraph_t * g);
 
 #define agnew(g,t)		((t*)agalloc(g,sizeof(t)))
 #define agnnew(g,n,t)	((t*)agalloc(g,(n)*sizeof(t)))
+/// @}
 
 /// @cond
 
