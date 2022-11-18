@@ -417,7 +417,7 @@ copyClusterInfo (int ncc, Agraph_t** ccs, Agraph_t* root)
 	nclust += GD_n_cluster(ccs[i]);
 
     GD_n_cluster(root) = nclust;
-    GD_clust(root) = N_NEW(nclust+1,Agraph_t*);
+    GD_clust(root) = gv_calloc(nclust + 1, sizeof(Agraph_t*));
     nclust = 1;
     for (i = 0; i < ncc; i++) {
 	sg = ccs[i];
