@@ -295,9 +295,6 @@ SparseMatrix Import_coord_clusters_from_dot(Agraph_t* g, int maxcluster, int dim
   int nnodes;
   int nedges;
   int i, row, ic,nc, j;
-  int* I;
-  int* J;
-  double* val;
   double v;
   int type = MATRIX_TYPE_REAL;
   char scluster[100];
@@ -362,9 +359,9 @@ SparseMatrix Import_coord_clusters_from_dot(Agraph_t* g, int maxcluster, int dim
     ND_id(n) = i++;
 
   /* form matrix */  
-  I = N_NEW(nedges, int);
-  J = N_NEW(nedges, int);
-  val = N_NEW(nedges, double);
+  int* I = gv_calloc(nedges, sizeof(int));
+  int* J = gv_calloc(nedges, sizeof(int));
+  double* val = gv_calloc(nedges, sizeof(double));
 
   sym = agattr(g, AGEDGE, "weight", NULL); 
   clust_sym = agattr(g, AGNODE, "cluster", NULL); 
@@ -389,7 +386,7 @@ SparseMatrix Import_coord_clusters_from_dot(Agraph_t* g, int maxcluster, int dim
                                           type, sizeof(double));
 
   /* get clustering info */
-  *clusters = MALLOC(sizeof(int)*nnodes);
+  *clusters = gv_calloc(nnodes, sizeof(int));
   nc = 1;
   MIN_GRPS = 0;
   /* if useClusters, the nodes in each top-level cluster subgraph are assigned to
@@ -466,18 +463,18 @@ SparseMatrix Import_coord_clusters_from_dot(Agraph_t* g, int maxcluster, int dim
     }
   }
 
-  *label_sizes = MALLOC(sizeof(double)*dim*nnodes);
+  *label_sizes = gv_calloc(dim * nnodes, sizeof(double));
   if (pal || (!noclusterinfo && clust_clr_sym)){
-    *rgb_r = MALLOC(sizeof(float)*(1+MAX_GRPS));
-    *rgb_g = MALLOC(sizeof(float)*(1+MAX_GRPS));
-    *rgb_b = MALLOC(sizeof(float)*(1+MAX_GRPS));
+    *rgb_r = gv_calloc(1 + MAX_GRPS, sizeof(float));
+    *rgb_g = gv_calloc(1 + MAX_GRPS, sizeof(float));
+    *rgb_b = gv_calloc(1 + MAX_GRPS, sizeof(float));
   } else {
     *rgb_r = NULL;
     *rgb_g = NULL;
     *rgb_b = NULL;
   }
-  *fsz = MALLOC(sizeof(float)*nnodes);
-  *labels = MALLOC(sizeof(char*)*nnodes);
+  *fsz = gv_calloc(nnodes, sizeof(float));
+  *labels = gv_calloc(nnodes, sizeof(char*));
 
   for (n = agfstnode (g); n; n = agnxtnode (g, n)) {
     gvcolor_t color;
@@ -540,7 +537,7 @@ SparseMatrix Import_coord_clusters_from_dot(Agraph_t* g, int maxcluster, int dim
 
   if (x){
     bool has_position = false;
-    *x = MALLOC(sizeof(double)*dim*nnodes);
+    *x = gv_calloc(dim * nnodes, sizeof(double));
     for (n = agfstnode (g); n; n = agnxtnode (g, n)) {
       double xx,yy;
       i = ND_id(n);
