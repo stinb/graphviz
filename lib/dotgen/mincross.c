@@ -17,6 +17,7 @@
  */
 
 #include <assert.h>
+#include <cgraph/alloc.h>
 #include <cgraph/cgraph.h>
 #include <cgraph/exit.h>
 #include <dotgen/dot.h>
@@ -389,10 +390,10 @@ void dot_mincross(graph_t * g, int doBalance)
 
 static adjmatrix_t *new_matrix(int i, int j)
 {
-    adjmatrix_t *rv = NEW(adjmatrix_t);
+    adjmatrix_t *rv = gv_alloc(sizeof(adjmatrix_t));
     rv->nrows = i;
     rv->ncols = j;
-    rv->data = N_NEW(i * j, char);
+    rv->data = gv_calloc(i * j, sizeof(char));
     return rv;
 }
 
