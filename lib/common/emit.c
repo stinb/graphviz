@@ -672,7 +672,7 @@ void emit_map_rect(GVJ_t *job, boxf b)
 	    obj->url_map_n = 4;
 	}
 	free(obj->url_map_p);
-	obj->url_map_p = p = N_NEW(obj->url_map_n, pointf);
+	obj->url_map_p = p = gv_calloc(obj->url_map_n, sizeof(pointf));
 	p[0] = b.LL;
 	p[1] = b.UR;
 	if (! (flags & GVRENDER_DOES_TRANSFORM))
