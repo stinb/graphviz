@@ -33,6 +33,7 @@
 #include <neatogen/kkutils.h>
 #include <common/pointset.h>
 #include <neatogen/sgd.h>
+#include <cgraph/alloc.h>
 #include <cgraph/bitarray.h>
 #include <cgraph/strcasecmp.h>
 #include <stdbool.h>
@@ -453,7 +454,8 @@ static void add_cluster(Agraph_t * g, Agraph_t * subg)
 {
     int cno;
     cno = ++(GD_n_cluster(g));
-    GD_clust(g) = ZALLOC(cno + 1, GD_clust(g), graph_t *, GD_n_cluster(g));
+    GD_clust(g) = gv_recalloc(GD_clust(g), GD_n_cluster(g), cno + 1,
+                              sizeof(graph_t*));
     GD_clust(g)[cno] = subg;
     do_graph_label(subg);
 }
