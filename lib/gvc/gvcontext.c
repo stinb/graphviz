@@ -21,6 +21,7 @@
 #include <stdlib.h>
 
 #include "builddate.h"
+#include <cgraph/alloc.h>
 #include <common/render.h>
 #include <common/types.h>
 #include <gvc/gvplugin.h>
@@ -46,7 +47,7 @@ static char *LibInfo[] = {
 
 GVC_t *gvNEWcontext(const lt_symlist_t *builtins, int demand_loading)
 {
-    GVC_t *gvc = zmalloc(sizeof(GVC_t));
+    GVC_t *gvc = gv_alloc(sizeof(GVC_t));
 
     gvc->common.info = LibInfo;
     gvc->common.errorfn = agerrorf;
