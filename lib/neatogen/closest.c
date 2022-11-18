@@ -174,13 +174,13 @@ static void find_closest_pairs(double *place, size_t n, int num_pairs,
                                gv_stack_t* pairs_stack) {
     /* Fill the stack 'pairs_stack' with 'num_pairs' closest pairs int the 1-D layout 'place' */
     PairHeap heap;
-    size_t *left = N_GNEW(n, size_t);
-    size_t *right = N_GNEW(n, size_t);
+    size_t *left = gv_calloc(n, sizeof(size_t));
+    size_t *right = gv_calloc(n, sizeof(size_t));
     Pair pair = {0}, new_pair;
 
     /* Order the nodes according to their place */
-    size_t *ordering = N_GNEW(n, size_t);
-    size_t *inv_ordering = N_GNEW(n, size_t);
+    size_t *ordering = gv_calloc(n, sizeof(size_t));
+    size_t *inv_ordering = gv_calloc(n, sizeof(size_t));
 
     for (size_t i = 0; i < n; i++) {
 	ordering[i] = i;
