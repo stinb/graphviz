@@ -183,7 +183,7 @@ appendFItemList (agxbuf *ag)
 static void 
 appendFLineList (int v)
 {
-    fspan *ln = NEW(fspan);
+    fspan *ln = gv_alloc(sizeof(fspan));
     fitem *fi;
     Dt_t *ilist = HTMLstate.fitemList;
 
@@ -204,7 +204,7 @@ appendFLineList (int v)
 	}
     }
     else {
-	ln->lp.items = NEW(textspan_t);
+	ln->lp.items = gv_alloc(sizeof(textspan_t));
 	ln->lp.nitems = 1;
 	ln->lp.items[0].str = gv_strdup("");
 	ln->lp.items[0].font = HTMLstate.fontstack->cfont;
