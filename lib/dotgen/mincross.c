@@ -1279,11 +1279,11 @@ static void flat_breakcycles(graph_t * g)
  */
 void allocate_ranks(graph_t * g)
 {
-    int r, low, high, *cn;
+    int r, low, high;
     node_t *n;
     edge_t *e;
 
-    cn = N_NEW(GD_maxrank(g) + 2, int);	/* must be 0 based, not GD_minrank */
+    int *cn = gv_calloc(GD_maxrank(g) + 2, sizeof(int)); // must be 0 based, not GD_minrank
     for (n = agfstnode(g); n; n = agnxtnode(g, n)) {
 	cn[ND_rank(n)]++;
 	for (e = agfstout(g, n); e; e = agnxtout(g, e)) {
@@ -1298,10 +1298,10 @@ void allocate_ranks(graph_t * g)
 		cn[r]++;
 	}
     }
-    GD_rank(g) = N_NEW(GD_maxrank(g) + 2, rank_t);
+    GD_rank(g) = gv_calloc(GD_maxrank(g) + 2, sizeof(rank_t));
     for (r = GD_minrank(g); r <= GD_maxrank(g); r++) {
 	GD_rank(g)[r].an = GD_rank(g)[r].n = cn[r];
-	GD_rank(g)[r].av = GD_rank(g)[r].v = N_NEW(cn[r] + 1, node_t *);
+	GD_rank(g)[r].av = GD_rank(g)[r].v = gv_calloc(cn[r] + 1, sizeof(node_t*));
     }
     free(cn);
 }
