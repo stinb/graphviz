@@ -171,7 +171,7 @@ static Dtdisc_t fspanDisc = {
 static void
 appendFItemList (agxbuf *ag)
 {
-    fitem *fi = NEW(fitem);
+    fitem *fi = gv_alloc(sizeof(fitem));
 
     fi->ti.str = agxbdisown(ag);
     fi->ti.font = HTMLstate.fontstack->cfont;
