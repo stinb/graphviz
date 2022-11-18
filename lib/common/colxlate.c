@@ -21,6 +21,7 @@
 #include <common/colortbl.h>
 #include <common/memory.h>
 #include <cgraph/agxbuf.h>
+#include <cgraph/alloc.h>
 #include <cgraph/strcasecmp.h>
 #include <cgraph/unreachable.h>
 
@@ -143,8 +144,9 @@ char *canontoken(char *str)
     p = str;
     len = strlen(str);
     if (len >= allocated) {
-	allocated = len + 1 + 10;
-	canon = grealloc(canon, allocated);
+	size_t new_allocated = len + 1 + 10;
+	canon = gv_recalloc(canon, allocated, new_allocated, sizeof(char));
+	allocated = new_allocated;
     }
     q = canon;
     while ((c = *p++)) {
