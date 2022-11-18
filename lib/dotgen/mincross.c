@@ -1153,7 +1153,7 @@ static void
 fillRanks (Agraph_t* g)
 {
     int rnks_sz = GD_maxrank(g) + 2;
-    int* rnks = N_NEW(rnks_sz, int);
+    int *rnks = gv_calloc(rnks_sz, sizeof(int));
     realFillRanks (g, rnks, rnks_sz, NULL);
     free (rnks);
 }
