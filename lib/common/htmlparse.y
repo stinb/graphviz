@@ -368,7 +368,7 @@ static int nonSpace (char* s)
 static void
 pushFont (textfont_t *fp)
 {
-    sfont_t *ft = NEW(sfont_t);
+    sfont_t *ft = gv_alloc(sizeof(sfont_t));
     textfont_t* curfont = HTMLstate.fontstack->cfont;
     textfont_t  f = *fp;
 
