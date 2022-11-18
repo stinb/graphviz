@@ -391,7 +391,7 @@ copyCluster (Agraph_t* scl, Agraph_t* cl)
     GD_label_pos(cl) = GD_label_pos(scl);
     memcpy(GD_border(cl), GD_border(scl), 4*sizeof(pointf));
     nclust = GD_n_cluster(cl) = GD_n_cluster(scl);
-    GD_clust(cl) = N_NEW(nclust+1,Agraph_t*);
+    GD_clust(cl) = gv_calloc(nclust + 1, sizeof(Agraph_t*));
     for (j = 1; j <= nclust; j++) {
 	cg = mapClust(GD_clust(scl)[j]);
 	GD_clust(cl)[j] = cg;
