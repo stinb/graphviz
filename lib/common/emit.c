@@ -485,7 +485,7 @@ static int parseSegs(char *clrs, int nseg, colorsegs_t *psegs) {
     }
 
     segs.base = colors;
-    segs.segs = s = N_NEW(nseg+1,colorseg_t);
+    segs.segs = s = gv_calloc(nseg + 1, sizeof(colorseg_t));
     for (color = strtok(colors, ":"); color; color = strtok(0, ":")) {
 	if ((v = getSegLen (color)) >= 0) {
 	    double del = v - left;
