@@ -1169,8 +1169,8 @@ static void init_mincross(graph_t * g)
     Root = g;
     /* alloc +1 for the null terminator usage in do_ordering() */
     size = agnedges(dot_root(g)) + 1;
-    TE_list = N_NEW(size, edge_t *);
-    TI_list = N_NEW(size, int);
+    TE_list = gv_calloc(size, sizeof(edge_t*));
+    TI_list = gv_calloc(size, sizeof(int));
     mincross_options(g);
     if (GD_flags(g) & NEW_RANK)
 	fillRanks (g);
