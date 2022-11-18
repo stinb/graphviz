@@ -10,6 +10,7 @@
 
 #define STANDALONE
 #include <cgraph/agxbuf.h>
+#include <cgraph/alloc.h>
 #include <sparse/general.h>
 #include <sparse/DotIO.h>
 #include <sparse/clustering.h>
@@ -110,9 +111,9 @@ SparseMatrix SparseMatrix_import_dot(Agraph_t *g, int dim,
     J = A->ja;
     val = A->a;
   } else {
-    I = N_NEW(nedges, int);
-    J = N_NEW(nedges, int);
-    val = N_NEW(nedges, double);
+    I = gv_calloc(nedges, sizeof(int));
+    J = gv_calloc(nedges, sizeof(int));
+    val = gv_calloc(nedges, sizeof(double));
   }
 
   sym = agattr(g, AGEDGE, "weight", NULL);
@@ -139,8 +140,7 @@ SparseMatrix SparseMatrix_import_dot(Agraph_t *g, int dim,
     bool has_positions = true;
     char* pval;
     if (!(*x)) {
-      *x = MALLOC(sizeof(double)*dim*nnodes);
-      assert(*x);
+      *x = gv_calloc(dim * nnodes, sizeof(double));
     }
     for (n = agfstnode (g); n && has_positions; n = agnxtnode (g, n)) {
       double xx,yy, zz,ww;
