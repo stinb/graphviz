@@ -3336,7 +3336,7 @@ static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
 	if (cnt < 0)
 	    break;
     }
-    rv->fld = N_NEW(maxf, field_t *);
+    rv->fld = gv_calloc(maxf, sizeof(field_t*));
     rv->LR = LR;
     mode = 0;
     fi = 0;
