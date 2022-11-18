@@ -2033,21 +2033,20 @@ static double approxLen (pointf* pts)
 static void splitBSpline (bezier* bz, float t, bezier* left, bezier* right)
 {
     int i, j, k, cnt = (bz->size - 1)/3;
-    double* lens;
     double last, len, sum;
     pointf* pts;
     float r;
 
     if (cnt == 1) {
 	left->size = 4;
-	left->list = N_NEW(4, pointf);
+	left->list = gv_calloc(4, sizeof(pointf));
 	right->size = 4;
-	right->list = N_NEW(4, pointf);
+	right->list = gv_calloc(4, sizeof(pointf));
 	Bezier (bz->list, 3, t, left->list, right->list);
 	return;
     }
     
-    lens = N_NEW(cnt, double);
+    double* lens = gv_calloc(cnt, sizeof(double));
     sum = 0;
     pts = bz->list;
     for (i = 0; i < cnt; i++) {
@@ -2064,9 +2063,9 @@ static void splitBSpline (bezier* bz, float t, bezier* left, bezier* right)
     }
 
     left->size = 3*(i+1) + 1;
-    left->list = N_NEW(left->size,pointf);
+    left->list = gv_calloc(left->size, sizeof(pointf));
     right->size = 3*(cnt-i) + 1;
-    right->list = N_NEW(right->size,pointf);
+    right->list = gv_calloc(right->size, sizeof(pointf));
     for (j = 0; j < left->size; j++)
 	left->list[j] = bz->list[j];
     k = j - 4;
