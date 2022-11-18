@@ -256,7 +256,7 @@ static pitem* addRow (void)
 {
   Dt_t*      dp = dtopen(&cellDisc, Dtqueue);
   htmltbl_t* tbl = HTMLstate.tblstack;
-  pitem*     sp = NEW(pitem);
+  pitem*     sp = gv_alloc(sizeof(pitem));
   sp->u.rp = dp;
   if (tbl->hrule)
     sp->ruled = 1;
