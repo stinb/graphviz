@@ -17,6 +17,7 @@
 
 ******************************************/
 
+#include <cgraph/alloc.h>
 #include <neatogen/bfs.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -120,7 +121,7 @@ bfs_bounded(int vertex, vtx_data * graph, DistType * dist,
 
 void mkQueue(Queue * qp, int size)
 {
-    qp->data = N_GNEW(size, int);
+    qp->data = gv_calloc(size, sizeof(int));
     qp->queueSize = size;
     qp->start = qp->end = 0;
 }
