@@ -941,7 +941,7 @@ static void readout_levels(graph_t * g, graph_t * Xg, int ncc)
     GD_maxrank(g) = -1;
     if (ncc > 1) {
 	int i;
-	minrk = N_NEW(ncc+1,int);
+	minrk = gv_calloc(ncc + 1, sizeof(int));
 	for (i = 1; i <= ncc; i++)
 	    minrk[i] = INT_MAX;
     }
