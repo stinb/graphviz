@@ -832,7 +832,7 @@ typedef struct segitem_s {
 
 static segitem_t* appendSeg (pointf p, segitem_t* lp)
 {
-    segitem_t* s = GNEW(segitem_t);
+    segitem_t* s = gv_alloc(sizeof(segitem_t));
     INIT_SEG (p, s);
     lp->next = s;
     return s;
