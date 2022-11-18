@@ -63,14 +63,13 @@ SparseMatrix call_tri(int n, double *x) {
 
 SparseMatrix call_tri2(int n, int dim, double * xx)
 {
-    double *x, *y;
     v_data *delaunay;
     int i, j;
     SparseMatrix A;
     SparseMatrix B;
     double one = 1;
-    x = N_GNEW(n, double);
-    y = N_GNEW(n, double);
+    double *x = gv_calloc(n, sizeof(double));
+    double *y = gv_calloc(n, sizeof(double));
 
     for (i = 0; i < n; i++) {
 	x[i] = xx[dim * i];
