@@ -268,7 +268,7 @@ static pitem* addRow (void)
  * Set cell body and type and attach to row
  */
 static void setCell(htmlcell_t *cp, void *obj, char kind) {
-  pitem*     sp = NEW(pitem);
+  pitem*     sp = gv_alloc(sizeof(pitem));
   htmltbl_t* tbl = HTMLstate.tblstack;
   pitem*     rp = dtlast (tbl->u.p.rows);
   Dt_t*      row = rp->u.rp;
