@@ -267,12 +267,12 @@ static void construct_graph(size_t n, gv_stack_t *edges_stack,
     vtx_data *new_graph;
 
     /* first compute new degrees and nedges; */
-    int *degrees = N_GNEW(n, int);
+    int *degrees = gv_calloc(n, sizeof(int));
     size_t top = stack_size(edges_stack);
     size_t new_nedges = 2 * top + n;
     Pair pair;
-    int *edges = N_GNEW(new_nedges, int);
-    float *weights = N_GNEW(new_nedges, float);
+    int *edges = gv_calloc(new_nedges, sizeof(int));
+    float *weights = gv_calloc(new_nedges, sizeof(float));
 
     for (size_t i = 0; i < n; i++) {
 	degrees[i] = 1;		/* save place for the self loop */
@@ -288,7 +288,7 @@ static void construct_graph(size_t n, gv_stack_t *edges_stack,
 	weights[i] = 1.0;
     }
 
-    *New_graph = new_graph = N_GNEW(n, vtx_data);
+    *New_graph = new_graph = gv_calloc(n, sizeof(vtx_data));
     for (size_t i = 0; i < n; i++) {
 	new_graph[i].nedges = 1;
 	new_graph[i].ewgts = weights;
