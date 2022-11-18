@@ -347,7 +347,7 @@ static void map_point(GVJ_t *job, pointf pf)
 	    obj->url_map_n = 4;
 	}
 	free(obj->url_map_p);
-	obj->url_map_p = p = N_NEW(obj->url_map_n, pointf);
+	obj->url_map_p = p = gv_calloc(obj->url_map_n, sizeof(pointf));
 	P2RECT(pf, p, FUZZ, FUZZ);
 	if (! (flags & GVRENDER_DOES_TRANSFORM))
 	    gvrender_ptf_A(job, p, p, 2);
