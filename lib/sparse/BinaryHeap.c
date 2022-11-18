@@ -42,23 +42,16 @@ void BinaryHeap_delete(BinaryHeap h, void (*del)(void* item)){
   free(h);
 }
 
-static BinaryHeap BinaryHeap_realloc(BinaryHeap h){
+static void BinaryHeap_realloc(BinaryHeap h) {
   size_t max_len0 = h->max_len, max_len = h->max_len, i;
   max_len = max_len + MAX(max_len / 5, 10);
   h->max_len = max_len;
 
-  h->heap = REALLOC(h->heap, sizeof(h->heap[0]) * max_len);
-  if (!(h->heap)) return NULL;
-
-  h->id_to_pos = REALLOC(h->id_to_pos, sizeof(h->id_to_pos[0]) * max_len);
-  if (!(h->id_to_pos)) return NULL;
-
-  h->pos_to_id = REALLOC(h->pos_to_id, sizeof(h->pos_to_id[0]) * max_len);
-  if (!(h->pos_to_id)) return NULL;
+  h->heap = gv_recalloc(h->heap, max_len0, max_len, sizeof(h->heap[0]));
+  h->id_to_pos = gv_recalloc(h->id_to_pos, max_len0, max_len, sizeof(h->id_to_pos[0]));
+  h->pos_to_id = gv_recalloc(h->pos_to_id, max_len0, max_len, sizeof(h->pos_to_id[0]));
 
   for (i = max_len0; i < max_len; i++) h->id_to_pos[i] = SIZE_MAX;
-  return h;
-
 }
 
 #define ParentPos(pos) (pos - 1)/2
@@ -141,7 +134,7 @@ int BinaryHeap_insert(BinaryHeap h, void *item){
 
   /* insert an item, and return its ID. This ID can be used later to extract the item */
   if (len > h->max_len - 1) {
-    if (BinaryHeap_realloc(h) == NULL) return BinaryHeap_error_malloc;
+    BinaryHeap_realloc(h);
   }
   
   // check if we have IDs in the stack to reuse

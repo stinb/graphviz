@@ -48,8 +48,6 @@ struct BinaryHeap_struct {
 				      if item1 >, =, < item2 */
 };
 
-enum {BinaryHeap_error_malloc = -10};
-
 typedef struct BinaryHeap_struct* BinaryHeap;
 
 BinaryHeap BinaryHeap_new(int (*cmp)(void*item1, void*item2));
