@@ -2304,14 +2304,14 @@ static void emit_edge_graphics(GVJ_t * job, edge_t * e, char** styles)
 	else if (numc) {
 	    /* calculate and save offset vector spline and initialize first offset spline */
 	    tmpspl.size = offspl.size = ED_spl(e)->size;
-	    offspl.list = malloc(sizeof(bezier) * offspl.size);
-	    tmpspl.list = malloc(sizeof(bezier) * tmpspl.size);
+	    offspl.list = gv_calloc(offspl.size, sizeof(bezier));
+	    tmpspl.list = gv_calloc(tmpspl.size, sizeof(bezier));
 	    numc2 = (2 + numc) / 2.0;
 	    for (i = 0; i < offspl.size; i++) {
 		bz = ED_spl(e)->list[i];
 		tmpspl.list[i].size = offspl.list[i].size = bz.size;
-		offlist = offspl.list[i].list = malloc(sizeof(pointf) * bz.size);
-		tmplist = tmpspl.list[i].list = malloc(sizeof(pointf) * bz.size);
+		offlist = offspl.list[i].list = gv_calloc(bz.size, sizeof(pointf));
+		tmplist = tmpspl.list[i].list = gv_calloc(bz.size, sizeof(pointf));
 		pf3 = bz.list[0];
 		for (j = 0; j < bz.size - 1; j += 3) {
 		    pf0 = pf3;
