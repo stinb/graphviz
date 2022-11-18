@@ -115,7 +115,7 @@ static void initHeap(PairHeap *h, double *place, size_t *ordering, size_t n) {
 
     h->heapSize = n == 0 ? 0 : (n - 1);
     h->maxSize = h->heapSize;
-    h->data = N_GNEW(h->maxSize, Pair);
+    h->data = gv_calloc(h->maxSize, sizeof(Pair));
 
     for (size_t i = 0; n != 0 && i < n - 1; i++) {
 	edge.left = ordering[i];
