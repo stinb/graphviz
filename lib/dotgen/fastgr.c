@@ -201,11 +201,9 @@ void delete_fast_node(graph_t * g, node_t * n)
 
 static node_t *named_virtual_node(graph_t * g, char *s)
 {
-    node_t *n;
-
-    n = NEW(node_t);
+    node_t *n = gv_alloc(sizeof(node_t));
     AGTYPE(n) = AGNODE;
-    n->base.data = (Agrec_t*)NEW(Agnodeinfo_t);
+    n->base.data = gv_alloc(sizeof(Agnodeinfo_t));
     n->root = agroot(g);
     ND_node_type(n) = VIRTUAL;
     ND_lw(n) = ND_rw(n) = 1;
