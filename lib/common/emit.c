@@ -698,7 +698,7 @@ static void map_label(GVJ_t *job, textlabel_t *lab)
 	    obj->url_map_n = 4;
 	}
 	free(obj->url_map_p);
-	obj->url_map_p = p = N_NEW(obj->url_map_n, pointf);
+	obj->url_map_p = p = gv_calloc(obj->url_map_n, sizeof(pointf));
 	P2RECT(lab->pos, p, lab->dimen.x / 2., lab->dimen.y / 2.);
 	if (! (flags & GVRENDER_DOES_TRANSFORM))
 	    gvrender_ptf_A(job, p, p, 2);
