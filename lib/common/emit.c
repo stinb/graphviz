@@ -1813,7 +1813,7 @@ static void emit_begin_node(GVJ_t * job, node_t * n)
             if (poly->peripheries == 0 && !filled) {
                 obj->url_map_shape = MAP_RECTANGLE;
                 nump = 2;
-                p = N_NEW(nump, pointf);
+                p = gv_calloc(nump, sizeof(pointf));
                 P2RECT(coord, p, ND_lw(n), ND_ht(n) / 2.0 );
             }
             /* circle or ellipse */
@@ -1821,7 +1821,7 @@ static void emit_begin_node(GVJ_t * job, node_t * n)
                 if (poly->regular) {
                     obj->url_map_shape = MAP_CIRCLE;
                     nump = 2;              /* center of circle and top right corner of bb */
-                    p = N_NEW(nump, pointf);
+                    p = gv_calloc(nump, sizeof(pointf));
                     p[0].x = coord.x;
                     p[0].y = coord.y;
 		    /* even vertices contain LL corner of bb */
@@ -1850,7 +1850,7 @@ static void emit_begin_node(GVJ_t * job, node_t * n)
                 if (poly->sides >= 0 && (size_t)poly->sides >= nump) {
                     assert(poly->sides >= 0);
                     size_t delta = (size_t)poly->sides / nump;
-                    p = N_NEW(nump, pointf);
+                    p = gv_calloc(nump, sizeof(pointf));
                     for (size_t i = 0, j = 0; j < nump; i += delta, j++) {
                         p[j].x = coord.x + vertices[i + offset].x;
                         p[j].y = coord.y + vertices[i + offset].y;
@@ -1858,7 +1858,7 @@ static void emit_begin_node(GVJ_t * job, node_t * n)
                 } else {
                     assert(sides >= 0);
                     nump = (size_t)sides;
-                    p = N_NEW(nump, pointf);
+                    p = gv_calloc(nump, sizeof(pointf));
                     for (size_t i = 0; i < nump; i++) {
                         p[i].x = coord.x + vertices[i + offset].x;
                         p[i].y = coord.y + vertices[i + offset].y;
@@ -1872,7 +1872,7 @@ static void emit_begin_node(GVJ_t * job, node_t * n)
              */
             obj->url_map_shape = MAP_RECTANGLE;
             nump = 2;
-            p = N_NEW(nump, pointf);
+            p = gv_calloc(nump, sizeof(pointf));
             p[0].x = coord.x - ND_lw(n);
             p[0].y = coord.y - (ND_ht(n) / 2);
             p[1].x = coord.x + ND_rw(n);
