@@ -959,7 +959,7 @@ static void mkSegPts (segitem_t* prv, segitem_t* cur, segitem_t* nxt,
  */
 static void map_output_bspline (pointf **pbs, int **pbs_n, int *pbs_poly_n, bezier* bp, double w2)
 {
-    segitem_t* segl = GNEW(segitem_t);
+    segitem_t* segl = gv_alloc(sizeof(segitem_t));
     segitem_t* segp = segl;
     segitem_t* segprev;
     segitem_t* segnext;
