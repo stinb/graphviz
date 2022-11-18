@@ -239,8 +239,6 @@ fixLabelOrder (graph_t* g, rank_t* rk)
 {
     int cnt;
     bool haveBackedge = false;
-    Agnode_t** arr;
-    int* indices;
     Agraph_t* sg;
     Agnode_t* n;
     Agnode_t* nxtp;
@@ -261,8 +259,8 @@ fixLabelOrder (graph_t* g, rank_t* rk)
     if (!haveBackedge) return;
     
     sg = agsubg(g, "comp", 1);
-    arr = N_NEW(agnnodes(g), Agnode_t*);
-    indices = N_NEW(agnnodes(g), int);
+    Agnode_t **arr = gv_calloc(agnnodes(g), sizeof(Agnode_t*));
+    int *indices = gv_calloc(agnnodes(g), sizeof(int));
 
     for (n = agfstnode(g); n; n = agnxtnode(g,n)) {
 	if (ND_x(n) || agdegree(g,n,1,1) == 0) continue;
