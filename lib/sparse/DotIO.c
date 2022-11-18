@@ -574,17 +574,10 @@ void attached_clustering(Agraph_t* g, int maxcluster, int clustering_scheme){
   int nnodes;
   int nedges;
   int i, row,nc;
-  int* I;
-  int* J;
-  double* val;
   double v;
   int type = MATRIX_TYPE_REAL;
   size_t sz = sizeof(double);
 
-  int *clusters;
-
-
-  
   if (!g) return;
   nnodes = agnnodes (g);
   nedges = agnedges (g);
@@ -595,9 +588,9 @@ void attached_clustering(Agraph_t* g, int maxcluster, int clustering_scheme){
     ND_id(n) = i++;
   
   /* form matrix */  
-  I = N_NEW(nedges, int);
-  J = N_NEW(nedges, int);
-  val = N_NEW(nedges, double);
+  int* I = gv_calloc(nedges, sizeof(int));
+  int* J = gv_calloc(nedges, sizeof(int));
+  double* val = gv_calloc(nedges, sizeof(double));
   
   sym = agattr(g, AGEDGE, "weight", NULL);
   clust_sym = agattr(g, AGNODE, "cluster", NULL);
@@ -620,7 +613,7 @@ void attached_clustering(Agraph_t* g, int maxcluster, int clustering_scheme){
   }
   A = SparseMatrix_from_coordinate_arrays(nedges, nnodes, nnodes, I, J, val, type, sz);
 
-  clusters = MALLOC(sizeof(int)*nnodes);
+  int *clusters = gv_calloc(nnodes, sizeof(int));
 
   {
     double modularity;
