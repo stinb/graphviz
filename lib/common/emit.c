@@ -747,9 +747,8 @@ static bool isFilled(node_t * n)
 static pointf *pEllipse(double a, double b, size_t np) {
     double theta = 0.0;
     double deltheta = 2 * M_PI / (double)np;
-    pointf *ps;
 
-    ps = N_NEW(np, pointf);
+    pointf *ps = gv_calloc(np, sizeof(pointf));
     for (size_t i = 0; i < np; i++) {
         ps[i].x = a * cos(theta);
         ps[i].y = b * sin(theta);
