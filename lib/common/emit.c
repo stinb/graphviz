@@ -3379,7 +3379,7 @@ static void emit_page(GVJ_t * job, graph_t * g)
 		obj->url_map_shape = MAP_POLYGON;
 		nump = 4;
 	    }
-	    p = N_NEW(nump, pointf);
+	    p = gv_calloc(nump, sizeof(pointf));
 	    p[0] = job->pageBox.LL;
 	    p[1] = job->pageBox.UR;
 	    if (! (flags & (GVRENDER_DOES_MAP_RECTANGLE)))
