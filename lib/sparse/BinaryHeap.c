@@ -9,23 +9,23 @@
  *************************************************************************/
 
 #include <assert.h>
+#include <cgraph/alloc.h>
 #include <cgraph/prisize_t.h>
 #include <limits.h>
 #include <sparse/BinaryHeap.h>
 #include <stdlib.h>
 
 BinaryHeap BinaryHeap_new(int (*cmp)(void*item1, void*item2)){
-  BinaryHeap h;
   size_t max_len = 1<<8;
 
-  h = MALLOC(sizeof(struct BinaryHeap_struct));
+  BinaryHeap h = gv_alloc(sizeof(struct BinaryHeap_struct));
   h->max_len = max_len;
   h->len = 0;
-  h->heap = CALLOC(max_len, sizeof(h->heap[0]));
-  h->id_to_pos = CALLOC(max_len, sizeof(h->id_to_pos[0]));
+  h->heap = gv_calloc(max_len, sizeof(h->heap[0]));
+  h->id_to_pos = gv_calloc(max_len, sizeof(h->id_to_pos[0]));
   for (size_t i = 0; i < max_len; i++) h->id_to_pos[i] = SIZE_MAX;
 
-  h->pos_to_id = CALLOC(max_len, sizeof(h->pos_to_id[0]));
+  h->pos_to_id = gv_calloc(max_len, sizeof(h->pos_to_id[0]));
   h->id_stack = (int_stack_t){0};
   h->cmp = cmp;
   return h;
