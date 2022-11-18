@@ -290,7 +290,7 @@ static void setCell(htmlcell_t *cp, void *obj, char kind) {
  * Create label, given body and type.
  */
 static htmllabel_t *mkLabel(void *obj, char kind) {
-  htmllabel_t* lp = NEW(htmllabel_t);
+  htmllabel_t* lp = gv_alloc(sizeof(htmllabel_t));
 
   lp->kind = kind;
   if (kind == HTML_TEXT)
