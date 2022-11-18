@@ -348,7 +348,7 @@ static void
 attachPos (Agraph_t* g)
 {
     node_t* np;
-    double* ps = N_NEW(2*agnnodes(g), double);
+    double* ps = gv_calloc(2 * agnnodes(g), sizeof(double));
 
     for (np = agfstnode(g); np; np = agnxtnode(g, np)) {
 	ND_pos(np) = ps;
