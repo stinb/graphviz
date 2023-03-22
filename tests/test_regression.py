@@ -28,7 +28,9 @@ from gvtest import (  # pylint: disable=wrong-import-position
     ROOT,
     dot,
     gvpr,
+    is_centos,
     is_python36,
+    is_using_asan,
     remove_xtype_warnings,
     run_c,
     which,
@@ -2027,6 +2029,25 @@ def test_2342():
 
     # run it through Graphviz
     dot("svg", input)
+
+
+@pytest.mark.xfail(
+    not is_centos() and not is_using_asan(),
+    strict=True,
+    reason="https://gitlab.com/graphviz/graphviz/-/issues/2356",
+)
+def test_2356():
+    """
+    Using `mindist` programmatically in a loop should not cause Windows crashes
+    https://gitlab.com/graphviz/graphviz/-/issues/2356
+    """
+
+    # find co-located test source
+    c_src = (Path(__file__).parent / "2356.c").resolve()
+    assert c_src.exists(), "missing test case"
+
+    # run the test
+    run_c(c_src, link=["cgraph", "gvc"])
 
 
 def test_2361():
