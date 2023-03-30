@@ -631,7 +631,7 @@ static void insert (Dt_t* map, char* name, int v)
 	return;
     }
     ip = gv_alloc(sizeof(intm));
-    ip->id = strdup(name);
+    ip->id = gv_strdup(name);
     ip->v = v;
     dtinsert (map, ip);
 }
