@@ -651,20 +651,18 @@ static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
 	agxbuf pov = {0};
 	agxbprint(&pov, POV_SPHERE_SWEEP, "b_spline", n + 2);
 
-	agxbuf v = {0}, x = {0};
+	agxbuf v = {0};
 	for (i = 0; i < n; i++) {
 		agxbprint(&v, POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
 		          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
-		agxbprint(&x, "%s    %s", agxbuse(&pov), agxbuse(&v)); // catenate pov & vector v
-		agxbput(&pov, agxbuse(&x));
+		agxbprint(&pov, "    %s", agxbuse(&v)); // catenate pov & vector v
 
 		//TODO: we currently just use the start and end points of the curve as
 		//control points but we should use center of nodes
 		if (i == 0 || i == n - 1) {
 			agxbprint(&v, POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
 			          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
-			agxbprint(&x, "%s    %s", agxbuse(&pov), agxbuse(&v)); // catenate pov & vector v
-			agxbput(&pov, agxbuse(&x));
+			agxbprint(&pov, "    %s", agxbuse(&v)); // catenate pov & vector v
 		}
 #ifdef DEBUG
 		gvprintf(job, "sphere{<0, 0, 0>, 2\ntranslate<%f, %f, %d>\n"
@@ -677,7 +675,6 @@ static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
 	         agxbuse(&pov), agxbuse(&s), agxbuse(&r), agxbuse(&t), p); // catenate pov & end str
 
 	agxbfree(&v);
-	agxbfree(&x);
 	agxbfree(&s);
 	agxbfree(&r);
 	agxbfree(&t);
