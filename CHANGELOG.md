@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Edges with at least one corner were unaffected. #144
 - `_Gdtclft_Init` link errors when builting libtcldot_builtin using the
   Autotools build system have been resolved. #2365
+- Incorrect string construction in the `pov` output formatter has been fixed.
 
 ## [8.0.1] – 2023-03-27
 

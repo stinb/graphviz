@@ -557,8 +557,8 @@ static void pov_textspan(GVJ_t * job, pointf c, textspan_t * span)
 	//pov bundled fonts: timrom.ttf, cyrvetic.ttf
 	agxbuf pov = {0};
 	agxbprint(&pov, POV_TEXT "    %s    %s    %s    %s    %s" END,
-		span->font->name, 0.25, 0.0,	//font, depth (0.5 ... 2.0), offset
-		span->str, "    no_shadow\n", agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
+		span->font->name, span->str, 0.25, 0.0, // font, text, depth (0.5 ... 2.0), offset
+		"    no_shadow\n", agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
 
 #ifdef DEBUG
 	GV_OBJ_EXT("Text", agxbuse(&pov), span->str);
