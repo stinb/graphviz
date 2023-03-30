@@ -733,19 +733,17 @@ static void pov_polyline(GVJ_t * job, pointf * A, int n)
 	agxbuf pov = {0};
 	agxbprint(&pov, POV_SPHERE_SWEEP, "linear_spline", n);
 
-	agxbuf v = {0}, x = {0};
+	agxbuf v = {0};
 	for (i = 0; i < n; i++) {
 		agxbprint(&v, POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
 		          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
-		agxbprint(&x, "%s    %s", agxbuse(&pov), agxbuse(&v)); // catenate pov & vector v
-		agxbput(&pov, agxbuse(&x));
+		agxbprint(&pov, "    %s", agxbuse(&v)); // catenate pov & vector v
 	}
 
 	gvprintf(job, "%s    tolerance 0.01\n    %s    %s    %s    %s" END,
 	         agxbuse(&pov), agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
 
 	agxbfree(&v);
-	agxbfree(&x);
 	agxbfree(&s);
 	agxbfree(&r);
 	agxbfree(&t);
