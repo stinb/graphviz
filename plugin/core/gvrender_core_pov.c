@@ -697,18 +697,14 @@ static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
 	agxbuf pov = {0};
 	agxbprint(&pov, POV_SPHERE_SWEEP, "linear_spline", n + 1);
 
-	agxbuf v = {0};
 	for (i = 0; i < n; i++) {
-		agxbprint(&v, POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
+		agxbprint(&pov, "    " POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
 		          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
-		agxbprint(&pov, "    %s", agxbuse(&v)); // catenate pov & vector v
 	}
 
 	//close polygon, add starting point as final point^
-	agxbprint(&v, POV_VECTOR3 ", %.3f\n", A[0].x + job->translation.x,
+	agxbprint(&pov, "    " POV_VECTOR3 ", %.3f\n", A[0].x + job->translation.x,
 	          A[0].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
-
-	agxbprint(&pov, "    %s", agxbuse(&v)); // catenate pov & vector v
 
 	gvprintf(job, "%s    tolerance 0.1\n    %s    %s    %s    %s" END,
 	         agxbuse(&pov), agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
@@ -726,17 +722,15 @@ static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
 
 		for (i = 0; i < n; i++) {
 			//create on z = 0 plane, then translate to real z pos
-			agxbprint(&v, POV_VECTOR3,
+			agxbprint(&pov, "\n    " POV_VECTOR3,
 			       A[i].x + job->translation.x,
 			       A[i].y + job->translation.y, 0.0);
-			agxbprint(&pov, "\n    %s", agxbuse(&v)); // catenate pov & vector v
 		}
 		gvprintf(job, "%s\n    %s    %s    %s    %s" END, agxbuse(&pov),
 		         agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
 
 		free(p);
 	}
-	agxbfree(&v);
 	agxbfree(&s);
 	agxbfree(&r);
 	agxbfree(&t);
