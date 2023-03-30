@@ -680,71 +680,71 @@ static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
 
 static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
 {
-	char *pov, *s, *r, *t, *p, *v, *x;
+	char *p;
 	int i;
 
 	gvputs(job, "//*** polygon\n");
 	z = layerz - 2;
 
-	s = el(job, POV_SCALE3, job->scale.x, job->scale.y, 1.0);
-	r = el(job, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-	t = el(job, POV_TRANSLATE, 0.0, 0.0, z - 2);
+	agxbuf s = {0};
+	agxbprint(&s, POV_SCALE3, job->scale.x, job->scale.y, 1.0);
+	agxbuf r = {0};
+	agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
+	agxbuf t = {0};
+	agxbprint(&t, POV_TRANSLATE, 0.0, 0.0, z - 2);
 	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
-	pov = el(job, POV_SPHERE_SWEEP, "linear_spline", n + 1);
+	agxbuf pov = {0};
+	agxbprint(&pov, POV_SPHERE_SWEEP, "linear_spline", n + 1);
 
+	agxbuf v = {0}, x = {0};
 	for (i = 0; i < n; i++) {
-		v = el(job, POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x, A[i].y + job->translation.y, 0.0, job->obj->penwidth);	//z coordinate, thickness
-		x = el(job, "%s    %s", pov, v);	//catenate pov & vector v
-		free(v);
-		free(pov);
-		pov = x;
+		agxbprint(&v, POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
+		          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
+		agxbprint(&x, "%s    %s", agxbuse(&pov), agxbuse(&v)); // catenate pov & vector v
+		agxbput(&pov, agxbuse(&x));
 	}
 
 	//close polygon, add starting point as final point^
-	v = el(job, POV_VECTOR3 ", %.3f\n", A[0].x + job->translation.x, A[0].y + job->translation.y, 0.0, job->obj->penwidth);	//z coordinate, thickness
+	agxbprint(&v, POV_VECTOR3 ", %.3f\n", A[0].x + job->translation.x,
+	          A[0].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
 
-	x = el(job, "%s    %s", pov, v);	//catenate pov & vector v
-	free(v);
-	free(pov);
-	pov = x;
+	agxbprint(&x, "%s    %s", agxbuse(&pov), agxbuse(&v)); // catenate pov & vector v
+	agxbput(&pov, agxbuse(&x));
 
-	gvprintf(job, "%s    tolerance 0.1\n    %s    %s    %s    %s" END, pov, s, r,
-	         t, p);
+	gvprintf(job, "%s    tolerance 0.1\n    %s    %s    %s    %s" END,
+	         agxbuse(&pov), agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
 
-	free(s);
-	free(r);
-	free(t);
 	free(p);
-	free(pov);
 
 	//create fill background
 	if (filled) {
-		s = el(job, POV_SCALE3, job->scale.x, job->scale.y, 1.0);
-		r = el(job, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-		t = el(job, POV_TRANSLATE, 0.0, 0.0, z - 2);
+		agxbprint(&s, POV_SCALE3, job->scale.x, job->scale.y, 1.0);
+		agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
+		agxbprint(&t, POV_TRANSLATE, 0.0, 0.0, z - 2);
 		p = pov_color_as_str(job, job->obj->fillcolor, 0.25);
 
-		pov = el(job, POV_POLYGON, n);
+		agxbprint(&pov, POV_POLYGON, n);
 
 		for (i = 0; i < n; i++) {
 			//create on z = 0 plane, then translate to real z pos
-			v = el(job, POV_VECTOR3,
+			agxbprint(&v, POV_VECTOR3,
 			       A[i].x + job->translation.x,
 			       A[i].y + job->translation.y, 0.0);
-			x = el(job, "%s\n    %s", pov, v);	//catenate pov & vector v
-			free(v);
-			free(pov);
-			pov = x;
+			agxbprint(&x, "%s\n    %s", agxbuse(&pov), agxbuse(&v)); // catenate pov & vector v
+			agxbput(&pov, agxbuse(&x));
 		}
-		gvprintf(job, "%s\n    %s    %s    %s    %s" END, pov, s, r, t, p);
+		gvprintf(job, "%s\n    %s    %s    %s    %s" END, agxbuse(&pov),
+		         agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
 
-		free(s);
-		free(r);
-		free(t);
 		free(p);
-		free(pov);
 	}
+	agxbfree(&v);
+	agxbfree(&x);
+	agxbfree(&s);
+	agxbfree(&r);
+	agxbfree(&t);
+	agxbfree(&pov);
 }
 
 static void pov_polyline(GVJ_t * job, pointf * A, int n)
