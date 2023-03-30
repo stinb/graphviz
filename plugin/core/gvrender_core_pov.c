@@ -577,7 +577,7 @@ static void pov_textspan(GVJ_t * job, pointf c, textspan_t * span)
 
 static void pov_ellipse(GVJ_t * job, pointf * A, int filled)
 {
-	char *pov, *s, *r, *t, *p;
+	char *p;
 	float cx, cy, rx, ry, w;
 
 	gvputs(job, "//*** ellipse\n");
@@ -591,43 +591,44 @@ static void pov_ellipse(GVJ_t * job, pointf * A, int filled)
 	w = job->obj->penwidth / (rx + ry) / 2.0 * 5;
 
 	//draw rim (torus)
-	s = el(job, POV_SCALE3, rx, (rx + ry) / 4.0, ry);
-	r = el(job, POV_ROTATE, 90.0, 0.0, (float)job->rotation);
-	t = el(job, POV_TRANSLATE, cx, cy, z);
+	agxbuf s = {0};
+	agxbprint(&s, POV_SCALE3, rx, (rx + ry) / 4.0, ry);
+	agxbuf r = {0};
+	agxbprint(&r, POV_ROTATE, 90.0, 0.0, (float)job->rotation);
+	agxbuf t = {0};
+	agxbprint(&t, POV_TRANSLATE, cx, cy, z);
 	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
-	pov = el(job, POV_TORUS "    %s    %s    %s    %s" END, 1.0, w,	//radius, size of ring
-		 s, r, t, p);
+	agxbuf pov = {0};
+	agxbprint(&pov, POV_TORUS "    %s    %s    %s    %s" END, 1.0, w, // radius, size of ring
+	          agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
 
 #ifdef DEBUG
-	GV_OBJ_EXT("Torus", pov, "");
+	GV_OBJ_EXT("Torus", agxbuse(&pov), "");
 	gvprintf(job, "sphere{<0, 0, 0>, 2\ntranslate<%f, %f, %d>\n"
 		 "pigment{color Green}\nno_shadow\n}\n", cx, cy, z - 1);
 #else
-	gvputs(job, pov);
+	gvputs(job, agxbuse(&pov));
 #endif
 
-	free(s);
-	free(r);
-	free(t);
 	free(p);
-	free(pov);
 
 	//backgroud of ellipse if filled
 	if (filled) {
-		s = el(job, POV_SCALE3, rx, ry, 1.0);
-		r = el(job, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-		t = el(job, POV_TRANSLATE, cx, cy, z);
+		agxbprint(&s, POV_SCALE3, rx, ry, 1.0);
+		agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
+		agxbprint(&t, POV_TRANSLATE, cx, cy, z);
 		p = pov_color_as_str(job, job->obj->fillcolor, 0.0);
 
 		gvprintf(job, POV_SPHERE "    %s    %s    %s    %s" END,
-			 0.0, 0.0, 0.0, s, r, t, p);
+			 0.0, 0.0, 0.0, agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
 
-		free(s);
-		free(r);
-		free(t);
 		free(p);
 	}
+	agxbfree(&s);
+	agxbfree(&r);
+	agxbfree(&t);
+	agxbfree(&pov);
 }
 
 static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
