@@ -620,16 +620,13 @@ static void pov_ellipse(GVJ_t * job, pointf * A, int filled)
 		t = el(job, POV_TRANSLATE, cx, cy, z);
 		p = pov_color_as_str(job, job->obj->fillcolor, 0.0);
 
-		pov = el(job, POV_SPHERE "    %s    %s    %s    %s" END,
+		gvprintf(job, POV_SPHERE "    %s    %s    %s    %s" END,
 			 0.0, 0.0, 0.0, s, r, t, p);
-
-		gvputs(job, pov);
 
 		free(s);
 		free(r);
 		free(t);
 		free(p);
-		free(pov);
 	}
 }
 
