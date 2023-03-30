@@ -519,7 +519,7 @@ static void pov_end_edge(GVJ_t * job)
 static void pov_textspan(GVJ_t * job, pointf c, textspan_t * span)
 {
 	double x, y;
-	char *pov, *s, *r, *t, *p;
+	char *p;
 
 	gvprintf(job, "//*** textspan: %s, fontsize = %.3f, fontname = %s\n",
 		 span->str, span->font->size, span->font->name);
@@ -546,29 +546,33 @@ static void pov_textspan(GVJ_t * job, pointf c, textspan_t * span)
 	x = (c.x + job->translation.x) * job->scale.x;
 	y = (c.y + job->translation.y) * job->scale.y;
 
-	s = el(job, POV_SCALE1, span->font->size * job->scale.x);
-	r = el(job, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-	t = el(job, POV_TRANSLATE, x, y, z);
+	agxbuf s = {0};
+	agxbprint(&s, POV_SCALE1, span->font->size * job->scale.x);
+	agxbuf r = {0};
+	agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
+	agxbuf t = {0};
+	agxbprint(&t, POV_TRANSLATE, x, y, z);
 	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
 	//pov bundled fonts: timrom.ttf, cyrvetic.ttf
-	pov = el(job, POV_TEXT "    %s    %s    %s    %s    %s" END,
+	agxbuf pov = {0};
+	agxbprint(&pov, POV_TEXT "    %s    %s    %s    %s    %s" END,
 		span->font->name, 0.25, 0.0,	//font, depth (0.5 ... 2.0), offset
-		span->str, "    no_shadow\n", s, r, t, p);
+		span->str, "    no_shadow\n", agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
 
 #ifdef DEBUG
-	GV_OBJ_EXT("Text", pov, span->str);
+	GV_OBJ_EXT("Text", agxbuse(&pov), span->str);
 	gvprintf(job, "sphere{<0, 0, 0>, 2\ntranslate<%f, %f, %d>\n"
 		 "pigment{color Red}\nno_shadow\n}\n", x, y, z - 1);
 #else
-	gvputs(job, pov);
+	gvputs(job, agxbuse(&pov));
 #endif
 
-	free(pov);
-	free(r);
+	agxbfree(&pov);
+	agxbfree(&r);
 	free(p);
-	free(t);
-	free(s);
+	agxbfree(&t);
+	agxbfree(&s);
 }
 
 static void pov_ellipse(GVJ_t * job, pointf * A, int filled)
