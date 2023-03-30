@@ -739,10 +739,8 @@ static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
 			pov = x;
 		}
 		x = el(job, "\n    %s    %s    %s    %s" END, s, r, t, p);
-		pov = el(job, "%s%s", pov, x);	//catenate pov & end str
+		gvprintf(job, "%s%s", pov, x); // catenate pov & end str
 		free(x);
-
-		gvputs(job, pov);
 
 		free(s);
 		free(r);
