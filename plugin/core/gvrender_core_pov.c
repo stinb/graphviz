@@ -635,34 +635,36 @@ static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
 	(void)filled;
 
 	int i;
-	char *v, *x;
-	char *pov, *s, *r, *t, *p;
+	char *p;
 
 	gvputs(job, "//*** bezier\n");
 	z = layerz - 4;
 
-	s = el(job, POV_SCALE3, job->scale.x, job->scale.y, 1.0);
-	r = el(job, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-	t = el(job, POV_TRANSLATE, 0.0, 0.0, z - 2);
+	agxbuf s = {0};
+	agxbprint(&s, POV_SCALE3, job->scale.x, job->scale.y, 1.0);
+	agxbuf r = {0};
+	agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
+	agxbuf t = {0};
+	agxbprint(&t, POV_TRANSLATE, 0.0, 0.0, z - 2);
 	p = pov_color_as_str(job, job->obj->fillcolor, 0.0);
 
-	pov = el(job, POV_SPHERE_SWEEP, "b_spline", n + 2);
+	agxbuf pov = {0};
+	agxbprint(&pov, POV_SPHERE_SWEEP, "b_spline", n + 2);
 
+	agxbuf v = {0}, x = {0};
 	for (i = 0; i < n; i++) {
-		v = el(job, POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x, A[i].y + job->translation.y, 0.0, job->obj->penwidth);	//z coordinate, thickness
-		x = el(job, "%s    %s", pov, v);	//catenate pov & vector v
-		free(v);
-		free(pov);
-		pov = x;
+		agxbprint(&v, POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
+		          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
+		agxbprint(&x, "%s    %s", agxbuse(&pov), agxbuse(&v)); // catenate pov & vector v
+		agxbput(&pov, agxbuse(&x));
 
 		//TODO: we currently just use the start and end points of the curve as
 		//control points but we should use center of nodes
 		if (i == 0 || i == n - 1) {
-			v = el(job, POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x, A[i].y + job->translation.y, 0.0, job->obj->penwidth);	//z coordinate, thickness
-			x = el(job, "%s    %s", pov, v);	//catenate pov & vector v
-			free(v);
-			free(pov);
-			pov = x;
+			agxbprint(&v, POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
+			          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
+			agxbprint(&x, "%s    %s", agxbuse(&pov), agxbuse(&v)); // catenate pov & vector v
+			agxbput(&pov, agxbuse(&x));
 		}
 #ifdef DEBUG
 		gvprintf(job, "sphere{<0, 0, 0>, 2\ntranslate<%f, %f, %d>\n"
@@ -671,14 +673,16 @@ static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
 			 (A[i].y + job->translation.y) * job->scale.y, z - 2);
 #endif
 	}
-	gvprintf(job, "%s        tolerance 0.01\n    %s    %s    %s    %s" END, pov, s,
-	         r, t, p); // catenate pov & end str
+	gvprintf(job, "%s        tolerance 0.01\n    %s    %s    %s    %s" END,
+	         agxbuse(&pov), agxbuse(&s), agxbuse(&r), agxbuse(&t), p); // catenate pov & end str
 
-	free(s);
-	free(r);
-	free(t);
+	agxbfree(&v);
+	agxbfree(&x);
+	agxbfree(&s);
+	agxbfree(&r);
+	agxbfree(&t);
 	free(p);
-	free(pov);
+	agxbfree(&pov);
 }
 
 static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
