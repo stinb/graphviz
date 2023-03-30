@@ -315,29 +315,6 @@ static char *pov_knowncolors[] = { POV_COLORS };
 static int layerz = 0;
 static int z = 0;
 
-static char *el(GVJ_t* job, char *template, ...)
-{
-	int len;
-	char *str;
-	va_list arglist, arglist2;
-
-	va_start(arglist, template);
-	va_copy(arglist2, arglist);
-	len = vsnprintf(NULL, 0, template, arglist);
-	if (len < 0) {
-		job->common->errorfn("pov renderer:el - %s\n", strerror(errno));
-		str = strdup ("");
-	}
-	else {
-		str = malloc ((size_t)len+1);
-		vsprintf(str, template, arglist2);
-	}
-	va_end(arglist);
-	va_end(arglist2);
-
-	return str;
-}
-
 static char *pov_color_as_str(GVJ_t * job, gvcolor_t color, float transparency)
 {
 	agxbuf c = {0};
@@ -739,35 +716,41 @@ static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
 
 static void pov_polyline(GVJ_t * job, pointf * A, int n)
 {
-	char *pov, *s, *r, *t, *p, *v, *x;
+	char *p;
 	int i;
 
 	gvputs(job, "//*** polyline\n");
 	z = layerz - 6;
 
-	s = el(job, POV_SCALE3, job->scale.x, job->scale.y, 1.0);
-	r = el(job, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-	t = el(job, POV_TRANSLATE, 0.0, 0.0, z);
+	agxbuf s = {0};
+	agxbprint(&s, POV_SCALE3, job->scale.x, job->scale.y, 1.0);
+	agxbuf r = {0};
+	agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
+	agxbuf t = {0};
+	agxbprint(&t, POV_TRANSLATE, 0.0, 0.0, z);
 	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
-	pov = el(job, POV_SPHERE_SWEEP, "linear_spline", n);
+	agxbuf pov = {0};
+	agxbprint(&pov, POV_SPHERE_SWEEP, "linear_spline", n);
 
+	agxbuf v = {0}, x = {0};
 	for (i = 0; i < n; i++) {
-		v = el(job, POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x, A[i].y + job->translation.y, 0.0, job->obj->penwidth);	//z coordinate, thickness
-		x = el(job, "%s    %s", pov, v);	//catenate pov & vector v
-		free(v);
-		free(pov);
-		pov = x;
+		agxbprint(&v, POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
+		          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
+		agxbprint(&x, "%s    %s", agxbuse(&pov), agxbuse(&v)); // catenate pov & vector v
+		agxbput(&pov, agxbuse(&x));
 	}
 
-	gvprintf(job, "%s    tolerance 0.01\n    %s    %s    %s    %s" END, pov, s, r,
-	         t, p);
+	gvprintf(job, "%s    tolerance 0.01\n    %s    %s    %s    %s" END,
+	         agxbuse(&pov), agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
 
-	free(s);
-	free(r);
-	free(t);
+	agxbfree(&v);
+	agxbfree(&x);
+	agxbfree(&s);
+	agxbfree(&r);
+	agxbfree(&t);
 	free(p);
-	free(pov);
+	agxbfree(&pov);
 }
 
 gvrender_engine_t pov_engine = {
