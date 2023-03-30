@@ -9,7 +9,7 @@
  *************************************************************************/
 
 #include "config.h"
-
+#include <cgraph/agxbuf.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -45,8 +45,6 @@ static void gdk_set_mimedata_from_file (cairo_surface_t *image, const char *mime
     unsigned char *data = NULL;
     long len;
     const char *id_prefix = "gvloadimage_gdk-";
-    char *unique_id;
-    size_t unique_id_len;
 
     fp = fopen (file, "rb");
     if (fp == NULL)
@@ -66,10 +64,12 @@ static void gdk_set_mimedata_from_file (cairo_surface_t *image, const char *mime
 
     if (data) {
         cairo_surface_set_mime_data (image, mime_type, data, (unsigned long)len, free, data);
-        unique_id_len = strlen(id_prefix) + strlen(file) + 1;
-        unique_id = malloc (unique_id_len);
-        snprintf (unique_id, unique_id_len, "%s%s", id_prefix, file);
-        cairo_surface_set_mime_data (image, CAIRO_MIME_TYPE_UNIQUE_ID, (unsigned char *)unique_id, unique_id_len, free, unique_id);
+        agxbuf id = {0};
+        agxbprint(&id, "%s%s", id_prefix, file);
+        char *unique_id = agxbdisown(&id);
+        cairo_surface_set_mime_data(image, CAIRO_MIME_TYPE_UNIQUE_ID,
+                                    (unsigned char*)unique_id,
+                                    strlen(unique_id), free, unique_id);
     }
 }
 
