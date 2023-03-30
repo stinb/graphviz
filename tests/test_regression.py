@@ -2661,6 +2661,21 @@ def test_2355():
     dot("svg", source=graph.getvalue())
 
 
+@pytest.mark.xfail(strict=True)  # FIXME
+def test_2368():
+    """
+    routesplines should not corrupt its `prev` and `next` indices
+    https://gitlab.com/graphviz/graphviz/-/issues/2368
+    """
+
+    # locate our associated test case in this directory
+    input = Path(__file__).parent / "2368.dot"
+    assert input.exists(), "unexpectedly missing test case"
+
+    # run it through Graphviz
+    dot("svg", input)
+
+
 def test_changelog_dates():
     """
     Check the dates of releases in the changelog are correctly formatted
