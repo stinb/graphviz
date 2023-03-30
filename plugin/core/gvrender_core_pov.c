@@ -671,10 +671,8 @@ static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
 			 (A[i].y + job->translation.y) * job->scale.y, z - 2);
 #endif
 	}
-	x = el(job, "        tolerance 0.01\n    %s    %s    %s    %s" END, s, r, t,
-	       p);
-	gvprintf(job, "%s%s", pov, x); // catenate pov & end str
-	free(x);
+	gvprintf(job, "%s        tolerance 0.01\n    %s    %s    %s    %s" END, pov, s,
+	         r, t, p); // catenate pov & end str
 
 	free(s);
 	free(r);
