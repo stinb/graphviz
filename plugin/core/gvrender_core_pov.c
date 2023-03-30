@@ -15,7 +15,7 @@
 
 #define _GNU_SOURCE
 #include "config.h"
-
+#include <cgraph/agxbuf.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -340,20 +340,22 @@ static char *el(GVJ_t* job, char *template, ...)
 
 static char *pov_color_as_str(GVJ_t * job, gvcolor_t color, float transparency)
 {
-	char *pov, *c = NULL;
+	agxbuf c = {0};
 	switch (color.type) {
 	case COLOR_STRING:
 #ifdef DEBUG
 		gvprintf(job, "// type = %d, color = %s\n", color.type, color.u.string);
+#else
+		(void)job;
 #endif
 		if (!strcmp(color.u.string, "red"))
-			c = el(job, POV_COLOR_NAME, "Red", transparency);
+			agxbprint(&c, POV_COLOR_NAME, "Red", transparency);
 		else if (!strcmp(color.u.string, "green"))
-			c = el(job, POV_COLOR_NAME, "Green", transparency);
+			agxbprint(&c, POV_COLOR_NAME, "Green", transparency);
 		else if (!strcmp(color.u.string, "blue"))
-			c = el(job, POV_COLOR_NAME, "Blue", transparency);
+			agxbprint(&c, POV_COLOR_NAME, "Blue", transparency);
 		else
-			c = el(job, POV_COLOR_NAME, color.u.string, transparency);
+			agxbprint(&c, POV_COLOR_NAME, color.u.string, transparency);
 		break;
 	case RENDERER_COLOR_TYPE:
 #ifdef DEBUG
@@ -361,7 +363,7 @@ static char *pov_color_as_str(GVJ_t * job, gvcolor_t color, float transparency)
 			 color.type, color.u.rgba[0], color.u.rgba[1],
 			 color.u.rgba[2]);
 #endif
-		c = el(job, POV_COLOR_RGB,
+		agxbprint(&c, POV_COLOR_RGB,
 		       color.u.rgba[0] / 256.0, color.u.rgba[1] / 256.0,
 		       color.u.rgba[2] / 256.0, transparency);
 		break;
@@ -371,9 +373,10 @@ static char *pov_color_as_str(GVJ_t * job, gvcolor_t color, float transparency)
 			color.type, color.u.string);
 		assert(0);	//oops, wrong type set in gvrender_features_t?
 	}
-	pov = el(job, POV_PIGMENT_COLOR, c);
-	free(c);
-	return pov;
+	agxbuf pov = {0};
+	agxbprint(&pov, POV_PIGMENT_COLOR, agxbuse(&c));
+	agxbfree(&c);
+	return agxbdisown(&pov);
 }
 
 static void pov_comment(GVJ_t * job, char *str)
