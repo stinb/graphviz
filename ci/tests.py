@@ -21,13 +21,6 @@ from gvtest import (  # pylint: disable=wrong-import-position
 )
 
 
-def is_centos() -> bool:
-    """
-    is the current CI environment CentOS-based?
-    """
-    return freedesktop_os_release().get("ID") == "centos"
-
-
 def is_win64() -> bool:
     """
     is the Graphviz under test targeting the x64 Windows API?
