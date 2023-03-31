@@ -10,7 +10,7 @@ import sys
 import sysconfig
 import tempfile
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 ROOT = Path(__file__).resolve().parent.parent
 """absolute path to the root of the repository"""
@@ -108,6 +108,25 @@ def dot(
         kwargs["input"] = source
 
     return subprocess.check_output(args, **kwargs)
+
+
+def freedesktop_os_release() -> Dict[str, str]:
+    """
+    polyfill for `platform.freedesktop_os_release`
+    """
+    release = {}
+    os_release = Path("/etc/os-release")
+    if os_release.exists():
+        with open(os_release, "rt", encoding="utf-8") as f:
+            for line in f.readlines():
+                if line.startswith("#") or "=" not in line:
+                    continue
+                key, _, value = (x.strip() for x in line.partition("="))
+                # remove quotes
+                if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+                    value = value[1:-1]
+                release[key] = value
+    return release
 
 
 def gvpr(program: Path) -> str:
