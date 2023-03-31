@@ -94,7 +94,6 @@ def test_existence(binary: str):
     ]
 
     tools_not_built_with_autotools_on_macos = [
-        "mingle",
         "smyrna",
     ]
 
