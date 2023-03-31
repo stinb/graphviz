@@ -9,6 +9,7 @@
  *************************************************************************/
 
 #include <cgraph/cghdr.h>
+#include <stdbool.h>
 #include <stddef.h>
 
 static Agraph_t *agfindsubg_by_id(Agraph_t * g, IDTYPE id)
@@ -31,7 +32,7 @@ static Agraph_t *localsubg(Agraph_t * g, IDTYPE id)
     subg = agalloc(g, sizeof(Agraph_t));
     subg->clos = g->clos;
     subg->desc = g->desc;
-    subg->desc.maingraph = FALSE;
+    subg->desc.maingraph = false;
     subg->parent = g;
     subg->root = g->root;
     AGID(subg) = id;

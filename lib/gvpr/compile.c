@@ -231,19 +231,19 @@ static Agdesc_t xargs(char *args)
 	switch (c) {
 	case 'u':
 	case 'U':
-	    desc.directed = 0;
+	    desc.directed = false;
 	    break;
 	case 'd':
 	case 'D':
-	    desc.directed = 1;
+	    desc.directed = true;
 	    break;
 	case 's':
 	case 'S':
-	    desc.strict = 1;
+	    desc.strict = true;
 	    break;
 	case 'n':
 	case 'N':
-	    desc.directed = 0;
+	    desc.directed = false;
 	    break;
 	default:
 	    error(ERROR_WARNING, "unknown graph descriptor '%c' : ignored",

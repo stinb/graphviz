@@ -9,6 +9,7 @@
  *************************************************************************/
 
 #include <cgraph/cghdr.h>
+#include <stdbool.h>
 
 static void agflatten_elist(Dict_t * d, Dtlink_t ** lptr, int flag)
 {
@@ -37,14 +38,14 @@ void agflatten(Agraph_t * g, int flag)
 	    dtmethod(g->n_seq,Dtlist);
 	    for (n = agfstnode(g); n; n = agnxtnode(g,n))
 		agflatten_edges(g, n, flag);
-	    g->desc.flatlock = TRUE;
+	    g->desc.flatlock = true;
 	}
     } else {
 	if (g->desc.flatlock) {
 	    dtmethod(g->n_seq,Dtoset);
 	    for (n = agfstnode(g); n; n = agnxtnode(g,n))
 		agflatten_edges(g, n, flag);
-	    g->desc.flatlock = FALSE;
+	    g->desc.flatlock = false;
 	}
     }
 }

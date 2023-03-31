@@ -19,12 +19,12 @@
 #include    <cgraph/alloc.h>
 #include    <cgraph/exit.h>
 #include    <cgraph/stack.h>
+#include    <stdbool.h>
 #include    <stdio.h>
 #ifdef HAVE_EXPAT
 #include    <expat.h>
 #include    <ctype.h>
 #include    <limits.h>
-#include    <stdbool.h>
 #include    <stdlib.h>
 
 #ifndef XML_STATUS_ERROR
@@ -335,7 +335,7 @@ setGraphAttr(Agraph_t * g, char *name, char *value, userdata_t * ud)
     Agsym_t *ap;
 
     if ((g == root) && !strcmp(name, "strict") && !strcmp(value, "true")) {
-	g->desc.strict = 1;
+	g->desc.strict = true;
     } else if (strcmp(name, "name") == 0)
 	setName(ud->nameMap, (Agobj_t *) g, value);
     else {
