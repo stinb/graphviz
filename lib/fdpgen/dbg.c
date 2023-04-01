@@ -90,8 +90,7 @@ static void dumpSG(graph_t * g)
 
 /* dump:
  */
-void dump(graph_t * g, int level, int doBB)
-{
+void dump(graph_t *g, int level) {
     node_t *n;
     boxf bb;
     double w, h;
@@ -112,18 +111,8 @@ void dump(graph_t * g, int level, int doBB)
 	    prIndent();
 	    w = ND_width(n);
 	    h = ND_height(n);
-	    if (doBB) {
-		bb.LL.x = pos.x - w / 2.0;
-		bb.LL.y = pos.y - h / 2.0;
-		bb.UR.x = bb.LL.x + w;
-		bb.UR.y = bb.LL.y + h;
-		fprintf(stderr, "%s: (%f,%f) ((%f,%f) , (%f,%f))\n",
-			agnameof(n), pos.x, pos.y, bb.LL.x, bb.LL.y, bb.UR.x,
-			bb.UR.y);
-	    } else {
-		fprintf(stderr, "%s: (%f,%f) (%f,%f) \n",
-			agnameof(n), pos.x, pos.y, w, h);
-	    }
+	    fprintf(stderr, "%s: (%f,%f) (%f,%f) \n",
+	            agnameof(n), pos.x, pos.y, w, h);
 	}
     }
 }

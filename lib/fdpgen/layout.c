@@ -920,7 +920,7 @@ static int layout(graph_t * g, layout_info * infop)
     BB(g) = BB(dg);
 #ifdef DEBUG
     if (g == infop->rootg)
-	dump(g, 1, 0);
+	dump(g, 1);
 #endif
 
     /* clean up temp graphs */

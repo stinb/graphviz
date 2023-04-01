@@ -27,7 +27,7 @@ extern "C" {
     extern void decInd(void);
     extern void prIndent(void);
 
-    extern void dump(graph_t * g, int doAll, int doBB);
+    extern void dump(graph_t *g, int doAll);
     extern void dumpG(graph_t * g, char *fname, int);
 
 #endif
