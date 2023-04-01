@@ -21,7 +21,6 @@ extern "C" {
     extern int glCompSetAddPanel(glCompSet * s, glCompPanel * p);
     extern int glCompSetRemovePanel(glCompSet * s, glCompPanel * p);
     extern int glCompPanelShow(glCompPanel * p);
-    extern int glCompPanelHide(glCompPanel * p);
 
 /*events*/
     extern int glCompPanelDraw(glCompObj * o);

@@ -76,12 +76,6 @@ int glCompPanelDraw(glCompObj * o)
     return 1;
 }
 
-int glCompPanelHide(glCompPanel * p)
-{
-    p->common.visible = 0;
-    return 1;
-}
-
 int glCompPanelShow(glCompPanel * p)
 {
     p->common.visible = 1;
