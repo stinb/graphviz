@@ -76,13 +76,6 @@ int glCompPanelDraw(glCompObj * o)
     return 1;
 }
 
-void glCompPanelClick(glCompObj * o, GLfloat x, GLfloat y,
-		      glMouseButtonType t)
-{
-    if (o->common.callbacks.click)
-	o->common.callbacks.click(o, x, y, t);
-}
-
 void glCompPanelDoubleClick(glCompObj * obj, GLfloat x, GLfloat y,
 			    glMouseButtonType t)
 {
