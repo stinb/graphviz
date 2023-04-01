@@ -88,54 +88,6 @@ static void dumpSG(graph_t * g)
     fprintf(stderr, "  }\n");
 }
 
-/* dumpE:
- */
-void dumpE(graph_t * g, int derived)
-{
-    Agnode_t *n;
-    Agedge_t *e;
-    Agedge_t **ep;
-    Agedge_t *el;
-    int i;
-    int deg;
-
-    prIndent();
-    fprintf(stderr, "Graph %s : %d nodes %d edges\n", agnameof(g), agnnodes(g),
-	    agnedges(g));
-    for (n = agfstnode(g); n; n = agnxtnode(g, n)) {
-	deg = 0;
-	for (e = agfstout(g, n); e; e = agnxtout(g, e)) {
-	    deg++;
-	    prIndent();
-		prEdge(e,"\n");
-	    if (derived) {
-		for (i = 0, ep = (Agedge_t **) ED_to_virt(e);
-		     i < ED_count(e); i++, ep++) {
-		    el = *ep;
-		    prIndent();
-			prEdge(el,"\n");
-		}
-	    }
-	}
-	if (deg == 0) {		/* no out edges */
-	    if (!agfstin(g, n))	/* no in edges */
-		fprintf(stderr, " %s\n", agnameof(n));
-	}
-    }
-    if (!derived) {
-	bport_t *pp;
-	if ((pp = PORTS(g))) {
-	    int sz = NPORTS(g);
-	    fprintf(stderr, "   %d ports\n", sz);
-	    while (pp->e) {
-		fprintf(stderr, "   %s : ", agnameof(pp->n));
-		prEdge(pp->e,"\n");
-		pp++;
-	    }
-	}
-    }
-}
-
 /* dump:
  */
 void dump(graph_t * g, int level, int doBB)
