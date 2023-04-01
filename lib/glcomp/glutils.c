@@ -195,13 +195,6 @@ double point_to_lineseg_dist(glCompPoint p, glCompPoint a, glCompPoint b)
     return dist(p, q);
 }
 
-void replacestr(char *source, char **target)
-{
-
-    free(*target);
-    *target = strdup(source);
-}
-
 void glCompCalcWidget(glCompCommon * parent, glCompCommon * child,
 		      glCompCommon * ref)
 {
