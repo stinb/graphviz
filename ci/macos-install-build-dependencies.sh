@@ -13,6 +13,7 @@ brew install cmake || brew upgrade cmake
 brew install bison || brew upgrade bison
 
 brew install gtk+ || brew upgrade gtk+
+brew install gtkglext || brew upgrade gtkglext
 
 # quoting Homebrew:
 #
