@@ -130,7 +130,6 @@ void dumpG(graph_t * g, char *fname, int expMode)
     fclose(fp);
 }
 
-double Scale = 0.0;
 double ArrowScale = 1.0;
 
 #define         ARROW_LENGTH    10
@@ -233,21 +232,17 @@ static void pswrite(Agraph_t * g, FILE * fp, int expMode)
     /* If user gives scale factor, use it.
      * Else if figure too large for standard PS page, scale it to fit.
      */
-    if (Scale > 0.0)
-	scale = Scale;
-    else {
-	width = maxx - minx + 20;
-	height = maxy - miny + 20;
-	if (width > PSWidth) {
-	    if (height > PSHeight) {
-		scale = fmin(PSWidth / width, PSHeight / height);
-	    } else
-		scale = PSWidth / width;
-	} else if (height > PSHeight) {
-	    scale = PSHeight / height;
+    width = maxx - minx + 20;
+    height = maxy - miny + 20;
+    if (width > PSWidth) {
+	if (height > PSHeight) {
+	    scale = fmin(PSWidth / width, PSHeight / height);
 	} else
-	    scale = 1.0;
-    }
+	    scale = PSWidth / width;
+    } else if (height > PSHeight) {
+	scale = PSHeight / height;
+    } else
+	scale = 1.0;
 
     fprintf(fp, "%f %f translate\n",
 	    (PSWidth - scale * (minx + maxx)) / 2.0,

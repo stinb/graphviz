@@ -20,7 +20,6 @@ extern "C" {
 #include <stdio.h>
 #include <cgraph/cgraph.h>
 
-    extern double Scale;
     extern void outputGraph(Agraph_t *, FILE *, int);
 
     extern void incInd(void);
