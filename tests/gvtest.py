@@ -161,6 +161,22 @@ def is_python36() -> bool:
     return sys.version_info.major == 3 and sys.version_info.minor == 6
 
 
+def is_using_asan() -> bool:
+    """was Graphviz built with Address Sanitizer?"""
+
+    # if we do not have `ldd`, assume Graphviz was not built with ASan
+    ldd = shutil.which("ldd")
+    if ldd is None:
+        return False
+
+    # what dynamic libraries is `dot` linked against?
+    dot_exe = shutil.which("dot")
+    shared_libs = subprocess.check_output([ldd, dot_exe], universal_newlines=True)
+
+    # was `dot` linked against the ASan supporting library?
+    return re.search(r"\blibasan\b", shared_libs) is not None
+
+
 def remove_xtype_warnings(s: str) -> str:
     """
     Remove macOS XType warnings from a string. These appear to be harmless, but
