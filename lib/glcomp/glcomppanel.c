@@ -76,14 +76,6 @@ int glCompPanelDraw(glCompObj * o)
     return 1;
 }
 
-void glCompPanelDoubleClick(glCompObj * obj, GLfloat x, GLfloat y,
-			    glMouseButtonType t)
-{
-    /*Put your internal code here */
-    if (((glCompPanel *) obj)->common.callbacks.doubleclick)
-	((glCompPanel *) obj)->common.callbacks.doubleclick(obj, x, y, t);
-}
-
 void glCompPanelMouseDown(glCompObj * obj, GLfloat x, GLfloat y,
 			  glMouseButtonType t)
 {
