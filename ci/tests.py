@@ -93,10 +93,6 @@ def test_existence(binary: str):
         "vimdot",
     ]
 
-    tools_not_built_with_autotools_on_macos = [
-        "smyrna",
-    ]
-
     os_id = freedesktop_os_release().get("ID")
 
     # FIXME: Remove skip when
@@ -111,14 +107,6 @@ def test_existence(binary: str):
         if binary in tools_not_built_with_msbuild:
             check_that_tool_does_not_exist(binary, os_id)
             pytest.skip(f"{binary} is not built with MSBuild (#1837)")
-
-    # FIXME: Remove skip when
-    # https://gitlab.com/graphviz/graphviz/-/issues/1854 is fixed
-    if os.getenv("build_system") == "autotools":
-        if platform.system() == "Darwin":
-            if binary in tools_not_built_with_autotools_on_macos:
-                check_that_tool_does_not_exist(binary, os_id)
-                pytest.skip(f"{binary} is not built with autotools on macOS (#1854)")
 
     if binary == "mingle" and is_cmake() and (is_win64() or is_mingw()):
         check_that_tool_does_not_exist(binary, os_id)
