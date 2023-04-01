@@ -130,7 +130,7 @@ void dumpG(graph_t * g, char *fname, int expMode)
     fclose(fp);
 }
 
-double ArrowScale = 1.0;
+static const double ArrowScale = 1.0;
 
 #define         ARROW_LENGTH    10
 #define         ARROW_WIDTH      5
