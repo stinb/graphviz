@@ -15,6 +15,7 @@ brew install bison || brew upgrade bison
 brew install libglade || brew upgrade libglade
 brew install gtk+ || brew upgrade gtk+
 brew install gtkglext || brew upgrade gtkglext
+brew install gts || brew upgrade gts
 
 # quoting Homebrew:
 #
