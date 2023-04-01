@@ -76,12 +76,6 @@ int glCompPanelDraw(glCompObj * o)
     return 1;
 }
 
-int glCompPanelShow(glCompPanel * p)
-{
-    p->common.visible = 1;
-    return 1;
-}
-
 void glCompPanelClick(glCompObj * o, GLfloat x, GLfloat y,
 		      glMouseButtonType t)
 {
