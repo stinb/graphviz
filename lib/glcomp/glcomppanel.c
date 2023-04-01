@@ -76,13 +76,6 @@ int glCompPanelDraw(glCompObj * o)
     return 1;
 }
 
-void glCompPanelMouseOver(glCompObj * obj, GLfloat x, GLfloat y)
-{
-    /*Put your internal code here */
-    if (((glCompPanel *) obj)->common.callbacks.mouseover)
-	((glCompPanel *) obj)->common.callbacks.mouseover(obj, x, y);
-}
-
 void glCompPanelMouseUp(glCompObj * obj, GLfloat x, GLfloat y,
 			glMouseButtonType t)
 {
