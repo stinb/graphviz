@@ -23,7 +23,6 @@ extern "C" {
 
 /*events*/
     extern int glCompPanelDraw(glCompObj * o);
-    extern void glCompPanelMouseIn(glCompObj * obj, GLfloat x, GLfloat y);
     extern void glCompPanelMouseOut(glCompObj * obj, GLfloat x, GLfloat y);
     extern void glCompPanelMouseOver(glCompObj * obj, GLfloat x,
 				     GLfloat y);
