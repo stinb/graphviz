@@ -12,6 +12,8 @@ brew install automake || brew upgrade automake
 brew install cmake || brew upgrade cmake
 brew install bison || brew upgrade bison
 
+brew install gtk+ || brew upgrade gtk+
+
 # quoting Homebrew:
 #
 #   bison is keg-only, which means it was not symlinked into /usr/local,

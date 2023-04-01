@@ -10,6 +10,8 @@ brew update
 brew install pango || brew upgrade pango
 brew install qt5 || brew upgrade qt5
 
+brew install gtk+ || brew upgrade gtk+
+
 # quoting Homebrew:
 #
 #   qt@5 is keg-only, which means it was not symlinked into /usr/local,
