@@ -38,15 +38,6 @@ glCompPanel *glCompPanelNew(glCompObj * parentObj, GLfloat x, GLfloat y,
     p->image = NULL;
     return p;
 }
-void glCompSetPanelText(glCompPanel * p, char *t)
-{
-    replacestr(t, &p->text);
-    glCompDeleteTexture(p->common.font->tex);
-    p->common.font->tex =
-	glCompSetAddNewTexLabel(p->common.compset,
-				p->common.font->fontdesc,
-				p->common.font->size, p->text, 1);
-}
 
 int glCompPanelDraw(glCompObj * o)
 {
