@@ -23,8 +23,6 @@ extern "C" {
 
 /*events*/
     extern int glCompPanelDraw(glCompObj * o);
-    extern void glCompPanelMouseUp(glCompObj * obj, GLfloat x, GLfloat y,
-				   glMouseButtonType t);
 
 #ifdef __cplusplus
 }
