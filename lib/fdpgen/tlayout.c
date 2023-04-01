@@ -613,32 +613,6 @@ static pointf initPositions(graph_t * g, bport_t * pp)
     return ctr;
 }
 
-void dumpstat(graph_t * g)
-{
-    double dx, dy;
-    double l, max2 = 0.0;
-    node_t *np;
-    edge_t *ep;
-    for (np = agfstnode(g); np; np = agnxtnode(g, np)) {
-	dx = DISP(np)[0];
-	dy = DISP(np)[1];
-	l = dx * dx + dy * dy;
-	if (l > max2)
-	    max2 = l;
-	fprintf(stderr, "%s: (%f,%f) (%f,%f)\n", agnameof(np),
-		ND_pos(np)[0], ND_pos(np)[1], DISP(np)[0], DISP(np)[1]);
-    }
-    fprintf(stderr, "max delta = %f\n", sqrt(max2));
-    for (np = agfstnode(g); np; np = agnxtnode(g, np)) {
-	for (ep = agfstout(g, np); ep; ep = agnxtout(g, ep)) {
-	    dx = ND_pos(np)[0] - ND_pos(aghead(ep))[0];
-	    dy = ND_pos(np)[1] - ND_pos(aghead(ep))[1];
-	    fprintf(stderr, "  %s --  %s  (%f)\n", agnameof(np),
-		    agnameof(aghead(ep)), hypot(dx, dy));
-	}
-    }
-}
-
 /* fdp_tLayout:
  * Given graph g with ports nodes, layout g respecting ports.
  * If some node have position information, it may be useful to
@@ -680,7 +654,6 @@ void fdp_tLayout(graph_t * g, xparams * xpms)
 	    ND_pos(n)[1] += ctr.y;
 	}
     }
-/* dumpstat (g); */
     if (reset)
 	reset_params();
 }
