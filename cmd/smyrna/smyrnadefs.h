@@ -113,7 +113,6 @@ typedef struct
     } colorschemaset;
 
     typedef enum {
-	GVK_NONE = -1,
 	GVK_DOT,
 	GVK_NEATO,
 	GVK_TWOPI,
