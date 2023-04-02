@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [8.0.4 (Unreleased)]
 
+### Fixed
+
+- A minor inaccuracy for some cases of clipping an edge to a polygon node
+  boundary has been fixed.
+
 ## [8.0.3] – 2023-04-16
 
 ### Added

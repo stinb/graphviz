@@ -2384,8 +2384,8 @@ static bool poly_inside(inside_t * inside_context, pointf p)
 		xsize = ND_lw(n) + ND_rw(n);
 		ysize = ND_ht(n);
 	    }
-	    n_width = POINTS(ND_width(n));
-	    n_height = POINTS(ND_height(n));
+	    n_width = INCH2PS(ND_width(n));
+	    n_height = INCH2PS(ND_height(n));
 	    n_outline_width = INCH2PS(ND_outline_width(n));
 	    n_outline_height = INCH2PS(ND_outline_height(n));
 	}
