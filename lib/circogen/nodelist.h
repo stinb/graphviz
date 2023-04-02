@@ -30,7 +30,7 @@ extern "C" {
     extern void insertNodelist(nodelist_t *, Agnode_t *, Agnode_t *, int);
 
     extern void reverseAppend(nodelist_t *, nodelist_t *);
-    extern nodelist_t *reverseNodelist(nodelist_t * list);
+    extern void reverseNodelist(nodelist_t *list);
     extern nodelist_t *cloneNodelist(nodelist_t * list);
 
 #ifdef DEBUG
