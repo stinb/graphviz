@@ -2868,8 +2868,8 @@ static void poly_gencode(GVJ_t * job, node_t * n)
     /* nominal label position in the center of the node */
     ND_label(n)->pos = ND_coord(n);
 
-    xsize = (ND_lw(n) + ND_rw(n)) / POINTS(ND_width(n));
-    ysize = ND_ht(n) / POINTS(ND_height(n));
+    xsize = (ND_lw(n) + ND_rw(n)) / INCH2PS(ND_width(n));
+    ysize = ND_ht(n) / INCH2PS(ND_height(n));
 
     style = stylenode(job, n);
     clrs[0] = NULL;
