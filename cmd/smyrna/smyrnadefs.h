@@ -26,7 +26,6 @@
 #include <glcomp/glcompset.h>
 #include "hier.h"
 #include <glcomp/glutils.h>
-#include <stddef.h>
 
 #ifdef	_WIN32			//this is needed on _WIN32 to get libglade see the callback
 #define _BB  __declspec(dllexport)
