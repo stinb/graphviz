@@ -135,7 +135,7 @@ static int attr_compare(const void *a, const void *b)
 }
 
 static void attr_list_add(attr_list *l, attr_t *a) {
-    if ((!l) || (!a))
+    if (!l || !a)
 	return;
     attrs_append(&l->attributes, a);
     attrs_sort(&l->attributes, (int(*)(const attr_t**, const attr_t**))attr_compare);
@@ -245,7 +245,7 @@ static void create_filtered_list(const char *prefix, attr_list *sl,
 
     res = 0;
     /*go backward to get the first */
-    while ((at->index > 0) && (res == 0)) {
+    while (at->index > 0 && res == 0) {
 	at = attrs_get(&sl->attributes, at->index - 1);
 	res = strncasecmp(prefix, at->name, strlen(prefix));
     }
@@ -253,7 +253,7 @@ static void create_filtered_list(const char *prefix, attr_list *sl,
     while (at->index < attrs_size(&sl->attributes) && res == 0) {
 	at = attrs_get(&sl->attributes, at->index + 1);
 	res = strncasecmp(prefix, at->name, strlen(prefix));
-	if ((res == 0) && (at->objType[objKind] == 1))
+	if (res == 0 && at->objType[objKind] == 1)
 	    attr_list_add(tl, new_attr_ref(at));
     }
 }
@@ -336,9 +336,9 @@ static void filter_attributes(const char *prefix, topview *t) {
 	}
     }
 
-    tmp = (((objKind == AGNODE) && (sel_node))
-	   || ((objKind == AGEDGE) && (sel_edge)) || ((objKind == AGRAPH)
-						      && (sel_graph)));
+    tmp = (objKind == AGNODE && sel_node)
+       || (objKind == AGEDGE && sel_edge)
+       || (objKind == AGRAPH && sel_graph);
     gtk_widget_set_sensitive(glade_xml_get_widget(xml, "attrApplyBtn"),
 			     tmp);
 }
