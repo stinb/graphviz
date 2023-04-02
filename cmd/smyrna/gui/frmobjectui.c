@@ -157,8 +157,7 @@ static void attr_list_add(attr_list *l, attr_t *a) {
 	l->capacity = l->capacity + EXPAND_CAPACITY_VALUE;
     }
     l->attributes[l->attr_count - 1] = a;
-    if (l->attr_count > 1)
-	attr_list_sort(l);
+    attr_list_sort(l);
     /*update indices */
     for (id = 0; id < l->attr_count; id++)
 	l->attributes[id]->index = id;
