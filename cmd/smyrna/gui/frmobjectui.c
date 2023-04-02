@@ -145,7 +145,7 @@ static void attr_list_add(attr_list *l, attr_t *a) {
     attrs_sort(&l->attributes, (int(*)(const attr_t**, const attr_t**))attr_compare);
     /*update indices */
     for (size_t id = 0; id < attrs_size(&l->attributes); ++id)
-	attrs_get(&l->attributes, id)->index = (int)id;
+	attrs_get(&l->attributes, id)->index = id;
 }
 
 static attr_data_type get_attr_data_type(char c)
@@ -521,7 +521,7 @@ attr_list *load_attr_list(Agraph_t * g)
     l = attr_list_new(1);
     file = fopen(smyrna_attrs, "r");
     if (file != NULL) {
-	int i = 0;
+	size_t i = 0;
 	while (fgets(buffer, sizeof(buffer), file) != NULL) {
 	    int idx = 0;
 	    attr = new_attr();

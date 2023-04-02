@@ -69,7 +69,7 @@ typedef struct{
 
 
 typedef struct {
-	int index;
+	size_t index;
 	char* name;
 	char* value;
 	char* defValG;
