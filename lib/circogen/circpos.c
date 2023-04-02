@@ -19,6 +19,7 @@
 #include	<circogen/blockpath.h>
 #include	<circogen/circpos.h>
 #include	<math.h>
+#include	<stddef.h>
 
 /* getRotation:
  * The function determines how much the block should be rotated
@@ -51,7 +52,6 @@ static double getRotation(block_t *sn, double x, double y, double theta) {
     Agnode_t *n, *closest_node, *neighbor;
     nodelist_t *list;
     double len2, newX, newY;
-    int count;
 
     subg = sn->sub_graph;
 
@@ -65,7 +65,7 @@ static double getRotation(block_t *sn, double x, double y, double theta) {
 	return theta;
     }
 
-    count = sizeNodelist(list);
+    size_t count = nodelist_size(list);
     if (count == 2) {
 	return theta - M_PI / 2.0;
     }
@@ -232,7 +232,7 @@ setInfo (posinfo_t* p0, posinfo_t* p1, double delta)
 /* positionChildren:
  */
 static void
-positionChildren(posinfo_t *pi, posstate *stp, int length, double min_dist)
+positionChildren(posinfo_t *pi, posstate *stp, size_t length, double min_dist)
 {
     block_t *child;
     double childAngle, childRadius, incidentAngle;
@@ -264,7 +264,7 @@ positionChildren(posinfo_t *pi, posstate *stp, int length, double min_dist)
     for (child = stp->cp; child; child = child->next) {
 	if (BLK_PARENT(child) != pi->n)
 	    continue;
-	if (sizeNodelist(child->circle_list) <= 0)
+	if (nodelist_is_empty(child->circle_list))
 	    continue;
 
 	incidentAngle = child->radius / childRadius;
@@ -327,7 +327,7 @@ positionChildren(posinfo_t *pi, posstate *stp, int length, double min_dist)
  * Finally, positionChildren is called to do the actual positioning.
  * If length is 1, keeps track of minimum and maximum child angle.
  */
-static double position(size_t childCount, int length, nodelist_t *nodepath,
+static double position(size_t childCount, size_t length, nodelist_t *nodepath,
 	 block_t * sn, double min_dist)
 {
     posstate state;
@@ -345,7 +345,7 @@ static double position(size_t childCount, int length, nodelist_t *nodepath,
     state.subtreeR = sn->radius;
     state.radius = sn->radius;
     state.neighbor = CHILD(sn);
-    state.nodeAngle = 2 * M_PI / length;
+    state.nodeAngle = 2 * M_PI / (double)length;
     state.firstAngle = -1;
     state.lastAngle = -1;
 
@@ -419,7 +419,6 @@ static void doBlock(Agraph_t * g, block_t * sn, double min_dist)
 {
     block_t *child;
     nodelist_t *longest_path;
-    int length;
     double centerAngle = M_PI;
 
     /* layout child subtrees */
@@ -432,7 +431,7 @@ static void doBlock(Agraph_t * g, block_t * sn, double min_dist)
     /* layout this block */
     longest_path = layout_block(g, sn, min_dist);
     sn->circle_list = longest_path;
-    length = sizeNodelist(longest_path);	/* path contains everything in block */
+    size_t length = nodelist_size(longest_path); // path contains everything in block
 
     /* attach children */
     if (childCount > 0)

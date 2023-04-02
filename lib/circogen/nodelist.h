@@ -22,7 +22,6 @@ extern "C" {
 
     extern nodelist_t *mkNodelist(void);
     extern void freeNodelist(nodelist_t *);
-    extern int sizeNodelist(nodelist_t * list);
 
     extern void appendNodelist(nodelist_t*, size_t, Agnode_t *n);
 

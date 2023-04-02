@@ -118,12 +118,6 @@ insertNodelist(nodelist_t * list, Agnode_t * cn, Agnode_t * neighbor,
   }
 }
 
-int sizeNodelist(nodelist_t * list)
-{
-  assert(nodelist_size(list) <= INT_MAX);
-  return (int)nodelist_size(list);
-}
-
 /* concatNodelist:
  * attach l2 to l1.
  */

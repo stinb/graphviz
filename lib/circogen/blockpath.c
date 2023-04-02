@@ -568,7 +568,7 @@ static void place_node(Agraph_t * g, Agnode_t * n, nodelist_t * list)
     }
 
     /* Look for 2 neighbors consecutive on list */
-    if (sizeNodelist(neighbors) >= 2) {
+    if (nodelist_size(neighbors) >= 2) {
 	for (size_t two, one = 0; one < nodelist_size(list); ++one) {
 	    if (one == nodelist_size(list) - 1)
 		two = 0;
@@ -585,7 +585,7 @@ static void place_node(Agraph_t * g, Agnode_t * n, nodelist_t * list)
     }
 
     /* Find any neighbor on list */
-    if (!placed && sizeNodelist(neighbors) > 0) {
+    if (!placed && !nodelist_is_empty(neighbors)) {
 	for (size_t one = 0; one < nodelist_size(list); ++one) {
 	    if (NEIGHBOR(nodelist_get(list, one))) {
 		appendNodelist(list, one, n);
@@ -620,7 +620,7 @@ nodelist_t *layout_block(Agraph_t * g, block_t * sn, double min_dist)
 {
     Agraph_t *copyG, *tree, *subg;
     nodelist_t *longest_path;
-    int N, k;
+    int k;
     double theta, radius, largest_node;
     largest_node = 0;
 
@@ -637,13 +637,13 @@ nodelist_t *layout_block(Agraph_t * g, block_t * sn, double min_dist)
     /* apply crossing reduction algorithms here */
     longest_path = reduce_edge_crossings(longest_path, subg);
 
-    N = sizeNodelist(longest_path);
+    size_t N = nodelist_size(longest_path);
     largest_node = largest_nodesize(longest_path);
     /* N*(min_dist+largest_node) is roughly circumference of required circle */
     if (N == 1)
 	radius = 0;
     else
-	radius = N * (min_dist + largest_node) / (2 * M_PI);
+	radius = (double)N * (min_dist + largest_node) / (2 * M_PI);
 
     for (size_t item = 0; item < nodelist_size(longest_path); ++item) {
 	Agnode_t *n = nodelist_get(longest_path, item);
@@ -659,7 +659,7 @@ nodelist_t *layout_block(Agraph_t * g, block_t * sn, double min_dist)
 	Agnode_t *n = nodelist_get(longest_path, item);
 	POSITION(n) = k;
 	PSI(n) = 0.0;
-	theta = k * (2.0 * M_PI / N);
+	theta = k * (2.0 * M_PI / (double)N);
 
 	ND_pos(n)[0] = radius * cos(theta);
 	ND_pos(n)[1] = radius * sin(theta);
