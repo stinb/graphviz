@@ -97,7 +97,6 @@ typedef struct
 	glCompFont* font;
 	int size;
 	int layer;
-	int listId;/*opengl list id*/
 	glCompImage* img;
     } sdot_op;	
 	
