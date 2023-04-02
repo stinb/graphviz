@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A minor vertical misalignment of text in the GD plugin has been fixed.
 - Instead of using the actual font height as given by the font metrics, an
   approximation based on font size was used in the Pango plugin.
+- A minor inaccuracy for some cases of calculating text width and height in the
+  Pango plugin has been fixed.
 
 ## [8.0.3] – 2023-04-16
 

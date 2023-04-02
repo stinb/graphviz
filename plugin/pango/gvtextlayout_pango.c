@@ -251,8 +251,8 @@ static bool pango_textlayout(textspan_t * span, char **fontpath)
 	logical_rect.height = 0;
 
     textlayout_scale = POINTS_PER_INCH / (FONT_DPI * PANGO_SCALE);
-    span->size.x = (int)(logical_rect.width * textlayout_scale + 1);    /* round up so that width/height are never too small */
-    span->size.y = (int)(logical_rect.height * textlayout_scale + 1);
+    span->size.x = logical_rect.width * textlayout_scale;
+    span->size.y = logical_rect.height * textlayout_scale;
 
     /* The y offset from baseline to 0,0 of the bitmap representation */
 #if !defined(_WIN32) && defined PANGO_VERSION_MAJOR && (PANGO_VERSION_MAJOR >= 1)
