@@ -3644,8 +3644,8 @@ static void record_init(node_t * n)
     }
     free(textbuf);
     size_reclbl(n, info);
-    sz.x = POINTS(ND_width(n));
-    sz.y = POINTS(ND_height(n));
+    sz.x = INCH2PS(ND_width(n));
+    sz.y = INCH2PS(ND_height(n));
     if (mapbool(late_string(n, N_fixed, "false"))) {
 	if (sz.x < info->size.x || sz.y < info->size.y) {
 /* should check that the record really won't fit, e.g., there may be no text.
