@@ -220,22 +220,14 @@ static void set_attr_object_type(const char *str, int *t) {
 
 static attr_t *binarySearch(attr_list * l, char *searchKey)
 {
-    int middle, low, high, res;
-    low = 0;
-    high = l->attr_count - 1;
-
-    while (low <= high) {
-	middle = (low + high) / 2;
-	res = strcasecmp(searchKey, l->attributes[middle]->name);
-	if (res == 0) {
-	    return l->attributes[middle];
-	} else if (res < 0) {
-	    high = middle - 1;
-	} else {
-	    low = middle + 1;
-	}
-    }
-    return NULL;
+  const attr_t key = {.name = searchKey};
+  const attr_t *keyp = &key;
+  attr_t **attrp = bsearch(&keyp, l->attributes, l->attr_count,
+                           sizeof(l->attributes[0]), attr_compare);
+  if (attrp != NULL) {
+    return *attrp;
+  }
+  return NULL;
 }
 
 static attr_t *pBinarySearch(attr_list *l, const char *searchKey) {
