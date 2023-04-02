@@ -3473,11 +3473,11 @@ static pointf size_reclbl(node_t * n, field_t * f)
 	    if ((p = agget(n, "margin"))) {
 		i = sscanf(p, "%lf,%lf", &marginx, &marginy);
 		if (i > 0) {
-		    dimen.x += 2 * POINTS(marginx);
+		    dimen.x += 2 * INCH2PS(marginx);
 		    if (i > 1)
-			dimen.y += 2 * POINTS(marginy);
+			dimen.y += 2 * INCH2PS(marginy);
 		    else
-			dimen.y += 2 * POINTS(marginx);
+			dimen.y += 2 * INCH2PS(marginx);
 		} else
 		    PAD(dimen);
 	    } else

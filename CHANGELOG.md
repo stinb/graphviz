@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ensure `HAVE_PANGOCAIRO` is set when using CMake and the library is available.
 - A minor inaccuracy in node width and height for some cases of defining
   polygon-based nodes has been fixed.
+- A minor inaccuracy for some cases of calculating margin for record-based nodes
+  has been fixed.
 
 ## [8.0.3] – 2023-04-16
 
