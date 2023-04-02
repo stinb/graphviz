@@ -506,7 +506,6 @@ attr_list *load_attr_list(Agraph_t * g)
     attr_t *attr;
     attr_list *l;
     FILE *file;
-    Agsym_t *sym;		/*cgraph atttribute */
     char buffer[BUFSIZ];
     static char *smyrna_attrs;
     char *a;
@@ -544,8 +543,7 @@ attr_list *load_attr_list(Agraph_t * g)
 	}
 	fclose(file);
     }
-    sym = NULL;
-    while ((sym = agnxtattr(g, AGRAPH, sym))) {
+    for (Agsym_t *sym = NULL; (sym = agnxtattr(g, AGRAPH, sym)); ) {
 	attr = binarySearch(l, sym->name);
 	if (attr)
 	    attr->objType[0] = 1;
@@ -554,9 +552,7 @@ attr_list *load_attr_list(Agraph_t * g)
 	    attr_list_add(l, attr);
 	}
     }
-    sym = NULL;
-    while ((sym = agnxtattr(g, AGNODE, sym))) {
-
+    for (Agsym_t *sym = NULL; (sym = agnxtattr(g, AGNODE, sym)); ) {
 	attr = binarySearch(l, sym->name);
 	if (attr) {
 	    attr->objType[1] = 1;
@@ -567,9 +563,7 @@ attr_list *load_attr_list(Agraph_t * g)
 	}
 
     }
-    sym = NULL;
-    while ((sym = agnxtattr(g, AGEDGE, sym))) {
-
+    for (Agsym_t *sym = NULL; (sym = agnxtattr(g, AGEDGE, sym)); ) {
 	attr = binarySearch(l, sym->name);
 	if (attr)
 	    attr->objType[2] = 1;
