@@ -18,14 +18,10 @@
 #include "callbacks.h"
 #include <cgraph/cgraph.h>
 
-#define MAXIMUM_WIDGET_COUNT	97
-
     extern GladeXML *xml;	//global libglade vars
     extern GtkWidget *gladewidget;
 
     void load_graph_properties(void);	//load from graph to gui
-
-    void load_attributes(void);	//loads attributes from a text file
 
 //GTK helper functions
 //void Color_Widget_bg (int r, int g, int b, GtkWidget *widget);        //change background color 

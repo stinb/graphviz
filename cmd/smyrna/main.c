@@ -332,7 +332,6 @@ int main(int argc, char *argv[])
     if (!smyrnaDir) {
 	smyrnaDir = find_share();
     }
-    load_attributes();
 
     gchar *package_locale_dir;
 #ifdef G_OS_WIN32

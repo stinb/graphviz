@@ -22,8 +22,6 @@
 GladeXML *xml;			//global libglade vars
 GtkWidget *gladewidget;
 
-static attribute attr[MAXIMUM_WIDGET_COUNT];
-
 void Color_Widget_bg(char *colorstring, GtkWidget * widget)
 {
     GdkColor color;
@@ -39,72 +37,6 @@ void load_graph_properties(void) {
 		       view->Topview->Graphdata.GraphFileName);
 }
 
-void load_attributes(void)
-{
-    FILE *file;
-    char buffer[BUFSIZ];
-    char *pch;
-    static char *smyrna_attrs;
-
-    if (!smyrna_attrs) {
-	smyrna_attrs = smyrnaPath("attrs.txt");
-    }
-    //loads attributes from a text file
-    file = fopen(smyrna_attrs, "r");
-    if (file != NULL) {
-	for (int attrcount = 0; fgets(buffer, sizeof(buffer), file) != NULL;
-	     ++attrcount) {
-	    pch = strtok(buffer, ",");
-	    for (int ind = 0; pch != NULL; ++ind) {
-		strview_t ss = strview(pch, '\0');
-		pch = strtok(NULL, ",");
-		switch (ind) {
-		case 0:
-		    attr[attrcount].Type = ss.size > 0 ? ss.data[0] : '\0';
-		    break;
-		case 1:
-		    attr[attrcount].Name = strview_str(ss);
-		    break;
-		case 2:
-		    attr[attrcount].Default = strview_str(ss);
-		    break;
-		case 3:
-		    break;
-		case 4:
-		    if (strview_str_contains(ss, "ALL_ENGINES")) {
-			attr[attrcount].Engine[GVK_DOT] = 1;
-			attr[attrcount].Engine[GVK_NEATO] = 1;
-			attr[attrcount].Engine[GVK_TWOPI] = 1;
-			attr[attrcount].Engine[GVK_CIRCO] = 1;
-			attr[attrcount].Engine[GVK_FDP] = 1;
-		    } else {
-			attr[attrcount].Engine[GVK_DOT] =
-			    strview_str_contains(ss, "DOT") ? 1 : 0;
-			attr[attrcount].Engine[GVK_NEATO] =
-			    strview_str_contains(ss, "NEATO") ? 1 : 0;
-			attr[attrcount].Engine[GVK_TWOPI] =
-			    strview_str_contains(ss, "TWOPI") ? 1 : 0;
-			attr[attrcount].Engine[GVK_CIRCO] =
-			    strview_str_contains(ss, "CIRCO") ? 1 : 0;
-			attr[attrcount].Engine[GVK_FDP] =
-			    strview_str_contains(ss, "FDP") ? 1 : 0;
-		    }
-		    break;
-		default:
-		    attr[attrcount].ComboValues = gv_recalloc(attr[attrcount].ComboValues,
-		                                              attr[attrcount].ComboValuesCount - 1,
-		                                              attr[attrcount].ComboValuesCount,
-		                                              sizeof(char*));
-		    attr[attrcount].ComboValues[attr[attrcount].
-						ComboValuesCount] = strview_str(ss);
-		    attr[attrcount].ComboValuesCount++;
-		    break;
-		}
-	    }
-	}
-	fclose (file);
-    }
-}
 void show_gui_warning(char *str)
 {
     Dlg = (GtkMessageDialog *) gtk_message_dialog_new(NULL,

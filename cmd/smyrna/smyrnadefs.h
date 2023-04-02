@@ -261,17 +261,6 @@ typedef struct
 	
     } topview;
 
-    typedef struct _attribute {
-	char Type;
-	char *Name;
-	char *Default;
-	char Engine[GVK_FDP + 1];
-	char **ComboValues;
-	size_t ComboValuesCount;
-	GtkWidget *attrWidget;
-
-    } attribute;
-
     typedef struct{
     Agraph_t *def_attrs;
     Agraph_t *attrs_widgets;
