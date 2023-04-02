@@ -18,6 +18,7 @@
 #include <gvc/gvplugin_textlayout.h>
 #include <gd.h>
 #include <cgraph/strcasecmp.h>
+#include <common/const.h>
 
 #ifdef HAVE_GD_FREETYPE
 
@@ -171,10 +172,8 @@ static bool gd_textlayout(textspan_t * span, char **fontpath)
 	if (span->str && span->str[0]) {
 	    /* can't use brect on some archtectures if strlen 0 */
 	    span->size.x = (double) (brect[4] - brect[0]);
-	    /* 1.2 specifies how much extra space to leave between lines;
-             * see LINESPACING in const.h.
-             */
-	    span->size.y = fontsize * 1.2;
+	    // LINESPACING specifies how much extra space to leave between lines
+	    span->size.y = fontsize * LINESPACING;
 	}
     }
     return true;
