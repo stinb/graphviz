@@ -37,8 +37,14 @@ static inline void *gv_alloc(size_t size) { return gv_calloc(1, size); }
 
 static inline void *gv_realloc(void *ptr, size_t old_size, size_t new_size) {
 
+  // make realloc with 0 size equivalent to free, even under C23 rules
+  if (new_size == 0) {
+    free(ptr);
+    return NULL;
+  }
+
   void *p = realloc(ptr, new_size);
-  if (UNLIKELY(new_size > 0 && p == NULL)) {
+  if (UNLIKELY(p == NULL)) {
     fprintf(stderr, "out of memory\n");
     graphviz_exit(EXIT_FAILURE);
   }
