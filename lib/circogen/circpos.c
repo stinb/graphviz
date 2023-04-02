@@ -330,8 +330,6 @@ positionChildren(posinfo_t *pi, posstate *stp, int length, double min_dist)
 static double position(size_t childCount, int length, nodelist_t *nodepath,
 	 block_t * sn, double min_dist)
 {
-    nodelistitem_t *item;
-    Agnode_t *n;
     posstate state;
     int i, counter = 0;
     double maxRadius = 0.0;
@@ -351,8 +349,8 @@ static double position(size_t childCount, int length, nodelist_t *nodepath,
     state.firstAngle = -1;
     state.lastAngle = -1;
 
-    for (item = nodepath->first; item; item = item->next) {
-	n = item->curr;
+    for (size_t item = 0; item < nodelist_size(nodepath); ++item) {
+	Agnode_t *n = nodelist_get(nodepath, item);
 
 	theta = counter * state.nodeAngle;
 	counter++;
