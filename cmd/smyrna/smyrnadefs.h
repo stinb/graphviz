@@ -57,7 +57,7 @@ typedef struct _ArcBall_t ArcBall_t;
 
 #define MAX_FILTERED_ATTR_COUNT 50
 
-typedef enum {attr_alpha,attr_float,attr_int,attr_bool,attr_drowdown,attr_color} attr_data_type;
+typedef enum {attr_alpha,attr_float,attr_int,attr_bool} attr_data_type;
 typedef enum {smyrna_all,smyrna_2D,smyrna_3D,smyrna_fisheye,smyrna_all_but_fisheye} smyrna_view_mode;
 
 
