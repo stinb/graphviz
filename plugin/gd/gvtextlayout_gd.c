@@ -174,7 +174,7 @@ static bool gd_textlayout(textspan_t * span, char **fontpath)
 	    /* 1.2 specifies how much extra space to leave between lines;
              * see LINESPACING in const.h.
              */
-	    span->size.y = (int)(fontsize * 1.2);
+	    span->size.y = fontsize * 1.2;
 	}
     }
     return true;

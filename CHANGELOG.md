@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   boundary has been fixed.
 - A minor inaccuracy in node width and height for some cases of rendering
   polygon nodes has been fixed.
+- A minor inaccuracy for some cases of calculating text height from `fontsize`
+  in the GD plugin has been fixed.
 
 ## [8.0.3] – 2023-04-16
 
