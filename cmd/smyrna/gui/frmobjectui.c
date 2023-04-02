@@ -36,7 +36,7 @@ static char *safestrdup(const char *src) {
     if (!src)
 	return NULL;
     else
-	return strdup(src);
+	return gv_strdup(src);
 }
 static int get_object_type(void)
 {
