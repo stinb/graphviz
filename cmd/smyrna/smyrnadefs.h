@@ -22,6 +22,7 @@
 #include <glcomp/opengl.h>
 #include <gtk/gtkgl.h>
 #include <cgraph/cgraph.h>
+#include <cgraph/list.h>
 #include <glcomp/glcompset.h>
 #include "hier.h"
 #include <glcomp/glutils.h>
@@ -54,8 +55,6 @@ typedef struct _ArcBall_t ArcBall_t;
 
 #define DEG2RAD  G_PI/180
 
-#define EXPAND_CAPACITY_VALUE 50
-#define DEFAULT_ATTR_LIST_CAPACITY 100
 #define MAX_FILTERED_ATTR_COUNT 50
 
 typedef enum {attr_alpha,attr_float,attr_int,attr_bool,attr_drowdown,attr_color} attr_data_type;
@@ -82,11 +81,11 @@ typedef struct {
 	int propagate;
 }attr_t;
 
+DEFINE_LIST(attrs, attr_t*)
+
 typedef struct
 {
-	int attr_count;
-	int capacity;
-	attr_t** attributes;
+	attrs_t attributes;
 	GtkLabel* fLabels[MAX_FILTERED_ATTR_COUNT];
 	int with_widgets;
 }attr_list;

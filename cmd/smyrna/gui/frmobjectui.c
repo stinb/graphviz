@@ -25,6 +25,7 @@
 #include <cgraph/alloc.h>
 #include <cgraph/strcasecmp.h>
 #include <cgraph/strview.h>
+#include <stdint.h>
 #include <string.h>
 
 static int sel_node;
@@ -107,9 +108,6 @@ static void reset_attr_list_widgets(attr_list * l)
 static attr_list *attr_list_new(int with_widgets) {
     int id;
     attr_list *l = gv_alloc(sizeof(attr_list));
-    l->attr_count = 0;
-    l->capacity = DEFAULT_ATTR_LIST_CAPACITY;
-    l->attributes = gv_calloc(DEFAULT_ATTR_LIST_CAPACITY, sizeof(attr_t*));
     l->with_widgets = with_widgets;
     /*create filter widgets */
 
@@ -140,27 +138,14 @@ static int attr_compare(const void *a, const void *b)
     return strcasecmp(a1->name, a2->name);
 }
 
-static void attr_list_sort(attr_list * l)
-{
-    qsort(l->attributes, l->attr_count, sizeof(attr_t *), attr_compare);
-}
-
 static void attr_list_add(attr_list *l, attr_t *a) {
-    int id;
     if ((!l) || (!a))
 	return;
-    l->attr_count++;
-    if (l->attr_count == l->capacity) {
-	l->attributes = gv_recalloc(l->attributes, l->capacity,
-	                            l->capacity + EXPAND_CAPACITY_VALUE,
-	                            sizeof(attr_t *));
-	l->capacity = l->capacity + EXPAND_CAPACITY_VALUE;
-    }
-    l->attributes[l->attr_count - 1] = a;
-    attr_list_sort(l);
+    attrs_append(&l->attributes, a);
+    attrs_sort(&l->attributes, (int(*)(const attr_t**, const attr_t**))attr_compare);
     /*update indices */
-    for (id = 0; id < l->attr_count; id++)
-	l->attributes[id]->index = id;
+    for (size_t id = 0; id < attrs_size(&l->attributes); ++id)
+	attrs_get(&l->attributes, id)->index = (int)id;
 }
 
 static attr_data_type get_attr_data_type(char c)
@@ -221,8 +206,9 @@ static attr_t *binarySearch(attr_list * l, char *searchKey)
 {
   const attr_t key = {.name = searchKey};
   const attr_t *keyp = &key;
-  attr_t **attrp = bsearch(&keyp, l->attributes, l->attr_count,
-                           sizeof(l->attributes[0]), attr_compare);
+  attr_t **attrp = bsearch(&keyp, attrs_at(&l->attributes, 0),
+                           attrs_size(&l->attributes), sizeof(attr_t*),
+                           attr_compare);
   if (attrp != NULL) {
     return *attrp;
   }
@@ -230,15 +216,14 @@ static attr_t *binarySearch(attr_list * l, char *searchKey)
 }
 
 static attr_t *pBinarySearch(attr_list *l, const char *searchKey) {
-    int middle, low, high, res;
-    low = 0;
-    high = l->attr_count - 1;
+    size_t low = 0;
+    size_t high = attrs_size(&l->attributes) - 1;
 
-    while (low <= high) {
-	middle = (low + high) / 2;
-	res = strncasecmp(searchKey, l->attributes[middle]->name, strlen(searchKey));
+    while (high != SIZE_MAX && low <= high) {
+	size_t middle = (low + high) / 2;
+	int res = strncasecmp(searchKey, attrs_get(&l->attributes, middle)->name, strlen(searchKey));
 	if (res == 0) {
-	    return l->attributes[middle];
+	    return attrs_get(&l->attributes, middle);
 	}
 	else if (res < 0) {
 	    high = middle - 1;
@@ -265,12 +250,12 @@ static void create_filtered_list(const char *prefix, attr_list *sl,
     res = 0;
     /*go backward to get the first */
     while ((at->index > 0) && (res == 0)) {
-	at = sl->attributes[at->index - 1];
+	at = attrs_get(&sl->attributes, at->index - 1);
 	res = strncasecmp(prefix, at->name, strlen(prefix));
     }
     res = 0;
-    while ((at->index < sl->attr_count) && (res == 0)) {
-	at = sl->attributes[at->index + 1];
+    while (at->index < attrs_size(&sl->attributes) && res == 0) {
+	at = attrs_get(&sl->attributes, at->index + 1);
 	res = strncasecmp(prefix, at->name, strlen(prefix));
 	if ((res == 0) && (at->objType[objKind] == 1))
 	    attr_list_add(tl, new_attr_ref(at));
@@ -278,7 +263,6 @@ static void create_filtered_list(const char *prefix, attr_list *sl,
 }
 
 static void filter_attributes(const char *prefix, topview *t) {
-    int ind;
     int tmp;
 
     attr_list *l = t->attributes;
@@ -287,12 +271,12 @@ static void filter_attributes(const char *prefix, topview *t) {
     attr_list *fl = attr_list_new(0);
     reset_attr_list_widgets(l);
     create_filtered_list(prefix, l, fl);
-    for (ind = 0; ind < fl->attr_count; ind++) {
-	gtk_label_set_text(l->fLabels[ind], fl->attributes[ind]->name);
+    for (size_t ind = 0; ind < attrs_size(&fl->attributes); ++ind) {
+	gtk_label_set_text(l->fLabels[ind], attrs_get(&fl->attributes, ind)->name);
     }
 
     Color_Widget_bg("white", glade_xml_get_widget(xml, "txtAttr"));
-    if (fl->attr_count == 0)
+    if (attrs_is_empty(&fl->attributes))
 	Color_Widget_bg("red", glade_xml_get_widget(xml, "txtAttr"));
     /*a new attribute can be entered */
 
@@ -322,8 +306,8 @@ static void filter_attributes(const char *prefix, topview *t) {
 	Color_Widget_bg("white", glade_xml_get_widget(xml, "txtAttr"));
     }
 
-    for (ind = 0; ind < fl->attr_count; ind++) {
-	if (strcasecmp(prefix, fl->attributes[ind]->name) == 0) {	/*an existing attribute */
+    for (size_t ind = 0; ind < attrs_size(&fl->attributes); ++ind) {
+	if (strcasecmp(prefix, attrs_get(&fl->attributes, ind)->name) == 0) { // an existing attribute
 
 	    Color_Widget_bg("green", glade_xml_get_widget(xml, "txtAttr"));
 
@@ -331,17 +315,17 @@ static void filter_attributes(const char *prefix, topview *t) {
 		gtk_entry_set_text((GtkEntry *)
 				   glade_xml_get_widget(xml,
 							"txtDefValue"),
-				   fl->attributes[0]->defValG);
+				   attrs_get(&fl->attributes, 0)->defValG);
 	    if (get_object_type() == AGNODE)
 		gtk_entry_set_text((GtkEntry *)
 				   glade_xml_get_widget(xml,
 							"txtDefValue"),
-				   fl->attributes[0]->defValN);
+				   attrs_get(&fl->attributes, 0)->defValN);
 	    if (get_object_type() == AGEDGE)
 		gtk_entry_set_text((GtkEntry *)
 				   glade_xml_get_widget(xml,
 							"txtDefValue"),
-				   fl->attributes[0]->defValE);
+				   attrs_get(&fl->attributes, 0)->defValE);
 	    gtk_widget_set_sensitive(glade_xml_get_widget
 				     (xml, "txtDefValue"), 0);
 	    gtk_widget_hide(glade_xml_get_widget(xml, "attrAddBtn"));
@@ -351,7 +335,7 @@ static void filter_attributes(const char *prefix, topview *t) {
 	    gtk_toggle_button_set_active((GtkToggleButton *)
 					 glade_xml_get_widget(xml,
 							      "attrProg"),
-					 fl->attributes[0]->propagate);
+					 attrs_get(&fl->attributes, 0)->propagate);
 	    break;
 	}
     }
