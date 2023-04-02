@@ -16,6 +16,7 @@
 #endif
 #endif
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <xdot/xdot.h>
 #include <gtk/gtk.h>
@@ -86,7 +87,7 @@ typedef struct
 {
 	attrs_t attributes;
 	GtkLabel* fLabels[MAX_FILTERED_ATTR_COUNT];
-	int with_widgets;
+	bool with_widgets;
 }attr_list;
 
     typedef struct 
