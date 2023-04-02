@@ -474,7 +474,7 @@ _BB void on_attrAddBtn_clicked(GtkWidget * widget, gpointer user_data)
 	attr->index = 0;
 	attr->name = safestrdup(attr_name);
 	attr->type = attr_alpha;
-	attr->value = safestrdup("");
+	attr->value = gv_strdup("");
 	attr->widget = NULL;
 	attr_list_add(t->attributes, attr);
     }
