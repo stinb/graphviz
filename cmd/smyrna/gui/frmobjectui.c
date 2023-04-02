@@ -518,12 +518,11 @@ attr_list *load_attr_list(Agraph_t * g)
     file = fopen(smyrna_attrs, "r");
     if (file != NULL) {
 	for (size_t i = 0; fgets(buffer, sizeof(buffer), file) != NULL; ++i) {
-	    int idx = 0;
 	    attr = new_attr();
 	    a = strtok(buffer, ",");
 	    attr->index = i;
 	    attr->type = get_attr_data_type(a[0]);
-	    while ((a = strtok(NULL, ","))) {
+	    for (int idx = 0; (a = strtok(NULL, ",")); ++idx) {
 		/*C,(0)color, (1)black, (2)EDGE Or NODE Or CLUSTER, (3)ALL_ENGINES */
 
 		switch (idx) {
@@ -539,7 +538,6 @@ attr_list *load_attr_list(Agraph_t * g)
 		    set_attr_object_type(a, attr->objType);
 		    break;
 		}
-		idx++;
 	    }
 	    attr_list_add(l, attr);
 
