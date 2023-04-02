@@ -555,7 +555,7 @@ static double largest_nodesize(nodelist_t * list)
 static void place_node(Agraph_t * g, Agnode_t * n, nodelist_t * list)
 {
     Agedge_t *e;
-    int placed = 0;
+    bool placed = false;
     nodelist_t *neighbors = mkNodelist();
 
     for (e = agfstout(g, n); e; e = agnxtout(g, e)) {
@@ -578,7 +578,7 @@ static void place_node(Agraph_t * g, Agnode_t * n, nodelist_t * list)
 	    if (NEIGHBOR(nodelist_get(list, one)) &&
 	        NEIGHBOR(nodelist_get(list, two))) {
 		appendNodelist(list, one, n);
-		placed = 1;
+		placed = true;
 		break;
 	    }
 	}
@@ -589,7 +589,7 @@ static void place_node(Agraph_t * g, Agnode_t * n, nodelist_t * list)
 	for (size_t one = 0; one < nodelist_size(list); ++one) {
 	    if (NEIGHBOR(nodelist_get(list, one))) {
 		appendNodelist(list, one, n);
-		placed = 1;
+		placed = true;
 		break;
 	    }
 	}
