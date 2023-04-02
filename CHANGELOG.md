@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Pango plugin has been fixed.
 - A minor vertical misalignment of text in the Pango plugin has been fixed.
 - Ensure `HAVE_PANGOCAIRO` is set when using CMake and the library is available.
+- A minor inaccuracy in node width and height for some cases of defining
+  polygon-based nodes has been fixed.
 
 ## [8.0.3] – 2023-04-16
 

@@ -1817,7 +1817,7 @@ static double userSize(node_t * n)
     double w, h;
     w = late_double(n, N_width, 0.0, MIN_NODEWIDTH);
     h = late_double(n, N_height, 0.0, MIN_NODEHEIGHT);
-    return POINTS(MAX(w, h));
+    return INCH2PS(MAX(w, h));
 }
 
 shape_kind shapeOf(node_t * n)
@@ -1887,11 +1887,11 @@ static void poly_init(node_t * n)
 	else {
 	    width = ND_width(n);
 	    height = ND_height(n);
-	    width = height = POINTS(MIN(width, height));
+	    width = height = INCH2PS(MIN(width, height));
 	}
     } else {
-	width = POINTS(ND_width(n));
-	height = POINTS(ND_height(n));
+	width = INCH2PS(ND_width(n));
+	height = INCH2PS(ND_height(n));
     }
 
     peripheries = late_int(n, N_peripheries, peripheries, 0);
@@ -1915,11 +1915,11 @@ static void poly_init(node_t * n)
 		marginx = fmax(marginx, 0);
 		marginy = fmax(marginy, 0);
 		if (i > 0) {
-		    dimen.x += 2 * POINTS(marginx);
+		    dimen.x += 2 * INCH2PS(marginx);
 		    if (i > 1)
-			dimen.y += 2 * POINTS(marginy);
+			dimen.y += 2 * INCH2PS(marginy);
 		    else
-			dimen.y += 2 * POINTS(marginx);
+			dimen.y += 2 * INCH2PS(marginx);
 		} else
 		    PAD(dimen);
 	    } else
@@ -1930,7 +1930,7 @@ static void poly_init(node_t * n)
 
     /* quantization */
     if ((temp = GD_drawing(agraphof(n))->quantum) > 0.0) {
-	temp = POINTS(temp);
+	temp = INCH2PS(temp);
 	dimen.x = quant(dimen.x, temp);
 	dimen.y = quant(dimen.y, temp);
     }
