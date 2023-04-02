@@ -254,15 +254,6 @@ static bool pango_textlayout(textspan_t * span, char **fontpath)
     span->size.x = (int)(logical_rect.width * textlayout_scale + 1);    /* round up so that width/height are never too small */
     span->size.y = (int)(logical_rect.height * textlayout_scale + 1);
 
-    /* FIXME  -- Horrible kluge !!! */
-
-    /* For now we are using pango for single line blocks only.
-     * The logical_rect.height seems to be too high from the font metrics on some platforms.
-     * Use an assumed height based on the point size.
-     */
-
-    span->size.y = (int)(span->font->size * 1.1 + .5);
-
     /* The y offset from baseline to 0,0 of the bitmap representation */
 #if !defined(_WIN32) && defined PANGO_VERSION_MAJOR && (PANGO_VERSION_MAJOR >= 1)
     span->yoffset_layout = pango_layout_get_baseline (layout) * textlayout_scale;
