@@ -119,7 +119,6 @@ typedef struct
 	GVK_TWOPI,
 	GVK_CIRCO,
 	GVK_FDP,
-	GVK_SFDP		/* keep last */
     } gvk_layout;
 
     typedef struct
