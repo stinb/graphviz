@@ -23,8 +23,6 @@
     extern GladeXML *xml;	//global libglade vars
     extern GtkWidget *gladewidget;
 
-    extern attribute attr[MAXIMUM_WIDGET_COUNT];
-
     void load_graph_properties(void);	//load from graph to gui
 
     void load_attributes(void);	//loads attributes from a text file

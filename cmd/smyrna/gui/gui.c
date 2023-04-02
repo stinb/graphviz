@@ -22,7 +22,7 @@
 GladeXML *xml;			//global libglade vars
 GtkWidget *gladewidget;
 
-attribute attr[MAXIMUM_WIDGET_COUNT];
+static attribute attr[MAXIMUM_WIDGET_COUNT];
 
 void Color_Widget_bg(char *colorstring, GtkWidget * widget)
 {
