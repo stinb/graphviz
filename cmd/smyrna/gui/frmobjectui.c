@@ -517,8 +517,7 @@ attr_list *load_attr_list(Agraph_t * g)
     l = attr_list_new(1);
     file = fopen(smyrna_attrs, "r");
     if (file != NULL) {
-	size_t i = 0;
-	while (fgets(buffer, sizeof(buffer), file) != NULL) {
+	for (size_t i = 0; fgets(buffer, sizeof(buffer), file) != NULL; ++i) {
 	    int idx = 0;
 	    attr = new_attr();
 	    a = strtok(buffer, ",");
@@ -542,7 +541,6 @@ attr_list *load_attr_list(Agraph_t * g)
 		}
 		idx++;
 	    }
-	    i++;
 	    attr_list_add(l, attr);
 
 	}
