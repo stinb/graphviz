@@ -184,12 +184,12 @@ static void pic_begin_page(GVJ_t * job)
 {
     box pbr = job->pageBoundingBox;
 
-    if (onetime && job->rotation && (job->rotation != 90)) {
+    if (onetime && job->rotation && job->rotation != 90) {
         unsupported("rotation");
         onetime = false;
     }
-    double height = PS2INCH((double) (pbr.UR.y) - (double) (pbr.LL.y));
-    double width = PS2INCH((double) (pbr.UR.x) - (double) (pbr.LL.x));
+    double height = PS2INCH((double)pbr.UR.y - (double)pbr.LL.y);
+    double width = PS2INCH((double)pbr.UR.x - (double)pbr.LL.x);
     if (job->rotation == 90) {
         double temp = width;
         width = height;
@@ -314,7 +314,7 @@ static void pic_textspan(GVJ_t * job, pointf p, textspan_t * span)
     p.y += span->font->size / (3.0 * POINTS_PER_INCH);
     p.x += span->size.x / (2.0 * POINTS_PER_INCH);
 
-    if (span->font->name && (!(lastname) || strcmp(lastname, span->font->name))) {
+    if (span->font->name && (!lastname || strcmp(lastname, span->font->name))) {
         gvprintf(job, ".ft %s\n", picfontname(strview(span->font->name, '\0')));
 	lastname = span->font->name;
     }
