@@ -157,25 +157,6 @@ static void picptarray(GVJ_t *job, pointf * A, int n, int close)
     gvputs(job, "\n");
 }
 
-static void pic_line_style(obj_state_t *obj, int *line_style, double *style_val)
-{
-    switch (obj->pen) {
-	case PEN_DASHED: 
-	    *line_style = 1;
-	    *style_val = 10.;
-	    break;
-	case PEN_DOTTED:
-	    *line_style = 2;
-	    *style_val = 10.;
-	    break;
-	case PEN_SOLID:
-	default:
-	    *line_style = 0;
-	    *style_val = 0.;
-	    break;
-    }
-}
-
 static void pic_comment(GVJ_t *job, char *str)
 {
     gvprintf(job, "%s %s\n", pic_comments, str);
@@ -365,18 +346,12 @@ static void pic_ellipse(GVJ_t * job, pointf * A, int filled)
 static void pic_bezier(GVJ_t *job, pointf *A, int n, int filled) {
     (void)filled;
 
-    obj_state_t *obj = job->obj;
-
-    int line_style;		/* solid, dotted, dashed */
-    double style_val;
     int i;
 
     pointf pf, V[4];
     point p;
     int j, step;
     int count = 0;
-
-    pic_line_style(obj, &line_style, &style_val);
 
     V[3].x = A[0].x;
     V[3].y = A[0].y;
@@ -406,25 +381,11 @@ static void pic_polygon(GVJ_t * job, pointf * A, int n, int filled)
 {
     (void)filled;
 
-    obj_state_t *obj = job->obj;
-
-    int line_style;		/* solid, dotted, dashed */
-    double style_val;
-
-    pic_line_style(obj, &line_style, &style_val);
-
     picptarray(job, A, n, 1);        /* closed shape */
 }
 
 static void pic_polyline(GVJ_t * job, pointf * A, int n)
 {
-    obj_state_t *obj = job->obj;
-
-    int line_style;		/* solid, dotted, dashed */
-    double style_val;
-
-    pic_line_style(obj, &line_style, &style_val);
-
     picptarray(job, A, n, 0);        /* open shape */
 }
 
