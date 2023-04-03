@@ -11,6 +11,7 @@
 #include "config.h"
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
@@ -19,6 +20,7 @@
 #include <gvc/gvplugin_device.h>
 #include <gvc/gvio.h>
 #include <cgraph/agxbuf.h>
+#include <cgraph/strview.h>
 #include <common/utils.h>
 #include <common/color.h>
 #include <common/colorprocs.h>
@@ -105,22 +107,38 @@ static fontinfo fonttab[] = {
     {"\000\000", (char *) 0}
 };
 
-static char *picfontname(char *psname)
-{
+#ifdef HAVE_MEMRCHR
+void *memrchr(const void *s, int c, size_t n);
+#else
+static const void *memrchr(const void *s, int c, size_t n) {
+  const char *str = s;
+  for (size_t i = n - 1; i != SIZE_MAX; --i) {
+    if (str[i] == c) {
+      return &str[i];
+    }
+  }
+  return NULL;
+}
+#endif
+
+static char *picfontname(strview_t psname) {
     char *rv;
     fontinfo *p;
 
     for (p = fonttab; p->psname; p++)
-        if (strcmp(p->psname, psname) == 0)
+        if (strview_str_eq(psname, p->psname))
             break;
     if (p->psname)
         rv = p->trname;
     else {
-        agerr(AGERR, "%s%s is not a troff font\n", picgen_msghdr, psname);
+        agerr(AGERR, "%s%.*s is not a troff font\n", picgen_msghdr,
+              (int)psname.size, psname.data);
         /* try base font names, e.g. Helvetica-Outline-Oblique -> Helvetica-Outline -> Helvetica */
-        if ((rv = strrchr(psname, '-'))) {
-            *rv = '\0';         /* psname is not specified as const ... */
-            rv = picfontname(psname);
+        const char *dash = memrchr(psname.data, '-', psname.size);
+        if (dash != NULL) {
+            strview_t prefix = {.data = psname.data,
+                                .size = (size_t)(dash - psname.data)};
+            rv = picfontname(prefix);
         } else
             rv = "R";
     }
@@ -327,7 +345,7 @@ static void pic_textspan(GVJ_t * job, pointf p, textspan_t * span)
     p.x += span->size.x / (2.0 * POINTS_PER_INCH);
 
     if (span->font->name && (!(lastname) || strcmp(lastname, span->font->name))) {
-        gvprintf(job, ".ft %s\n", picfontname(span->font->name));
+        gvprintf(job, ".ft %s\n", picfontname(strview(span->font->name, '\0')));
 	lastname = span->font->name;
     }
     if ((sz = (int)span->font->size) < 1)
