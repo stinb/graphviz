@@ -207,11 +207,9 @@ void epsf_emit_body(GVJ_t *job, usershape_t *us)
 
 void epsf_define(GVJ_t *job)
 {
-    usershape_t *us;
-
     if (!EPSF_contents)
 	return;
-    for (us = dtfirst(EPSF_contents); us; us = dtnext(EPSF_contents, us)) {
+    for (usershape_t *us = dtfirst(EPSF_contents); us; us = dtnext(EPSF_contents, us)) {
 	if (us->must_inline)
 	    continue;
 	gvprintf(job, "/user_shape_%d {\n", us->macro_id);
