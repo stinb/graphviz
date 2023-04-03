@@ -133,24 +133,23 @@ void epsf_free(node_t * n)
 void cat_libfile(GVJ_t * job, const char **arglib, const char **stdlib)
 {
     FILE *fp;
-    const char **s, *bp, *p;
-    int i;
+    const char *bp, *p;
     bool use_stdlib = true;
 
     /* check for empty string to turn off stdlib */
     if (arglib) {
-        for (i = 0; use_stdlib && (p = arglib[i]); i++) {
+        for (int i = 0; use_stdlib && (p = arglib[i]); i++) {
             if (*p == '\0')
                 use_stdlib = false;
         }
     }
     if (use_stdlib)
-        for (s = stdlib; *s; s++) {
+        for (const char **s = stdlib; *s; s++) {
             gvputs(job, *s);
             gvputs(job, "\n");
         }
     if (arglib) {
-        for (i = 0; (p = arglib[i]) != 0; i++) {
+        for (int i = 0; (p = arglib[i]) != 0; i++) {
             if (*p == '\0')
                 continue;       /* ignore empty string */
             const char *safepath = safefile(p);    /* make sure filename is okay */
