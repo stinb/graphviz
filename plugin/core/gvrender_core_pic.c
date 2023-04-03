@@ -30,7 +30,7 @@
 /* Number of points to split splines into */
 #define BEZIERSUBDIVISION 6
 
-typedef enum { FORMAT_PIC, } format_type;
+enum {FORMAT_PIC};
 
 static bool onetime = true;
 static double Fontscale;
