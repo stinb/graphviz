@@ -70,7 +70,7 @@ typedef struct {
     char trname[3], *psname;
 } fontinfo;
 
-static fontinfo fonttab[] = {
+static const fontinfo fonttab[] = {
     {"AB", "AvantGarde-Demi"},
     {"AI", "AvantGarde-BookOblique"},
     {"AR", "AvantGarde-Book"},
@@ -121,8 +121,8 @@ static const void *memrchr(const void *s, int c, size_t n) {
 }
 #endif
 
-static char *picfontname(strview_t psname) {
-    for (fontinfo *p = fonttab; p->psname; p++)
+static const char *picfontname(strview_t psname) {
+    for (const fontinfo *p = fonttab; p->psname; p++)
         if (strview_str_eq(psname, p->psname))
             return p->trname;
     agerr(AGERR, "%s%.*s is not a troff font\n", picgen_msghdr,
