@@ -253,7 +253,6 @@ charsetOf (char* s)
  */
 char *ps_string(char *ins, int chset)
 {
-    char *s;
     char *base;
     static agxbuf  xb;
     static int warned;
@@ -287,7 +286,7 @@ char *ps_string(char *ins, int chset)
     }
 
     agxbputc (&xb, LPAREN);
-    s = base;
+    char *s = base;
     while (*s) {
         if (*s == LPAREN || *s == RPAREN || *s == '\\')
             agxbputc (&xb, '\\');
