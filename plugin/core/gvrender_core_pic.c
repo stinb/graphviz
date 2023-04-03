@@ -139,10 +139,9 @@ static const char *picfontname(strview_t psname) {
 
 static void picptarray(GVJ_t *job, pointf * A, int n, int close)
 {
-    int i;
     point p;
 
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
 	PF2P(A[i],p);
         if (i == 0) {
             gvprintf(job, "move to (%d, %d)", p.x, p.y);
@@ -184,14 +183,13 @@ static void pic_end_graph(GVJ_t * job)
 static void pic_begin_page(GVJ_t * job)
 {
     box pbr = job->pageBoundingBox;
-    double height, width;
 
     if (onetime && job->rotation && (job->rotation != 90)) {
         unsupported("rotation");
         onetime = false;
     }
-    height = PS2INCH((double) (pbr.UR.y) - (double) (pbr.LL.y));
-    width = PS2INCH((double) (pbr.UR.x) - (double) (pbr.LL.x));
+    double height = PS2INCH((double) (pbr.UR.y) - (double) (pbr.LL.y));
+    double width = PS2INCH((double) (pbr.UR.x) - (double) (pbr.LL.x));
     if (job->rotation == 90) {
         double temp = width;
         width = height;
@@ -346,11 +344,8 @@ static void pic_ellipse(GVJ_t * job, pointf * A, int filled)
 static void pic_bezier(GVJ_t *job, pointf *A, int n, int filled) {
     (void)filled;
 
-    int i;
-
-    pointf pf, V[4];
+    pointf V[4];
     point p;
-    int j, step;
     int count = 0;
 
     V[3].x = A[0].x;
@@ -360,15 +355,15 @@ static void pic_bezier(GVJ_t *job, pointf *A, int n, int filled) {
     PF2P(A[0], p);
     gvprintf(job, "move to (%d, %d)", p.x, p.y);
     /* write subsequent points */
-    for (i = 0; i + 3 < n; i += 3) {
+    for (int i = 0; i + 3 < n; i += 3) {
         V[0] = V[3];
-        for (j = 1; j <= 3; j++) {
+        for (int j = 1; j <= 3; j++) {
             V[j].x = A[i + j].x;
             V[j].y = A[i + j].y;
         }
-        for (step = 1; step <= BEZIERSUBDIVISION; step++) {
+        for (int step = 1; step <= BEZIERSUBDIVISION; step++) {
             count++;
-            pf = Bezier (V, 3, (double) step / BEZIERSUBDIVISION, NULL, NULL);
+            pointf pf = Bezier(V, 3, (double)step / BEZIERSUBDIVISION, NULL, NULL);
 	    PF2P(pf, p);
             gvprintf(job, "; spline to (%d, %d)", p.x, p.y);
         }
