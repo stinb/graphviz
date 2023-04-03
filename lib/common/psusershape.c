@@ -96,15 +96,13 @@ void epsf_init(node_t * n)
 {
     epsf_t *desc;
     const char *str;
-    usershape_t *us;
-    int dx, dy;
 
     if ((str = safefile(agget(n, "shapefile")))) {
-	us = user_init(str);
+	usershape_t *us = user_init(str);
 	if (!us)
 	    return;
-	dx = us->w;
-	dy = us->h;
+	int dx = us->w;
+	int dy = us->h;
 	ND_width(n) = PS2INCH(dx);
 	ND_height(n) = PS2INCH(dy);
 	ND_shape_info(n) = desc = gv_alloc(sizeof(epsf_t));
