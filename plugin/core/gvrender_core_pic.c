@@ -122,27 +122,19 @@ static const void *memrchr(const void *s, int c, size_t n) {
 #endif
 
 static char *picfontname(strview_t psname) {
-    char *rv;
-    fontinfo *p;
-
-    for (p = fonttab; p->psname; p++)
+    for (fontinfo *p = fonttab; p->psname; p++)
         if (strview_str_eq(psname, p->psname))
-            break;
-    if (p->psname)
-        rv = p->trname;
-    else {
-        agerr(AGERR, "%s%.*s is not a troff font\n", picgen_msghdr,
-              (int)psname.size, psname.data);
-        /* try base font names, e.g. Helvetica-Outline-Oblique -> Helvetica-Outline -> Helvetica */
-        const char *dash = memrchr(psname.data, '-', psname.size);
-        if (dash != NULL) {
-            strview_t prefix = {.data = psname.data,
-                                .size = (size_t)(dash - psname.data)};
-            rv = picfontname(prefix);
-        } else
-            rv = "R";
+            return p->trname;
+    agerr(AGERR, "%s%.*s is not a troff font\n", picgen_msghdr,
+          (int)psname.size, psname.data);
+    /* try base font names, e.g. Helvetica-Outline-Oblique -> Helvetica-Outline -> Helvetica */
+    const char *dash = memrchr(psname.data, '-', psname.size);
+    if (dash != NULL) {
+        strview_t prefix = {.data = psname.data,
+                            .size = (size_t)(dash - psname.data)};
+        return picfontname(prefix);
     }
-    return rv;
+    return "R";
 }
 
 static void picptarray(GVJ_t *job, pointf * A, int n, int close)
