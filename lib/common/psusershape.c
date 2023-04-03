@@ -33,18 +33,15 @@ static Dtdisc_t ImageDictDisc = {
 
 static usershape_t *user_init(const char *str)
 {
-    char *contents;
     char line[BUFSIZ];
     FILE *fp;
     struct stat statbuf;
-    bool must_inline;
     int lx, ly, ux, uy;
-    usershape_t *us;
 
     if (!EPSF_contents)
 	EPSF_contents = dtopen(&ImageDictDisc, Dtoset);
 
-    us = dtmatch(EPSF_contents, str);
+    usershape_t *us = dtmatch(EPSF_contents, str);
     if (us)
 	return us;
 
@@ -54,7 +51,7 @@ static usershape_t *user_init(const char *str)
     }
     /* try to find size */
     bool saw_bb = false;
-    must_inline = false;
+    bool must_inline = false;
     while (fgets(line, sizeof(line), fp)) {
 	if (sscanf
 	    (line, "%%%%BoundingBox: %d %d %d %d", &lx, &ly, &ux, &uy) == 4) {
@@ -73,7 +70,7 @@ static usershape_t *user_init(const char *str)
 	us->name = str;
 	us->macro_id = N_EPSF_files++;
 	fstat(fileno(fp), &statbuf);
-	contents = us->data = gv_calloc((size_t)statbuf.st_size + 1, sizeof(char));
+	char *contents = us->data = gv_calloc((size_t)statbuf.st_size + 1, sizeof(char));
 	fseek(fp, 0, SEEK_SET);
 	size_t rc = fread(contents, (size_t)statbuf.st_size, 1, fp);
 	if (rc == 1) {
