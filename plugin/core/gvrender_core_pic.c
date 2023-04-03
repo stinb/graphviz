@@ -9,7 +9,7 @@
  *************************************************************************/
 
 #include "config.h"
-
+#include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -318,8 +318,7 @@ static void pic_end_page(GVJ_t * job)
 static void pic_textspan(GVJ_t * job, pointf p, textspan_t * span)
 {
     static char *lastname;
-    static int lastsize;
-    int sz;
+    static double lastsize;
 
     switch (span->just) {
     case 'l': 
@@ -340,10 +339,9 @@ static void pic_textspan(GVJ_t * job, pointf p, textspan_t * span)
         gvprintf(job, ".ft %s\n", picfontname(strview(span->font->name, '\0')));
 	lastname = span->font->name;
     }
-    if ((sz = (int)span->font->size) < 1)
-        sz = 1;
-    if (sz != lastsize) {
-        gvprintf(job, ".ps %d*\\n(SFu/%.0fu\n", sz, Fontscale);
+    double sz = fmin(span->font->size, 1);
+    if (fabs(sz - lastsize) > 0.5) {
+        gvprintf(job, ".ps %.0f*\\n(SFu/%.0fu\n", sz, Fontscale);
 	lastsize = sz;
     }
     gvputc(job, '"');
