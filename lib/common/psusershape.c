@@ -14,6 +14,7 @@
 #include <gvc/gvio.h>
 #include <cgraph/strcasecmp.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 static int N_EPSF_files;
 static Dict_t *EPSF_contents;
@@ -133,7 +134,7 @@ void epsf_free(node_t * n)
 void cat_libfile(GVJ_t * job, const char **arglib, const char **stdlib)
 {
     FILE *fp;
-    const char *bp, *p;
+    const char *p;
     bool use_stdlib = true;
 
     /* check for empty string to turn off stdlib */
@@ -157,8 +158,14 @@ void cat_libfile(GVJ_t * job, const char **arglib, const char **stdlib)
 		agerr(AGWARN, "can't find library file %s\n", p);
 	    }
             else if ((fp = fopen(safepath, "r"))) {
-                while ((bp = Fgets(fp)))
-                    gvputs(job, bp);
+                while (true) {
+                    char bp[BUFSIZ] = {0};
+                    size_t r = fread(bp, 1, sizeof(bp), fp);
+                    gvwrite(job, bp, r);
+                    if (r < sizeof(bp)) {
+                      break;
+                    }
+                }
                 gvputs(job, "\n"); /* append a newline just in case */
 		fclose (fp);
             } else
