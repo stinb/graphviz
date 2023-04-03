@@ -30,6 +30,7 @@
 
 #include	<common/const.h>
 #include <cgraph/alloc.h>
+#include <cgraph/list.h>
 #include <cgraph/strcasecmp.h>
 #include <cgraph/strview.h>
 
@@ -383,6 +384,8 @@ char *gvplugin_list(GVC_t * gvc, api_t api, const char *str)
     return bp;
 }
 
+DEFINE_LIST(strs, char*)
+
 /* gvPluginList:
  * Return list of plugins of type kind.
  * The size of the list is stored in sz.
@@ -398,8 +401,7 @@ char **gvPluginList(GVC_t * gvc, const char *kind, int *sz, const char *str)
 {
     size_t api;
     const gvplugin_available_t *pnext, *plugin;
-    int cnt = 0;
-    char **list = NULL;
+    strs_t list = {0};
 
     (void)str;
 
@@ -421,14 +423,13 @@ char **gvPluginList(GVC_t * gvc, const char *kind, int *sz, const char *str)
         /* list only one instance of type */
         strview_t q = strview(pnext->typestr, ':');
         if (!typestr_last.data || !strview_case_eq(typestr_last, q)) {
-            list = RALLOC(cnt + 1, list, char *);
-            list[cnt++] = strview_str(q);
+            strs_append(&list, strview_str(q));
         }
         typestr_last = q;
     }
 
-    *sz = cnt;
-    return list;
+    *sz = (int)strs_size(&list);
+    return strs_detach(&list);
 }
 
 void gvplugin_write_status(GVC_t * gvc)
