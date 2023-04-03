@@ -104,8 +104,8 @@ static const fontinfo fonttab[] = {
     {"R ", "Times-Roman"},
     {"S ", "Symbol"},
     {"ZD", "ZapfDingbats"},
-    {"\000\000", (char *) 0}
 };
+static const size_t fonttab_size = sizeof(fonttab) / sizeof(fonttab[0]);
 
 #ifdef HAVE_MEMRCHR
 void *memrchr(const void *s, int c, size_t n);
@@ -122,9 +122,9 @@ static const void *memrchr(const void *s, int c, size_t n) {
 #endif
 
 static const char *picfontname(strview_t psname) {
-    for (const fontinfo *p = fonttab; p->psname; p++)
-        if (strview_str_eq(psname, p->psname))
-            return p->trname;
+    for (size_t i = 0; i < fonttab_size; ++i)
+        if (strview_str_eq(psname, fonttab[i].psname))
+            return fonttab[i].trname;
     agerr(AGERR, "%s%.*s is not a troff font\n", picgen_msghdr,
           (int)psname.size, psname.data);
     /* try base font names, e.g. Helvetica-Outline-Oblique -> Helvetica-Outline -> Helvetica */
