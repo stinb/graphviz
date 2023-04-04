@@ -276,7 +276,7 @@ extern int		extoken_fn(Expr_t*);
 extern char*		exstring(Expr_t *, char *);
 extern void*		exstralloc(Expr_t *, size_t);
 extern char*		extype(int);
-extern Extype_t		exzero(int);
+extern Extype_t exzero(long int);
 extern char*	exopname(int);
 extern void		exinit(void);
 extern char*	extypename(Expr_t * p, int);
