@@ -304,7 +304,7 @@ static nodelist_t *find_longest_path(Agraph_t * tree)
     if (agnnodes(tree) == 1) {
 	nodelist_t *beginPath = mkNodelist();
 	n = agfstnode(tree);
-	appendNodelist(beginPath, NULL, n);
+	nodelist_append(beginPath, n);
 	SET_ONPATH(n);
 	return beginPath;
     }
@@ -329,16 +329,16 @@ static nodelist_t *find_longest_path(Agraph_t * tree)
 
     nodelist_t *beginPath = mkNodelist();
     for (n = LEAFONE(common); n != common; n = TPARENT(n)) {
-	appendNodelist(beginPath, NULL, n);
+	nodelist_append(beginPath, n);
 	SET_ONPATH(n);
     }
-    appendNodelist(beginPath, NULL, common);
+    nodelist_append(beginPath, common);
     SET_ONPATH(common);
 
     if (DISTTWO(common)) {	/* 2nd path might be empty */
 	endPath = mkNodelist();
 	for (n = LEAFTWO(common); n != common; n = TPARENT(n)) {
-	    appendNodelist(endPath, NULL, n);
+	    nodelist_append(endPath, n);
 	    SET_ONPATH(n);
 	}
 	reverseAppend(beginPath, endPath);
@@ -421,7 +421,6 @@ static void block_graph(Agraph_t * g, block_t * sn)
 
 static int count_all_crossings(nodelist_t * list, Agraph_t * subg)
 {
-    nodelistitem_t *item;
     edgelist *openEdgeList = init_edgelist();
     Agnode_t *n;
     Agedge_t *e;
@@ -434,8 +433,8 @@ static int count_all_crossings(nodelist_t * list, Agraph_t * subg)
 	}
     }
 
-    for (item = list->first; item; item = item->next) {
-	n = item->curr;
+    for (size_t item = 0; item < nodelist_size(list); ++item) {
+	n = nodelist_get(list, item);
 
 	for (e = agfstedge(subg, n); e; e = agnxtedge(subg, e, n)) {
 	    if (EDGEORDER(e) > 0) {
@@ -538,12 +537,10 @@ static nodelist_t *reduce_edge_crossings(nodelist_t * list,
  */
 static double largest_nodesize(nodelist_t * list)
 {
-    Agnode_t *n;
-    nodelistitem_t *item;
     double size = 0;
 
-    for (item = list->first; item; item = item->next) {
-	n = ORIGN(item->curr);
+    for (size_t item = 0; item < nodelist_size(list); ++item) {
+	Agnode_t *n = ORIGN(nodelist_get(list, item));
 	if (ND_width(n) > size)
 	    size = ND_width(n);
 	if (ND_height(n) > size)
@@ -558,51 +555,51 @@ static double largest_nodesize(nodelist_t * list)
 static void place_node(Agraph_t * g, Agnode_t * n, nodelist_t * list)
 {
     Agedge_t *e;
-    int placed = 0;
+    bool placed = false;
     nodelist_t *neighbors = mkNodelist();
-    nodelistitem_t *one, *two;
 
     for (e = agfstout(g, n); e; e = agnxtout(g, e)) {
-	appendNodelist(neighbors, NULL, aghead(e));
+	nodelist_append(neighbors, aghead(e));
 	SET_NEIGHBOR(aghead(e));
     }
     for (e = agfstin(g, n); e; e = agnxtin(g, e)) {
-	appendNodelist(neighbors, NULL, agtail(e));
+	nodelist_append(neighbors, agtail(e));
 	SET_NEIGHBOR(agtail(e));
     }
 
     /* Look for 2 neighbors consecutive on list */
-    if (sizeNodelist(neighbors) >= 2) {
-	for (one = list->first; one; one = one->next) {
-	    if (one == list->last)
-		two = list->first;
+    if (nodelist_size(neighbors) >= 2) {
+	for (size_t two, one = 0; one < nodelist_size(list); ++one) {
+	    if (one == nodelist_size(list) - 1)
+		two = 0;
 	    else
-		two = one->next;
+		two = one + 1;
 
-	    if (NEIGHBOR(one->curr) && NEIGHBOR(two->curr)) {
+	    if (NEIGHBOR(nodelist_get(list, one)) &&
+	        NEIGHBOR(nodelist_get(list, two))) {
 		appendNodelist(list, one, n);
-		placed = 1;
+		placed = true;
 		break;
 	    }
 	}
     }
 
     /* Find any neighbor on list */
-    if (!placed && sizeNodelist(neighbors) > 0) {
-	for (one = list->first; one; one = one->next) {
-	    if (NEIGHBOR(one->curr)) {
+    if (!placed && !nodelist_is_empty(neighbors)) {
+	for (size_t one = 0; one < nodelist_size(list); ++one) {
+	    if (NEIGHBOR(nodelist_get(list, one))) {
 		appendNodelist(list, one, n);
-		placed = 1;
+		placed = true;
 		break;
 	    }
 	}
     }
 
     if (!placed)
-	appendNodelist(list, NULL, n);
+	nodelist_append(list, n);
 
-    for (one = neighbors->first; one; one = one->next)
-	UNSET_NEIGHBOR(one->curr);
+    for (size_t one = 0; one < nodelist_size(neighbors); ++one)
+	UNSET_NEIGHBOR(nodelist_get(neighbors, one));
     freeNodelist(neighbors);
 }
 
@@ -621,11 +618,9 @@ static void place_residual_nodes(Agraph_t * g, nodelist_t * list)
 
 nodelist_t *layout_block(Agraph_t * g, block_t * sn, double min_dist)
 {
-    Agnode_t *n;
     Agraph_t *copyG, *tree, *subg;
     nodelist_t *longest_path;
-    nodelistitem_t *item;
-    int N, k;
+    int k;
     double theta, radius, largest_node;
     largest_node = 0;
 
@@ -642,16 +637,16 @@ nodelist_t *layout_block(Agraph_t * g, block_t * sn, double min_dist)
     /* apply crossing reduction algorithms here */
     longest_path = reduce_edge_crossings(longest_path, subg);
 
-    N = sizeNodelist(longest_path);
+    size_t N = nodelist_size(longest_path);
     largest_node = largest_nodesize(longest_path);
     /* N*(min_dist+largest_node) is roughly circumference of required circle */
     if (N == 1)
 	radius = 0;
     else
-	radius = N * (min_dist + largest_node) / (2 * M_PI);
+	radius = (double)N * (min_dist + largest_node) / (2 * M_PI);
 
-    for (item = longest_path->first; item; item = item->next) {
-	n = item->curr;
+    for (size_t item = 0; item < nodelist_size(longest_path); ++item) {
+	Agnode_t *n = nodelist_get(longest_path, item);
 	if (ISPARENT(n)) {
 	    /* QUESTION: Why is only one parent realigned? */
 	    realignNodelist(longest_path, item);
@@ -660,11 +655,11 @@ nodelist_t *layout_block(Agraph_t * g, block_t * sn, double min_dist)
     }
 
     k = 0;
-    for (item = longest_path->first; item; item = item->next) {
-	n = item->curr;
+    for (size_t item = 0; item < nodelist_size(longest_path); ++item) {
+	Agnode_t *n = nodelist_get(longest_path, item);
 	POSITION(n) = k;
 	PSI(n) = 0.0;
-	theta = k * (2.0 * M_PI / N);
+	theta = k * (2.0 * M_PI / (double)N);
 
 	ND_pos(n)[0] = radius * cos(theta);
 	ND_pos(n)[1] = radius * sin(theta);
