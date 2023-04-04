@@ -50,7 +50,6 @@ Makefile.in
 /redhat/graphviz.spec.rhel
 .deps
 Makefile
-!contrib/pangotest/Makefile
 !doc/**/Makefile
 doc/Makefile
 doc/info/Makefile

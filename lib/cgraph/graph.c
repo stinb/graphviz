@@ -10,6 +10,7 @@
 
 #include <assert.h>
 #include <cgraph/cghdr.h>
+#include <stdbool.h>
 #include <stddef.h>
 
 Agraph_t *Ag_G_global;
@@ -50,7 +51,7 @@ Agraph_t *agopen(char *name, Agdesc_t desc, Agdisc_t * arg_disc)
     AGTYPE(g) = AGRAPH;
     g->clos = clos;
     g->desc = desc;
-    g->desc.maingraph = TRUE;
+    g->desc.maingraph = true;
     g->root = g;
     g->clos->state.id = g->clos->disc.id->open(g, arg_disc);
     if (agmapnametoid(g, AGRAPH, name, &gid, TRUE))
@@ -259,10 +260,10 @@ Dtdisc_t Ag_subgraph_id_disc = {
     .memoryf = agdictobjmem,
 };
 
-Agdesc_t Agdirected = { .directed = 1, .maingraph = 1 };
-Agdesc_t Agstrictdirected = { .directed = 1, .strict = 1, .maingraph = 1 };
-Agdesc_t Agundirected = { .maingraph = 1 };
-Agdesc_t Agstrictundirected = { .strict = 1, .maingraph = 1 };
+Agdesc_t Agdirected = {.directed = true, .maingraph = true};
+Agdesc_t Agstrictdirected = {.directed = true, .strict = true, .maingraph = true};
+Agdesc_t Agundirected = {.maingraph = true};
+Agdesc_t Agstrictundirected = {.strict = true, .maingraph = true};
 
 Agdisc_t AgDefaultDisc = { &AgMemDisc, &AgIdDisc, &AgIoDisc };
 

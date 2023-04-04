@@ -37,7 +37,8 @@ Dtdisc_t AgDataDictDisc = {
 
 static char DataDictName[] = "_AG_datadict";
 static void init_all_attrs(Agraph_t * g);
-static Agdesc_t ProtoDesc = { 1, 0, 1, 0, 1, 1, 0, 0 };
+static Agdesc_t ProtoDesc = {.directed = true, .no_loop = true,
+                             .flatlock = true, .no_write = true};
 static Agraph_t *ProtoGraph;
 
 Agdatadict_t *agdatadict(Agraph_t * g, int cflag)
@@ -376,7 +377,7 @@ void agraphattr_init(Agraph_t * g)
 {
     Agraph_t *context;
 
-    g->desc.has_attrs = 1;
+    g->desc.has_attrs = true;
     agmakedatadict(g);
     if (!(context = agparent(g)))
 	context = g;

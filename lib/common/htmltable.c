@@ -1469,11 +1469,7 @@ static void sizeArray(htmltbl_t * tbl)
 {
     graph_t *rowg;
     graph_t *colg;
-#ifdef _WIN32
-    Agdesc_t dir = { 1, 1, 0, 1 };
-#else
     Agdesc_t dir = Agstrictdirected;
-#endif
 
     /* Do the 1D cases by hand */
     if (tbl->row_count == 1 || tbl->column_count == 1) {
