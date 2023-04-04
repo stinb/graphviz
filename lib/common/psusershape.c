@@ -14,6 +14,7 @@
 #include <gvc/gvio.h>
 #include <cgraph/strcasecmp.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 static int N_EPSF_files;
 static Dict_t *EPSF_contents;
@@ -33,18 +34,15 @@ static Dtdisc_t ImageDictDisc = {
 
 static usershape_t *user_init(const char *str)
 {
-    char *contents;
     char line[BUFSIZ];
     FILE *fp;
     struct stat statbuf;
-    bool must_inline;
     int lx, ly, ux, uy;
-    usershape_t *us;
 
     if (!EPSF_contents)
 	EPSF_contents = dtopen(&ImageDictDisc, Dtoset);
 
-    us = dtmatch(EPSF_contents, str);
+    usershape_t *us = dtmatch(EPSF_contents, str);
     if (us)
 	return us;
 
@@ -54,7 +52,7 @@ static usershape_t *user_init(const char *str)
     }
     /* try to find size */
     bool saw_bb = false;
-    must_inline = false;
+    bool must_inline = false;
     while (fgets(line, sizeof(line), fp)) {
 	if (sscanf
 	    (line, "%%%%BoundingBox: %d %d %d %d", &lx, &ly, &ux, &uy) == 4) {
@@ -65,7 +63,7 @@ static usershape_t *user_init(const char *str)
     }
 
     if (saw_bb) {
-	us = GNEW(usershape_t);
+	us = gv_alloc(sizeof(usershape_t));
 	us->x = lx;
 	us->y = ly;
 	us->w = ux - lx;
@@ -73,7 +71,7 @@ static usershape_t *user_init(const char *str)
 	us->name = str;
 	us->macro_id = N_EPSF_files++;
 	fstat(fileno(fp), &statbuf);
-	contents = us->data = N_GNEW((size_t)statbuf.st_size + 1, char);
+	char *contents = us->data = gv_calloc((size_t)statbuf.st_size + 1, sizeof(char));
 	fseek(fp, 0, SEEK_SET);
 	size_t rc = fread(contents, (size_t)statbuf.st_size, 1, fp);
 	if (rc == 1) {
@@ -99,15 +97,13 @@ void epsf_init(node_t * n)
 {
     epsf_t *desc;
     const char *str;
-    usershape_t *us;
-    int dx, dy;
 
     if ((str = safefile(agget(n, "shapefile")))) {
-	us = user_init(str);
+	usershape_t *us = user_init(str);
 	if (!us)
 	    return;
-	dx = us->w;
-	dy = us->h;
+	int dx = us->w;
+	int dy = us->h;
 	ND_width(n) = PS2INCH(dx);
 	ND_height(n) = PS2INCH(dy);
 	ND_shape_info(n) = desc = gv_alloc(sizeof(epsf_t));
@@ -138,24 +134,23 @@ void epsf_free(node_t * n)
 void cat_libfile(GVJ_t * job, const char **arglib, const char **stdlib)
 {
     FILE *fp;
-    const char **s, *bp, *p;
-    int i;
+    const char *p;
     bool use_stdlib = true;
 
     /* check for empty string to turn off stdlib */
     if (arglib) {
-        for (i = 0; use_stdlib && (p = arglib[i]); i++) {
+        for (int i = 0; use_stdlib && (p = arglib[i]); i++) {
             if (*p == '\0')
                 use_stdlib = false;
         }
     }
     if (use_stdlib)
-        for (s = stdlib; *s; s++) {
+        for (const char **s = stdlib; *s; s++) {
             gvputs(job, *s);
             gvputs(job, "\n");
         }
     if (arglib) {
-        for (i = 0; (p = arglib[i]) != 0; i++) {
+        for (int i = 0; (p = arglib[i]) != 0; i++) {
             if (*p == '\0')
                 continue;       /* ignore empty string */
             const char *safepath = safefile(p);    /* make sure filename is okay */
@@ -163,8 +158,14 @@ void cat_libfile(GVJ_t * job, const char **arglib, const char **stdlib)
 		agerr(AGWARN, "can't find library file %s\n", p);
 	    }
             else if ((fp = fopen(safepath, "r"))) {
-                while ((bp = Fgets(fp)))
-                    gvputs(job, bp);
+                while (true) {
+                    char bp[BUFSIZ] = {0};
+                    size_t r = fread(bp, 1, sizeof(bp), fp);
+                    gvwrite(job, bp, r);
+                    if (r < sizeof(bp)) {
+                      break;
+                    }
+                }
                 gvputs(job, "\n"); /* append a newline just in case */
 		fclose (fp);
             } else
@@ -213,11 +214,9 @@ void epsf_emit_body(GVJ_t *job, usershape_t *us)
 
 void epsf_define(GVJ_t *job)
 {
-    usershape_t *us;
-
     if (!EPSF_contents)
 	return;
-    for (us = dtfirst(EPSF_contents); us; us = dtnext(EPSF_contents, us)) {
+    for (usershape_t *us = dtfirst(EPSF_contents); us; us = dtnext(EPSF_contents, us)) {
 	if (us->must_inline)
 	    continue;
 	gvprintf(job, "/user_shape_%d {\n", us->macro_id);
@@ -261,7 +260,6 @@ charsetOf (char* s)
  */
 char *ps_string(char *ins, int chset)
 {
-    char *s;
     char *base;
     static agxbuf  xb;
     static int warned;
@@ -295,7 +293,7 @@ char *ps_string(char *ins, int chset)
     }
 
     agxbputc (&xb, LPAREN);
-    s = base;
+    char *s = base;
     while (*s) {
         if (*s == LPAREN || *s == RPAREN || *s == '\\')
             agxbputc (&xb, '\\');

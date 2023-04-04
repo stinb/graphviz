@@ -247,41 +247,6 @@ Agraphinfo_t* GD_info(graph_t * g) { return ((Agraphinfo_t*)AGDATA(g));}
 Agnodeinfo_t* ND_info(node_t * n) { return ((Agnodeinfo_t*)AGDATA(n));}
 #endif
 
-#if !defined(_WIN32)
-#include	<pwd.h>
-
-#endif
-
-/* Fgets:
- * Read a complete line.
- * Return pointer to line,
- * or 0 on EOF
- */
-char *Fgets(FILE * fp)
-{
-    static size_t bsize = 0;
-    static char *buf;
-    char *lp;
-    size_t len;
-
-    len = 0;
-    do {
-	if (bsize - len < BUFSIZ) {
-	    bsize += BUFSIZ;
-	    buf = grealloc(buf, bsize);
-	}
-	lp = fgets(buf + len, (int)(bsize - len), fp);
-	if (lp == 0)
-	    break;
-	len += strlen(lp);	/* since lp != NULL, len > 0 */
-    } while (buf[len - 1] != '\n');
-
-    if (len > 0)
-	return buf;
-    else
-	return 0;
-}
-
 /* safefile:
  * Check to make sure it is okay to read in files.
  * It returns NULL if the filename is trivial.
