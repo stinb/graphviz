@@ -402,7 +402,6 @@ statement	:	'{' statement_list '}'
 switch_list	:	/* empty */
 		{
 			Switch_t*		sw;
-			int				n;
 
 			if (expr.swstate)
 			{
@@ -421,7 +420,7 @@ switch_list	:	/* empty */
 			sw->lastcase = 0;
 			sw->defcase = 0;
 			sw->def = 0;
-			n = 8;
+			size_t n = 8;
 			if (!(sw->base = calloc(n, sizeof(Extype_t*))))
 			{
 				exnospace();
@@ -436,7 +435,6 @@ switch_list	:	/* empty */
 switch_item	:	case_list statement_list
 		{
 			Switch_t*	sw = expr.swstate;
-			int			n;
 
 			$$ = exnewnode(expr.program, CASE, 1, 0, $2, NULL);
 			if (sw->cur > sw->base)
@@ -446,7 +444,7 @@ switch_item	:	case_list statement_list
 				else
 					sw->firstcase = $$;
 				sw->lastcase = $$;
-				n = sw->cur - sw->base;
+				size_t n = (size_t)(sw->cur - sw->base);
 				sw->cur = sw->base;
 				$$->data.select.constant = exalloc(expr.program, (n + 1) * sizeof(Extype_t*));
 				memcpy($$->data.select.constant, sw->base, n * sizeof(Extype_t*));
@@ -471,11 +469,9 @@ case_list	:	case_item
 
 case_item	:	CASE constant ':'
 		{
-			int	n;
-
 			if (expr.swstate->cur >= expr.swstate->last)
 			{
-				n = expr.swstate->cur - expr.swstate->base;
+				size_t n = (size_t)(expr.swstate->cur - expr.swstate->base);
 				if (!(expr.swstate->base = realloc(expr.swstate->base, sizeof(Extype_t*) * 2 * n)))
 				{
 					exerror("too many case labels for switch");
