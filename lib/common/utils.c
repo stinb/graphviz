@@ -247,11 +247,6 @@ Agraphinfo_t* GD_info(graph_t * g) { return ((Agraphinfo_t*)AGDATA(g));}
 Agnodeinfo_t* ND_info(node_t * n) { return ((Agnodeinfo_t*)AGDATA(n));}
 #endif
 
-#if !defined(_WIN32)
-#include	<pwd.h>
-
-#endif
-
 /* safefile:
  * Check to make sure it is okay to read in files.
  * It returns NULL if the filename is trivial.
