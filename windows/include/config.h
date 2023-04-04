@@ -15,9 +15,6 @@
 /* Default DPI. */
 #define DEFAULT_DPI 96
 
-/* Path to TrueType fonts. */
-#define DEFAULT_FONTPATH "C:/WINDOWS/FONTS;C:/WINNT/Fonts;C:/winnt/fonts"
-
 /* Define if you want DIGCOLA */
 #define DIGCOLA 1
 

@@ -116,21 +116,18 @@ DARWIN9=no
 case "${host_os}" in
   *uwin* )
 	UWIN=yes
-	DEFAULT_FONTPATH="C:/WINDOWS/FONTS;C:/WINNT/Fonts;C:/winnt/fonts"
 	PATHSEPARATOR=";"
 	BROWSER="xdg-open"
 	JSHEXT=so
 	;;
   *cygwin* )
 	CYGWIN=yes
-	DEFAULT_FONTPATH="C:/WINDOWS/FONTS;C:/WINNT/Fonts;C:/winnt/fonts"
 	PATHSEPARATOR=";"
 	BROWSER="xdg-open"
 	JSHEXT=so
 	;;
   *mingw32* )
 	MINGW32=yes
-	DEFAULT_FONTPATH="C:/WINDOWS/FONTS;C:/WINNT/Fonts;C:/winnt/fonts"
 	PATHSEPARATOR=":"
 	BROWSER="xdg-open"
 	JSHEXT=so
@@ -138,7 +135,6 @@ case "${host_os}" in
   *darwin* )
 	DARWIN=yes
 	AC_DEFINE_UNQUOTED(DARWIN,1,[Define for any Darwin-based OS.])
-	DEFAULT_FONTPATH="~/Library/Fonts:/Library/Fonts:/Network/Library/Fonts:/System/Library/Fonts"
 	PATHSEPARATOR=":"
 	BROWSER="open"
 	JSHEXT=jnilib
@@ -154,8 +150,7 @@ case "${host_os}" in
 		;;
         esac
 	;;
-  * ) # This sucks!  Whatever happened to standards for file system layout?   (Good job its no longer used unless fontconfig is unavailable.)
-	DEFAULT_FONTPATH="/usr/share/fonts/sun/TrueType:/usr/share/fonts/TrueType:/usr/X11/lib/X11/fonts/TrueType:/usr/share/fonts/sun/Type1:/usr/openwin/lib/X11/fonts/Type1:/usr/share/fonts/X11/Type1:/usr/share/fonts/default/Type1:/usr/X11R6/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/truetype:/usr/X11R6/lib/X11/fonts/TTF:/usr/share/fonts/truetype:/usr/openwin/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/Type1:/usr/common/share/fonts/ttf";
+  * )
 	PATHSEPARATOR=":"
 	BROWSER="xdg-open"
 	JSHEXT=so
@@ -169,7 +164,6 @@ AC_SUBST([EXTRA_SMYRNA_LDFLAGS])
 JNI_EXTRA_LDFLAGS="-shrext .$JSHEXT"
 AC_SUBST([JNI_EXTRA_LDFLAGS])
 AC_SUBST([JSHEXT])
-AC_DEFINE_UNQUOTED(DEFAULT_FONTPATH,"$DEFAULT_FONTPATH",[Path to TrueType fonts.])
 AC_DEFINE_UNQUOTED(PATHSEPARATOR,"$PATHSEPARATOR",[Path separator character.])
 AM_CONDITIONAL(WITH_WIN32, [test "x$UWIN" = "xyes" -o "x$CYGWIN" = "xyes" -o "x$MINGW32" = "xyes"])
 AM_CONDITIONAL(WITH_DARWIN9, [test "x$DARWIN9" = "xyes"])
