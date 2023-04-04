@@ -275,7 +275,7 @@ extern char*		exstash(Sfio_t*, Vmalloc_t*);
 extern int		extoken_fn(Expr_t*);
 extern char*		exstring(Expr_t *, char *);
 extern void*		exstralloc(Expr_t *, size_t);
-extern char*		extype(int);
+extern char* extype(long int);
 extern Extype_t exzero(long int);
 extern char*	exopname(int);
 extern void		exinit(void);
