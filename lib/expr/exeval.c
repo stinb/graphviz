@@ -138,7 +138,7 @@ static Extype_t getdyn(Expr_t *ex, Exnode_t *exnode, void *env,
 		if (exnode->data.variable.symbol->index_type == INTEGER) {
 			if (!(b = dtmatch((Dt_t *) exnode->data.variable.symbol->local.pointer, &v)))
 			{
-				if (!(b = newof(0, Exassoc_t, 1, 0)))
+				if (!(b = calloc(1, sizeof(Exassoc_t))))
 					exnospace();
 				b->key = v;
 				dtinsert((Dt_t *)exnode->data.variable.symbol->local.pointer, b);
@@ -156,7 +156,7 @@ static Extype_t getdyn(Expr_t *ex, Exnode_t *exnode, void *env,
 				keyname = v.string;
 			if (!(b = dtmatch((Dt_t *)exnode->data.variable.symbol->local.pointer, keyname)))
 			{
-				if (!(b = newof(0, Exassoc_t, 1, strlen(keyname))))
+				if (!(b = calloc(1, sizeof(Exassoc_t) + strlen(keyname))))
 					exnospace();
 				strcpy(b->name, keyname);
 				b->key = v;
@@ -783,7 +783,7 @@ addItem (Dt_t* arr, Extype_t v, char* tok)
 	Exassoc_t* b;
 
 	if (!(b = dtmatch(arr, &v))) {
-		if (!(b = newof(0, Exassoc_t, 1, 0)))
+		if (!(b = calloc(1, sizeof(Exassoc_t))))
 	    	exerror("out of space [assoc]");
 		b->key = v;
 		dtinsert(arr, b);

@@ -18,8 +18,8 @@
 #include <cgraph/agxbuf.h>
 #include <cgraph/exit.h>
 #include <expr/exlib.h>
-#include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 typedef struct Excc_s Excc_t;
@@ -654,7 +654,7 @@ static Excc_t *exccopen(Expr_t *ex, Exccdisc_t *disc) {
 
 	if (!(id = disc->id))
 		id = "";
-	if (!(cc = newof(0, Excc_t, 1, strlen(id) + 2)))
+	if (!(cc = calloc(1, sizeof(Excc_t) + strlen(id) + 2)))
 		return 0;
 	cc->expr = ex;
 	cc->disc = ex->disc;

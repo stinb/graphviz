@@ -2222,9 +2222,7 @@ static int
  */
 static Exdisc_t *initDisc(Gpr_t * state)
 {
-    Exdisc_t *dp;
-
-    dp = newof(0, Exdisc_t, 1, 0);
+    Exdisc_t *dp = calloc(1, sizeof(Exdisc_t));
     if (!dp) {
 	error(ERROR_ERROR,
 	      "could not create libexp discipline: out of memory");
@@ -2434,7 +2432,6 @@ static const char *doFlags(int flags) {
  */
 comp_prog *compileProg(parse_prog * inp, Gpr_t * state, int flags)
 {
-    comp_prog *p;
     const char *endg_sfx = NULL;
     int i, useflags = 0;
 
@@ -2444,7 +2441,7 @@ comp_prog *compileProg(parse_prog * inp, Gpr_t * state, int flags)
     /* Make sure we have enough bits for types */
     assert(BITS_PER_BYTE * sizeof(tctype) >= (1 << TBITS));
 
-    p = newof(0, comp_prog, 1, 0);
+    comp_prog *p = calloc(1, sizeof(comp_prog));
     if (!p) {
 	error(ERROR_ERROR,
 	      "could not create compiled program: out of memory");

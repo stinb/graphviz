@@ -19,7 +19,7 @@
 #include <ast/sfstr.h>
 #include <cgraph/alloc.h>
 #include <stdbool.h>
-#include <stddef.h>
+#include <stdlib.h>
 
 static int name_used;
 
@@ -36,7 +36,7 @@ Gpr_t *openGPRState(gpr_info* info)
 {
     Gpr_t *state;
 
-    if (!(state = newof(0, Gpr_t, 1, 0))) {
+    if (!(state = calloc(1, sizeof(Gpr_t)))) {
 	error(ERROR_ERROR, "Could not create gvpr state: out of memory");
 	return state;
     }
