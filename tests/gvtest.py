@@ -10,7 +10,7 @@ import sys
 import sysconfig
 import tempfile
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 ROOT = Path(__file__).resolve().parent.parent
 """absolute path to the root of the repository"""
@@ -110,6 +110,25 @@ def dot(
     return subprocess.check_output(args, **kwargs)
 
 
+def freedesktop_os_release() -> Dict[str, str]:
+    """
+    polyfill for `platform.freedesktop_os_release`
+    """
+    release = {}
+    os_release = Path("/etc/os-release")
+    if os_release.exists():
+        with open(os_release, "rt", encoding="utf-8") as f:
+            for line in f.readlines():
+                if line.startswith("#") or "=" not in line:
+                    continue
+                key, _, value = (x.strip() for x in line.partition("="))
+                # remove quotes
+                if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+                    value = value[1:-1]
+                release[key] = value
+    return release
+
+
 def gvpr(program: Path) -> str:
     """run a GVPR program on empty input"""
 
@@ -118,6 +137,13 @@ def gvpr(program: Path) -> str:
     return subprocess.check_output(
         ["gvpr", "-f", program], stdin=subprocess.DEVNULL, universal_newlines=True
     )
+
+
+def is_centos() -> bool:
+    """
+    is the current environment CentOS-based?
+    """
+    return freedesktop_os_release().get("ID") == "centos"
 
 
 def is_cmake() -> bool:
@@ -133,6 +159,22 @@ def is_mingw() -> bool:
 def is_python36() -> bool:
     """are we running Python 3.6?"""
     return sys.version_info.major == 3 and sys.version_info.minor == 6
+
+
+def is_using_asan() -> bool:
+    """was Graphviz built with Address Sanitizer?"""
+
+    # if we do not have `ldd`, assume Graphviz was not built with ASan
+    ldd = shutil.which("ldd")
+    if ldd is None:
+        return False
+
+    # what dynamic libraries is `dot` linked against?
+    dot_exe = shutil.which("dot")
+    shared_libs = subprocess.check_output([ldd, dot_exe], universal_newlines=True)
+
+    # was `dot` linked against the ASan supporting library?
+    return re.search(r"\blibasan\b", shared_libs) is not None
 
 
 def remove_xtype_warnings(s: str) -> str:

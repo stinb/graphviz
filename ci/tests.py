@@ -8,44 +8,17 @@ import os
 import platform
 import subprocess
 import sys
-from pathlib import Path
-from typing import Dict
 
 import pytest
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../tests"))
 from gvtest import (  # pylint: disable=wrong-import-position
     dot,
+    freedesktop_os_release,
     is_cmake,
     is_mingw,
     which,
 )
-
-
-def _freedesktop_os_release() -> Dict[str, str]:
-    """
-    polyfill for `platform.freedesktop_os_release`
-    """
-    release = {}
-    os_release = Path("/etc/os-release")
-    if os_release.exists():
-        with open(os_release, "rt", encoding="utf-8") as f:
-            for line in f.readlines():
-                if line.startswith("#") or "=" not in line:
-                    continue
-                key, _, value = (x.strip() for x in line.partition("="))
-                # remove quotes
-                if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
-                    value = value[1:-1]
-                release[key] = value
-    return release
-
-
-def is_centos() -> bool:
-    """
-    is the current CI environment CentOS-based?
-    """
-    return _freedesktop_os_release().get("ID") == "centos"
 
 
 def is_win64() -> bool:
@@ -125,7 +98,7 @@ def test_existence(binary: str):
         "smyrna",
     ]
 
-    os_id = _freedesktop_os_release().get("ID")
+    os_id = freedesktop_os_release().get("ID")
 
     # FIXME: Remove skip when
     # https://gitlab.com/graphviz/graphviz/-/issues/1834 is fixed
