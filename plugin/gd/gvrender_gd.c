@@ -238,11 +238,6 @@ static void gdgen_missingfont(char *fontreq) {
     if (n_errors >= 20)
 	return;
     if (lastmissing == 0 || strcmp(lastmissing, fontreq)) {
-#ifndef HAVE_GD_FONTCONFIG
-	char *p = getenv("GDFONTPATH");
-	if (!p)
-	    p = DEFAULT_FONTPATH;
-#endif
 	free(lastmissing);
 	lastmissing = gv_strdup(fontreq);
 	n_errors++;
