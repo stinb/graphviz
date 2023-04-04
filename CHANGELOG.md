@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased (8.0.2)]
 
+### Changed
+
+- The Autotools build system can now detect a MacPorts-installed libANN. #1854
+
 ### Fixed
 
 - Head and tail of `digraph` edges with `dir = both` were inverted if

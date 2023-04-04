@@ -1832,7 +1832,14 @@ else
         use_ann="No (no ann.pc or libANN found)"
       ])
     ], [
-      use_ann="No (no ann.pc or ANN.h found)"
+      # fall back discovery for Macports
+      AS_IF([test -f /opt/local/include/ANN/ANN.h], [
+        use_ann="Yes"
+        ANN_CFLAGS="-I/opt/local/include"
+        ANN_LIBS="-L/opt/local/lib -lann"
+      ], [
+        use_ann="No (no ann.pc or ANN.h found)"
+      ])
     ])
   ])
 fi
