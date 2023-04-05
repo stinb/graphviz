@@ -10,6 +10,7 @@
 
 #include <label/index.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
 #include <label/split.q.h>
@@ -192,18 +193,18 @@ static void MethodZero(RTree_t * rtp)
 static void PickSeeds(RTree_t * rtp)
 {
   int seed0 = 0, seed1 = 0;
-  unsigned int area[NODECARD + 1];
+  uint64_t area[NODECARD + 1];
 
     for (int i = 0; i < NODECARD + 1; i++)
 	area[i] = RectArea(&rtp->split.BranchBuf[i].rect);
 
-    unsigned worst=0;
+    uint64_t worst=0;
     for (int i = 0; i < NODECARD; i++) {
 	for (int j = i + 1; j < NODECARD + 1; j++) {
 	    Rect_t rect;
 	    rect = CombineRect(&rtp->split.BranchBuf[i].rect,
 			       &rtp->split.BranchBuf[j].rect);
-	    unsigned waste = RectArea(&rect) - area[i] - area[j];
+	    uint64_t waste = RectArea(&rect) - area[i] - area[j];
 	    if (waste > worst) {
 		worst = waste;
 		seed0 = i;
