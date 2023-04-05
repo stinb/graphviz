@@ -1264,8 +1264,7 @@ def test_1893():
 
 def test_1906():
     """
-    graphs that cause an overflow during rectangle calculation should result in
-    a layout error
+    graphs that generate large rectangles should be accepted
     https://gitlab.com/graphviz/graphviz/-/issues/1906
     """
 
@@ -1274,16 +1273,7 @@ def test_1906():
     assert input.exists(), "unexpectedly missing test case"
 
     # use Circo to translate it to DOT
-    with subprocess.Popen(
-        ["dot", "-Kcirco", "-Tgv", "-o", os.devnull, input],
-        stderr=subprocess.PIPE,
-        universal_newlines=True,
-    ) as p:
-        _, stderr = p.communicate()
-
-        assert p.returncode != 0, "graph that generates overflow was accepted"
-
-    assert "area too large" in stderr, "missing/incorrect error message"
+    subprocess.check_call(["dot", "-Kcirco", "-Tgv", "-o", os.devnull, input])
 
 
 @pytest.mark.skipif(which("twopi") is None, reason="twopi not available")
@@ -2672,7 +2662,6 @@ def test_2368():
     dot("svg", input)
 
 
-@pytest.mark.xfail(strict=True)
 def test_2371():
     """
     Large graphs should not cause rectangle area calculation overflows

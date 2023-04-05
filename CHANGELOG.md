@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The Autotools build system can now detect a MacPorts-installed libANN. #1854
 - Support for versions of Cairo prior to 1.10 has been removed.
+- Graphs that generate rectangles with areas in the range [2³², 2⁶⁴ - 1]
+  are now supported. Previously areas greater than 2³² - 1 would be
+  rejected. #2371
 
 ### Fixed
 
