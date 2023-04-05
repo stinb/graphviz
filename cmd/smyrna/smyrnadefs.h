@@ -16,16 +16,17 @@
 #endif
 #endif
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <xdot/xdot.h>
 #include <gtk/gtk.h>
 #include <glcomp/opengl.h>
 #include <gtk/gtkgl.h>
 #include <cgraph/cgraph.h>
+#include <cgraph/list.h>
 #include <glcomp/glcompset.h>
 #include "hier.h"
 #include <glcomp/glutils.h>
-#include <stddef.h>
 
 #ifdef	_WIN32			//this is needed on _WIN32 to get libglade see the callback
 #define _BB  __declspec(dllexport)
@@ -54,11 +55,9 @@ typedef struct _ArcBall_t ArcBall_t;
 
 #define DEG2RAD  G_PI/180
 
-#define EXPAND_CAPACITY_VALUE 50
-#define DEFAULT_ATTR_LIST_CAPACITY 100
 #define MAX_FILTERED_ATTR_COUNT 50
 
-typedef enum {attr_alpha,attr_float,attr_int,attr_bool,attr_drowdown,attr_color} attr_data_type;
+typedef enum {attr_alpha,attr_float,attr_int,attr_bool} attr_data_type;
 typedef enum {smyrna_all,smyrna_2D,smyrna_3D,smyrna_fisheye,smyrna_all_but_fisheye} smyrna_view_mode;
 
 
@@ -70,7 +69,7 @@ typedef struct{
 
 
 typedef struct {
-	int index;
+	size_t index;
 	char* name;
 	char* value;
 	char* defValG;
@@ -82,13 +81,13 @@ typedef struct {
 	int propagate;
 }attr_t;
 
+DEFINE_LIST(attrs, attr_t*)
+
 typedef struct
 {
-	int attr_count;
-	int capacity;
-	attr_t** attributes;
+	attrs_t attributes;
 	GtkLabel* fLabels[MAX_FILTERED_ATTR_COUNT];
-	int with_widgets;
+	bool with_widgets;
 }attr_list;
 
     typedef struct 
@@ -98,7 +97,6 @@ typedef struct
 	glCompFont* font;
 	int size;
 	int layer;
-	int listId;/*opengl list id*/
 	glCompImage* img;
     } sdot_op;	
 	
@@ -115,13 +113,11 @@ typedef struct
     } colorschemaset;
 
     typedef enum {
-	GVK_NONE = -1,
 	GVK_DOT,
 	GVK_NEATO,
 	GVK_TWOPI,
 	GVK_CIRCO,
 	GVK_FDP,
-	GVK_SFDP		/* keep last */
     } gvk_layout;
 
     typedef struct
@@ -264,17 +260,6 @@ typedef struct
 	selection sel;
 	
     } topview;
-
-    typedef struct _attribute {
-	char Type;
-	char *Name;
-	char *Default;
-	char Engine[GVK_FDP + 1];
-	char **ComboValues;
-	size_t ComboValuesCount;
-	GtkWidget *attrWidget;
-
-    } attribute;
 
     typedef struct{
     Agraph_t *def_attrs;

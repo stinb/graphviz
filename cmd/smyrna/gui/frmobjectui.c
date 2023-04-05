@@ -25,6 +25,7 @@
 #include <cgraph/alloc.h>
 #include <cgraph/strcasecmp.h>
 #include <cgraph/strview.h>
+#include <stdint.h>
 #include <string.h>
 
 static int sel_node;
@@ -35,7 +36,7 @@ static char *safestrdup(const char *src) {
     if (!src)
 	return NULL;
     else
-	return strdup(src);
+	return gv_strdup(src);
 }
 static int get_object_type(void)
 {
@@ -62,18 +63,15 @@ static attr_t *new_attr_with_ref(Agsym_t * sym)
     switch (sym->kind) {
     case AGRAPH:
 	a->objType[0] = 1;
-	if (sym->defval)
-	    a->defValG = safestrdup(sym->defval);
+	a->defValG = safestrdup(sym->defval);
 	break;
     case AGNODE:
 	a->objType[1] = 1;
-	if (sym->defval)
-	    a->defValN = safestrdup(sym->defval);
+	a->defValN = safestrdup(sym->defval);
 	break;
     case AGEDGE:
 	a->objType[2] = 1;
-	if (sym->defval)
-	    a->defValE = safestrdup(sym->defval);
+	a->defValE = safestrdup(sym->defval);
 	break;
     }
     return a;
@@ -87,8 +85,7 @@ static attr_t *new_attr_ref(attr_t * refAttr)
     a->defValN = safestrdup(refAttr->defValN);
     a->defValE = safestrdup(refAttr->defValE);
     a->name = safestrdup(refAttr->name);
-    if (refAttr->value)
-	a->value = safestrdup(refAttr->value);
+    a->value = safestrdup(refAttr->value);
     return a;
 }
 
@@ -104,12 +101,9 @@ static void reset_attr_list_widgets(attr_list * l)
 // attr_list is a basic stack implementation
 // with alphanumeric sorting functions
 // that uses quicksort
-static attr_list *attr_list_new(int with_widgets) {
+static attr_list *attr_list_new(bool with_widgets) {
     int id;
     attr_list *l = gv_alloc(sizeof(attr_list));
-    l->attr_count = 0;
-    l->capacity = DEFAULT_ATTR_LIST_CAPACITY;
-    l->attributes = gv_calloc(DEFAULT_ATTR_LIST_CAPACITY, sizeof(attr_t*));
     l->with_widgets = with_widgets;
     /*create filter widgets */
 
@@ -140,28 +134,14 @@ static int attr_compare(const void *a, const void *b)
     return strcasecmp(a1->name, a2->name);
 }
 
-static void attr_list_sort(attr_list * l)
-{
-    qsort(l->attributes, l->attr_count, sizeof(attr_t *), attr_compare);
-}
-
 static void attr_list_add(attr_list *l, attr_t *a) {
-    int id;
-    if ((!l) || (!a))
+    if (!l || !a)
 	return;
-    l->attr_count++;
-    if (l->attr_count == l->capacity) {
-	l->attributes = gv_recalloc(l->attributes, l->capacity,
-	                            l->capacity + EXPAND_CAPACITY_VALUE,
-	                            sizeof(attr_t *));
-	l->capacity = l->capacity + EXPAND_CAPACITY_VALUE;
-    }
-    l->attributes[l->attr_count - 1] = a;
-    if (l->attr_count > 1)
-	attr_list_sort(l);
+    attrs_append(&l->attributes, a);
+    attrs_sort(&l->attributes, (int(*)(const attr_t**, const attr_t**))attr_compare);
     /*update indices */
-    for (id = 0; id < l->attr_count; id++)
-	l->attributes[id]->index = id;
+    for (size_t id = 0; id < attrs_size(&l->attributes); ++id)
+	attrs_get(&l->attributes, id)->index = id;
 }
 
 static attr_data_type get_attr_data_type(char c)
@@ -220,34 +200,26 @@ static void set_attr_object_type(const char *str, int *t) {
 
 static attr_t *binarySearch(attr_list * l, char *searchKey)
 {
-    int middle, low, high, res;
-    low = 0;
-    high = l->attr_count - 1;
-
-    while (low <= high) {
-	middle = (low + high) / 2;
-	res = strcasecmp(searchKey, l->attributes[middle]->name);
-	if (res == 0) {
-	    return l->attributes[middle];
-	} else if (res < 0) {
-	    high = middle - 1;
-	} else {
-	    low = middle + 1;
-	}
-    }
-    return NULL;
+  const attr_t key = {.name = searchKey};
+  const attr_t *keyp = &key;
+  attr_t **attrp = bsearch(&keyp, attrs_at(&l->attributes, 0),
+                           attrs_size(&l->attributes), sizeof(attr_t*),
+                           attr_compare);
+  if (attrp != NULL) {
+    return *attrp;
+  }
+  return NULL;
 }
 
 static attr_t *pBinarySearch(attr_list *l, const char *searchKey) {
-    int middle, low, high, res;
-    low = 0;
-    high = l->attr_count - 1;
+    size_t low = 0;
+    size_t high = attrs_size(&l->attributes) - 1;
 
-    while (low <= high) {
-	middle = (low + high) / 2;
-	res = strncasecmp(searchKey, l->attributes[middle]->name, strlen(searchKey));
+    while (high != SIZE_MAX && low <= high) {
+	size_t middle = (low + high) / 2;
+	int res = strncasecmp(searchKey, attrs_get(&l->attributes, middle)->name, strlen(searchKey));
 	if (res == 0) {
-	    return l->attributes[middle];
+	    return attrs_get(&l->attributes, middle);
 	}
 	else if (res < 0) {
 	    high = middle - 1;
@@ -273,35 +245,34 @@ static void create_filtered_list(const char *prefix, attr_list *sl,
 
     res = 0;
     /*go backward to get the first */
-    while ((at->index > 0) && (res == 0)) {
-	at = sl->attributes[at->index - 1];
+    while (at->index > 0 && res == 0) {
+	at = attrs_get(&sl->attributes, at->index - 1);
 	res = strncasecmp(prefix, at->name, strlen(prefix));
     }
     res = 0;
-    while ((at->index < sl->attr_count) && (res == 0)) {
-	at = sl->attributes[at->index + 1];
+    while (at->index < attrs_size(&sl->attributes) && res == 0) {
+	at = attrs_get(&sl->attributes, at->index + 1);
 	res = strncasecmp(prefix, at->name, strlen(prefix));
-	if ((res == 0) && (at->objType[objKind] == 1))
+	if (res == 0 && at->objType[objKind] == 1)
 	    attr_list_add(tl, new_attr_ref(at));
     }
 }
 
 static void filter_attributes(const char *prefix, topview *t) {
-    int ind;
     int tmp;
 
     attr_list *l = t->attributes;
     int objKind = get_object_type();
 
-    attr_list *fl = attr_list_new(0);
+    attr_list *fl = attr_list_new(false);
     reset_attr_list_widgets(l);
     create_filtered_list(prefix, l, fl);
-    for (ind = 0; ind < fl->attr_count; ind++) {
-	gtk_label_set_text(l->fLabels[ind], fl->attributes[ind]->name);
+    for (size_t ind = 0; ind < attrs_size(&fl->attributes); ++ind) {
+	gtk_label_set_text(l->fLabels[ind], attrs_get(&fl->attributes, ind)->name);
     }
 
     Color_Widget_bg("white", glade_xml_get_widget(xml, "txtAttr"));
-    if (fl->attr_count == 0)
+    if (attrs_is_empty(&fl->attributes))
 	Color_Widget_bg("red", glade_xml_get_widget(xml, "txtAttr"));
     /*a new attribute can be entered */
 
@@ -331,8 +302,8 @@ static void filter_attributes(const char *prefix, topview *t) {
 	Color_Widget_bg("white", glade_xml_get_widget(xml, "txtAttr"));
     }
 
-    for (ind = 0; ind < fl->attr_count; ind++) {
-	if (strcasecmp(prefix, fl->attributes[ind]->name) == 0) {	/*an existing attribute */
+    for (size_t ind = 0; ind < attrs_size(&fl->attributes); ++ind) {
+	if (strcasecmp(prefix, attrs_get(&fl->attributes, ind)->name) == 0) { // an existing attribute
 
 	    Color_Widget_bg("green", glade_xml_get_widget(xml, "txtAttr"));
 
@@ -340,17 +311,17 @@ static void filter_attributes(const char *prefix, topview *t) {
 		gtk_entry_set_text((GtkEntry *)
 				   glade_xml_get_widget(xml,
 							"txtDefValue"),
-				   fl->attributes[0]->defValG);
+				   attrs_get(&fl->attributes, 0)->defValG);
 	    if (get_object_type() == AGNODE)
 		gtk_entry_set_text((GtkEntry *)
 				   glade_xml_get_widget(xml,
 							"txtDefValue"),
-				   fl->attributes[0]->defValN);
+				   attrs_get(&fl->attributes, 0)->defValN);
 	    if (get_object_type() == AGEDGE)
 		gtk_entry_set_text((GtkEntry *)
 				   glade_xml_get_widget(xml,
 							"txtDefValue"),
-				   fl->attributes[0]->defValE);
+				   attrs_get(&fl->attributes, 0)->defValE);
 	    gtk_widget_set_sensitive(glade_xml_get_widget
 				     (xml, "txtDefValue"), 0);
 	    gtk_widget_hide(glade_xml_get_widget(xml, "attrAddBtn"));
@@ -360,14 +331,14 @@ static void filter_attributes(const char *prefix, topview *t) {
 	    gtk_toggle_button_set_active((GtkToggleButton *)
 					 glade_xml_get_widget(xml,
 							      "attrProg"),
-					 fl->attributes[0]->propagate);
+					 attrs_get(&fl->attributes, 0)->propagate);
 	    break;
 	}
     }
 
-    tmp = (((objKind == AGNODE) && (sel_node))
-	   || ((objKind == AGEDGE) && (sel_edge)) || ((objKind == AGRAPH)
-						      && (sel_graph)));
+    tmp = (objKind == AGNODE && sel_node)
+       || (objKind == AGEDGE && sel_edge)
+       || (objKind == AGRAPH && sel_graph);
     gtk_widget_set_sensitive(glade_xml_get_widget(xml, "attrApplyBtn"),
 			     tmp);
 }
@@ -503,7 +474,7 @@ _BB void on_attrAddBtn_clicked(GtkWidget * widget, gpointer user_data)
 	attr->index = 0;
 	attr->name = safestrdup(attr_name);
 	attr->type = attr_alpha;
-	attr->value = safestrdup("");
+	attr->value = gv_strdup("");
 	attr->widget = NULL;
 	attr_list_add(t->attributes, attr);
     }
@@ -535,7 +506,6 @@ attr_list *load_attr_list(Agraph_t * g)
     attr_t *attr;
     attr_list *l;
     FILE *file;
-    Agsym_t *sym;		/*cgraph atttribute */
     char buffer[BUFSIZ];
     static char *smyrna_attrs;
     char *a;
@@ -543,17 +513,15 @@ attr_list *load_attr_list(Agraph_t * g)
     if (!smyrna_attrs)
 	smyrna_attrs = smyrnaPath("attrs.txt");
     g = view->g[view->activeGraph];
-    l = attr_list_new(1);
+    l = attr_list_new(true);
     file = fopen(smyrna_attrs, "r");
     if (file != NULL) {
-	int i = 0;
-	while (fgets(buffer, sizeof(buffer), file) != NULL) {
-	    int idx = 0;
+	for (size_t i = 0; fgets(buffer, sizeof(buffer), file) != NULL; ++i) {
 	    attr = new_attr();
 	    a = strtok(buffer, ",");
 	    attr->index = i;
 	    attr->type = get_attr_data_type(a[0]);
-	    while ((a = strtok(NULL, ","))) {
+	    for (int idx = 0; (a = strtok(NULL, ",")); ++idx) {
 		/*C,(0)color, (1)black, (2)EDGE Or NODE Or CLUSTER, (3)ALL_ENGINES */
 
 		switch (idx) {
@@ -569,16 +537,13 @@ attr_list *load_attr_list(Agraph_t * g)
 		    set_attr_object_type(a, attr->objType);
 		    break;
 		}
-		idx++;
 	    }
-	    i++;
 	    attr_list_add(l, attr);
 
 	}
 	fclose(file);
     }
-    sym = NULL;
-    while ((sym = agnxtattr(g, AGRAPH, sym))) {
+    for (Agsym_t *sym = NULL; (sym = agnxtattr(g, AGRAPH, sym)); ) {
 	attr = binarySearch(l, sym->name);
 	if (attr)
 	    attr->objType[0] = 1;
@@ -587,9 +552,7 @@ attr_list *load_attr_list(Agraph_t * g)
 	    attr_list_add(l, attr);
 	}
     }
-    sym = NULL;
-    while ((sym = agnxtattr(g, AGNODE, sym))) {
-
+    for (Agsym_t *sym = NULL; (sym = agnxtattr(g, AGNODE, sym)); ) {
 	attr = binarySearch(l, sym->name);
 	if (attr) {
 	    attr->objType[1] = 1;
@@ -600,9 +563,7 @@ attr_list *load_attr_list(Agraph_t * g)
 	}
 
     }
-    sym = NULL;
-    while ((sym = agnxtattr(g, AGEDGE, sym))) {
-
+    for (Agsym_t *sym = NULL; (sym = agnxtattr(g, AGEDGE, sym)); ) {
 	attr = binarySearch(l, sym->name);
 	if (attr)
 	    attr->objType[2] = 1;
