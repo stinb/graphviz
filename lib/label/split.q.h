@@ -36,7 +36,7 @@ extern "C" {
 typedef struct split_q_s {
     struct Branch BranchBuf[NODECARD + 1];
     struct Rect CoverSplit;
-    unsigned int CoverSplitArea;
+    uint64_t CoverSplitArea;
     struct PartitionVars Partitions[METHODS];
 } SplitQ_t;
 
