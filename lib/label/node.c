@@ -103,7 +103,6 @@ Rect_t NodeCover(Node_t * n)
 */
 int PickBranch(Rect_t * r, Node_t * n)
 {
-    Rect_t *rr=0;
     uint64_t bestIncr = 0;
     uint64_t bestArea = 0;
     int best=0;
@@ -112,10 +111,9 @@ int PickBranch(Rect_t * r, Node_t * n)
 
     for (int i = 0; i < NODECARD; i++) {
 	if (n->branch[i].child) {
-	    Rect_t rect;
-	    rr = &n->branch[i].rect;
+	    Rect_t *rr = &n->branch[i].rect;
 	    uint64_t area = RectArea(rr);
-	    rect = CombineRect(r, rr);
+	    Rect_t rect = CombineRect(r, rr);
 	    uint64_t increase = RectArea(&rect) - area;
 	    if (!bestSet || increase < bestIncr) {
 		best = i;
