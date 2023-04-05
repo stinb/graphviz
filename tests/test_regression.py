@@ -2672,6 +2672,21 @@ def test_2368():
     dot("svg", input)
 
 
+@pytest.mark.xfail(strict=True)
+def test_2371():
+    """
+    Large graphs should not cause rectangle area calculation overflows
+    https://gitlab.com/graphviz/graphviz/-/issues/2371
+    """
+
+    # locate our associated test case in this directory
+    input = Path(__file__).parent / "2371.dot"
+    assert input.exists(), "unexpectedly missing test case"
+
+    # run it through Graphviz
+    subprocess.check_call(["dot", "-Tsvg", "-Knop2", "-o", os.devnull, input])
+
+
 def test_changelog_dates():
     """
     Check the dates of releases in the changelog are correctly formatted
