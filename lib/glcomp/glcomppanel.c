@@ -38,15 +38,6 @@ glCompPanel *glCompPanelNew(glCompObj * parentObj, GLfloat x, GLfloat y,
     p->image = NULL;
     return p;
 }
-void glCompSetPanelText(glCompPanel * p, char *t)
-{
-    replacestr(t, &p->text);
-    glCompDeleteTexture(p->common.font->tex);
-    p->common.font->tex =
-	glCompSetAddNewTexLabel(p->common.compset,
-				p->common.font->fontdesc,
-				p->common.font->size, p->text, 1);
-}
 
 int glCompPanelDraw(glCompObj * o)
 {
@@ -83,68 +74,4 @@ int glCompPanelDraw(glCompObj * o)
 	p->image->common.callbacks.draw(p->image);
     }
     return 1;
-}
-
-int glCompPanelHide(glCompPanel * p)
-{
-    p->common.visible = 0;
-    return 1;
-}
-
-int glCompPanelShow(glCompPanel * p)
-{
-    p->common.visible = 1;
-    return 1;
-}
-
-void glCompPanelClick(glCompObj * o, GLfloat x, GLfloat y,
-		      glMouseButtonType t)
-{
-    if (o->common.callbacks.click)
-	o->common.callbacks.click(o, x, y, t);
-}
-
-void glCompPanelDoubleClick(glCompObj * obj, GLfloat x, GLfloat y,
-			    glMouseButtonType t)
-{
-    /*Put your internal code here */
-    if (((glCompPanel *) obj)->common.callbacks.doubleclick)
-	((glCompPanel *) obj)->common.callbacks.doubleclick(obj, x, y, t);
-}
-
-void glCompPanelMouseDown(glCompObj * obj, GLfloat x, GLfloat y,
-			  glMouseButtonType t)
-{
-    /*Put your internal code here */
-    if (((glCompPanel *) obj)->common.callbacks.mousedown)
-	((glCompPanel *) obj)->common.callbacks.mousedown(obj, x, y, t);
-}
-
-void glCompPanelMouseIn(glCompObj * obj, GLfloat x, GLfloat y)
-{
-    /*Put your internal code here */
-    if (((glCompPanel *) obj)->common.callbacks.mousein)
-	((glCompPanel *) obj)->common.callbacks.mousein(obj, x, y);
-}
-
-void glCompPanelMouseOut(glCompObj * obj, GLfloat x, GLfloat y)
-{
-    /*Put your internal code here */
-    if (((glCompPanel *) obj)->common.callbacks.mouseout)
-	((glCompPanel *) obj)->common.callbacks.mouseout(obj, x, y);
-}
-
-void glCompPanelMouseOver(glCompObj * obj, GLfloat x, GLfloat y)
-{
-    /*Put your internal code here */
-    if (((glCompPanel *) obj)->common.callbacks.mouseover)
-	((glCompPanel *) obj)->common.callbacks.mouseover(obj, x, y);
-}
-
-void glCompPanelMouseUp(glCompObj * obj, GLfloat x, GLfloat y,
-			glMouseButtonType t)
-{
-    /*Put your internal code here */
-    if (((glCompPanel *) obj)->common.callbacks.mouseup)
-	((glCompPanel *) obj)->common.callbacks.mouseup(obj, x, y, t);
 }

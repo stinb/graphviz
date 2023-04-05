@@ -88,58 +88,9 @@ static void dumpSG(graph_t * g)
     fprintf(stderr, "  }\n");
 }
 
-/* dumpE:
- */
-void dumpE(graph_t * g, int derived)
-{
-    Agnode_t *n;
-    Agedge_t *e;
-    Agedge_t **ep;
-    Agedge_t *el;
-    int i;
-    int deg;
-
-    prIndent();
-    fprintf(stderr, "Graph %s : %d nodes %d edges\n", agnameof(g), agnnodes(g),
-	    agnedges(g));
-    for (n = agfstnode(g); n; n = agnxtnode(g, n)) {
-	deg = 0;
-	for (e = agfstout(g, n); e; e = agnxtout(g, e)) {
-	    deg++;
-	    prIndent();
-		prEdge(e,"\n");
-	    if (derived) {
-		for (i = 0, ep = (Agedge_t **) ED_to_virt(e);
-		     i < ED_count(e); i++, ep++) {
-		    el = *ep;
-		    prIndent();
-			prEdge(el,"\n");
-		}
-	    }
-	}
-	if (deg == 0) {		/* no out edges */
-	    if (!agfstin(g, n))	/* no in edges */
-		fprintf(stderr, " %s\n", agnameof(n));
-	}
-    }
-    if (!derived) {
-	bport_t *pp;
-	if ((pp = PORTS(g))) {
-	    int sz = NPORTS(g);
-	    fprintf(stderr, "   %d ports\n", sz);
-	    while (pp->e) {
-		fprintf(stderr, "   %s : ", agnameof(pp->n));
-		prEdge(pp->e,"\n");
-		pp++;
-	    }
-	}
-    }
-}
-
 /* dump:
  */
-void dump(graph_t * g, int level, int doBB)
-{
+void dump(graph_t *g, int level) {
     node_t *n;
     boxf bb;
     double w, h;
@@ -160,18 +111,8 @@ void dump(graph_t * g, int level, int doBB)
 	    prIndent();
 	    w = ND_width(n);
 	    h = ND_height(n);
-	    if (doBB) {
-		bb.LL.x = pos.x - w / 2.0;
-		bb.LL.y = pos.y - h / 2.0;
-		bb.UR.x = bb.LL.x + w;
-		bb.UR.y = bb.LL.y + h;
-		fprintf(stderr, "%s: (%f,%f) ((%f,%f) , (%f,%f))\n",
-			agnameof(n), pos.x, pos.y, bb.LL.x, bb.LL.y, bb.UR.x,
-			bb.UR.y);
-	    } else {
-		fprintf(stderr, "%s: (%f,%f) (%f,%f) \n",
-			agnameof(n), pos.x, pos.y, w, h);
-	    }
+	    fprintf(stderr, "%s: (%f,%f) (%f,%f) \n",
+	            agnameof(n), pos.x, pos.y, w, h);
 	}
     }
 }
@@ -189,8 +130,7 @@ void dumpG(graph_t * g, char *fname, int expMode)
     fclose(fp);
 }
 
-double Scale = 0.0;
-double ArrowScale = 1.0;
+static const double ArrowScale = 1.0;
 
 #define         ARROW_LENGTH    10
 #define         ARROW_WIDTH      5
@@ -292,21 +232,17 @@ static void pswrite(Agraph_t * g, FILE * fp, int expMode)
     /* If user gives scale factor, use it.
      * Else if figure too large for standard PS page, scale it to fit.
      */
-    if (Scale > 0.0)
-	scale = Scale;
-    else {
-	width = maxx - minx + 20;
-	height = maxy - miny + 20;
-	if (width > PSWidth) {
-	    if (height > PSHeight) {
-		scale = fmin(PSWidth / width, PSHeight / height);
-	    } else
-		scale = PSWidth / width;
-	} else if (height > PSHeight) {
-	    scale = PSHeight / height;
+    width = maxx - minx + 20;
+    height = maxy - miny + 20;
+    if (width > PSWidth) {
+	if (height > PSHeight) {
+	    scale = fmin(PSWidth / width, PSHeight / height);
 	} else
-	    scale = 1.0;
-    }
+	    scale = PSWidth / width;
+    } else if (height > PSHeight) {
+	scale = PSHeight / height;
+    } else
+	scale = 1.0;
 
     fprintf(fp, "%f %f translate\n",
 	    (PSWidth - scale * (minx + maxx)) / 2.0,
