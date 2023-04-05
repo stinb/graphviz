@@ -8,6 +8,7 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
+#include <inttypes.h>
 #include <label/index.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -314,15 +315,15 @@ PrintPVars(RTree_t * rtp)
     }
     fprintf(stderr, "\n");
 
-    fprintf(stderr, "count[0] = %d  area = %d\n",
+    fprintf(stderr, "count[0] = %d  area = %" PRIu64 "\n",
 	    rtp->split.Partitions[0].count[0],
 	    rtp->split.Partitions[0].area[0]);
-    fprintf(stderr, "count[1] = %d  area = %d\n",
+    fprintf(stderr, "count[1] = %d  area = %" PRIu64 "\n",
 	    rtp->split.Partitions[0].count[1],
 	    rtp->split.Partitions[0].area[1]);
     if (rtp->split.Partitions[0].area[0] +
 	rtp->split.Partitions[0].area[1] > 0) {
-	fprintf(stderr, "total area = %d  effectiveness = %3.2f\n",
+	fprintf(stderr, "total area = %" PRIu64 "  effectiveness = %3.2f\n",
 		rtp->split.Partitions[0].area[0] +
 		rtp->split.Partitions[0].area[1],
 		(float) rtp->split.CoverSplitArea /

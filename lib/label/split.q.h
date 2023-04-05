@@ -19,6 +19,7 @@ extern "C" {
 -----------------------------------------------------------------------------*/
 #include <label/rectangle.h>
 #include <label/index.h>
+#include <stdint.h>
 
 #ifndef METHODS
 #define METHODS 1
@@ -29,7 +30,7 @@ extern "C" {
     int taken[NODECARD + 1];
     int count[2];
     struct Rect cover[2];
-    int area[2];
+    uint64_t area[2];
 };
 
 typedef struct split_q_s {
