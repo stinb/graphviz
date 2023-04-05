@@ -207,8 +207,10 @@ static void xdot_style (GVJ_t *job)
 
     /* now process raw style, if any */
     s = job->obj->rawstyle;
-    if (!s)
+    if (!s) {
+	agxbfree(&xb);
 	return;
+    }
 
     while ((p = *s++)) {
 	if (streq(p, "filled") || streq(p, "bold") || streq(p, "setlinewidth")) continue;
