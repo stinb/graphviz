@@ -113,7 +113,6 @@ int PickBranch(Rect_t * r, Node_t * n)
 	    Rect_t rect;
 	    rr = &n->branch[i].rect;
 	    area = RectArea(rr);
-	    /* increase = RectArea(&CombineRect(r, rr)) - area; */
 	    rect = CombineRect(r, rr);
 	    increase = RectArea(&rect) - area;
 	    if (!bestSet || increase < bestIncr) {
