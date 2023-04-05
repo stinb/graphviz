@@ -9,8 +9,9 @@
  *************************************************************************/
 
 #include "config.h"
-
+#include <math.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
@@ -19,6 +20,7 @@
 #include <gvc/gvplugin_device.h>
 #include <gvc/gvio.h>
 #include <cgraph/agxbuf.h>
+#include <cgraph/strview.h>
 #include <common/utils.h>
 #include <common/color.h>
 #include <common/colorprocs.h>
@@ -28,7 +30,7 @@
 /* Number of points to split splines into */
 #define BEZIERSUBDIVISION 6
 
-typedef enum { FORMAT_PIC, } format_type;
+enum {FORMAT_PIC};
 
 static bool onetime = true;
 static double Fontscale;
@@ -68,7 +70,7 @@ typedef struct {
     char trname[3], *psname;
 } fontinfo;
 
-static fontinfo fonttab[] = {
+static const fontinfo fonttab[] = {
     {"AB", "AvantGarde-Demi"},
     {"AI", "AvantGarde-BookOblique"},
     {"AR", "AvantGarde-Book"},
@@ -102,37 +104,44 @@ static fontinfo fonttab[] = {
     {"R ", "Times-Roman"},
     {"S ", "Symbol"},
     {"ZD", "ZapfDingbats"},
-    {"\000\000", (char *) 0}
 };
+static const size_t fonttab_size = sizeof(fonttab) / sizeof(fonttab[0]);
 
-static char *picfontname(char *psname)
-{
-    char *rv;
-    fontinfo *p;
-
-    for (p = fonttab; p->psname; p++)
-        if (strcmp(p->psname, psname) == 0)
-            break;
-    if (p->psname)
-        rv = p->trname;
-    else {
-        agerr(AGERR, "%s%s is not a troff font\n", picgen_msghdr, psname);
-        /* try base font names, e.g. Helvetica-Outline-Oblique -> Helvetica-Outline -> Helvetica */
-        if ((rv = strrchr(psname, '-'))) {
-            *rv = '\0';         /* psname is not specified as const ... */
-            rv = picfontname(psname);
-        } else
-            rv = "R";
+#ifdef HAVE_MEMRCHR
+void *memrchr(const void *s, int c, size_t n);
+#else
+static const void *memrchr(const void *s, int c, size_t n) {
+  const char *str = s;
+  for (size_t i = n - 1; i != SIZE_MAX; --i) {
+    if (str[i] == c) {
+      return &str[i];
     }
-    return rv;
+  }
+  return NULL;
+}
+#endif
+
+static const char *picfontname(strview_t psname) {
+    for (size_t i = 0; i < fonttab_size; ++i)
+        if (strview_str_eq(psname, fonttab[i].psname))
+            return fonttab[i].trname;
+    agerr(AGERR, "%s%.*s is not a troff font\n", picgen_msghdr,
+          (int)psname.size, psname.data);
+    /* try base font names, e.g. Helvetica-Outline-Oblique -> Helvetica-Outline -> Helvetica */
+    const char *dash = memrchr(psname.data, '-', psname.size);
+    if (dash != NULL) {
+        strview_t prefix = {.data = psname.data,
+                            .size = (size_t)(dash - psname.data)};
+        return picfontname(prefix);
+    }
+    return "R";
 }
 
 static void picptarray(GVJ_t *job, pointf * A, int n, int close)
 {
-    int i;
     point p;
 
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
 	PF2P(A[i],p);
         if (i == 0) {
             gvprintf(job, "move to (%d, %d)", p.x, p.y);
@@ -145,25 +154,6 @@ static void picptarray(GVJ_t *job, pointf * A, int n, int close)
         gvprintf(job, "; line to (%d, %d)", p.x, p.y);
     }
     gvputs(job, "\n");
-}
-
-static void pic_line_style(obj_state_t *obj, int *line_style, double *style_val)
-{
-    switch (obj->pen) {
-	case PEN_DASHED: 
-	    *line_style = 1;
-	    *style_val = 10.;
-	    break;
-	case PEN_DOTTED:
-	    *line_style = 2;
-	    *style_val = 10.;
-	    break;
-	case PEN_SOLID:
-	default:
-	    *line_style = 0;
-	    *style_val = 0.;
-	    break;
-    }
 }
 
 static void pic_comment(GVJ_t *job, char *str)
@@ -193,14 +183,13 @@ static void pic_end_graph(GVJ_t * job)
 static void pic_begin_page(GVJ_t * job)
 {
     box pbr = job->pageBoundingBox;
-    double height, width;
 
-    if (onetime && job->rotation && (job->rotation != 90)) {
+    if (onetime && job->rotation && job->rotation != 90) {
         unsupported("rotation");
         onetime = false;
     }
-    height = PS2INCH((double) (pbr.UR.y) - (double) (pbr.LL.y));
-    width = PS2INCH((double) (pbr.UR.x) - (double) (pbr.LL.x));
+    double height = PS2INCH((double)pbr.UR.y - (double)pbr.LL.y);
+    double width = PS2INCH((double)pbr.UR.x - (double)pbr.LL.x);
     if (job->rotation == 90) {
         double temp = width;
         width = height;
@@ -308,8 +297,7 @@ static void pic_end_page(GVJ_t * job)
 static void pic_textspan(GVJ_t * job, pointf p, textspan_t * span)
 {
     static char *lastname;
-    static int lastsize;
-    int sz;
+    static double lastsize;
 
     switch (span->just) {
     case 'l': 
@@ -326,14 +314,13 @@ static void pic_textspan(GVJ_t * job, pointf p, textspan_t * span)
     p.y += span->font->size / (3.0 * POINTS_PER_INCH);
     p.x += span->size.x / (2.0 * POINTS_PER_INCH);
 
-    if (span->font->name && (!(lastname) || strcmp(lastname, span->font->name))) {
-        gvprintf(job, ".ft %s\n", picfontname(span->font->name));
+    if (span->font->name && (!lastname || strcmp(lastname, span->font->name))) {
+        gvprintf(job, ".ft %s\n", picfontname(strview(span->font->name, '\0')));
 	lastname = span->font->name;
     }
-    if ((sz = (int)span->font->size) < 1)
-        sz = 1;
-    if (sz != lastsize) {
-        gvprintf(job, ".ps %d*\\n(SFu/%.0fu\n", sz, Fontscale);
+    double sz = fmin(span->font->size, 1);
+    if (fabs(sz - lastsize) > 0.5) {
+        gvprintf(job, ".ps %.0f*\\n(SFu/%.0fu\n", sz, Fontscale);
 	lastsize = sz;
     }
     gvputc(job, '"');
@@ -357,35 +344,23 @@ static void pic_ellipse(GVJ_t * job, pointf * A, int filled)
 static void pic_bezier(GVJ_t *job, pointf *A, int n, int filled) {
     (void)filled;
 
-    obj_state_t *obj = job->obj;
-
-    int line_style;		/* solid, dotted, dashed */
-    double style_val;
-    int i;
-
-    pointf pf, V[4];
+    pointf V[4];
     point p;
-    int j, step;
-    int count = 0;
-
-    pic_line_style(obj, &line_style, &style_val);
 
     V[3].x = A[0].x;
     V[3].y = A[0].y;
     /* Write first point in line */
-    count++;
     PF2P(A[0], p);
     gvprintf(job, "move to (%d, %d)", p.x, p.y);
     /* write subsequent points */
-    for (i = 0; i + 3 < n; i += 3) {
+    for (int i = 0; i + 3 < n; i += 3) {
         V[0] = V[3];
-        for (j = 1; j <= 3; j++) {
+        for (int j = 1; j <= 3; j++) {
             V[j].x = A[i + j].x;
             V[j].y = A[i + j].y;
         }
-        for (step = 1; step <= BEZIERSUBDIVISION; step++) {
-            count++;
-            pf = Bezier (V, 3, (double) step / BEZIERSUBDIVISION, NULL, NULL);
+        for (int step = 1; step <= BEZIERSUBDIVISION; step++) {
+            pointf pf = Bezier(V, 3, (double)step / BEZIERSUBDIVISION, NULL, NULL);
 	    PF2P(pf, p);
             gvprintf(job, "; spline to (%d, %d)", p.x, p.y);
         }
@@ -398,25 +373,11 @@ static void pic_polygon(GVJ_t * job, pointf * A, int n, int filled)
 {
     (void)filled;
 
-    obj_state_t *obj = job->obj;
-
-    int line_style;		/* solid, dotted, dashed */
-    double style_val;
-
-    pic_line_style(obj, &line_style, &style_val);
-
     picptarray(job, A, n, 1);        /* closed shape */
 }
 
 static void pic_polyline(GVJ_t * job, pointf * A, int n)
 {
-    obj_state_t *obj = job->obj;
-
-    int line_style;		/* solid, dotted, dashed */
-    double style_val;
-
-    pic_line_style(obj, &line_style, &style_val);
-
     picptarray(job, A, n, 0);        /* open shape */
 }
 

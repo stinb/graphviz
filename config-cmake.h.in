@@ -16,6 +16,7 @@
 #cmakedefine HAVE_DL_ITERATE_PHDR
 #cmakedefine HAVE_DRAND48
 #cmakedefine HAVE_LRAND48
+#cmakedefine HAVE_MEMRCHR
 #cmakedefine HAVE_SETENV
 #cmakedefine HAVE_SETMODE
 #cmakedefine HAVE_SINCOS

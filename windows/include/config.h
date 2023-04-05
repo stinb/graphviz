@@ -129,6 +129,9 @@
 /* Define to 1 if you have the <search.h> header file. */
 #define HAVE_SEARCH_H 1
 
+/* Define to 1 if you have the `memrchr' function. */
+/* #undef HAVE_MEMRCHR */
+
 /* Define to 1 if you have the `setenv' function. */
 /* #undef HAVE_SETENV */
 
