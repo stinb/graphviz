@@ -198,9 +198,8 @@ static void PickSeeds(RTree_t * rtp)
     uint64_t worst=0;
     for (int i = 0; i < NODECARD; i++) {
 	for (int j = i + 1; j < NODECARD + 1; j++) {
-	    Rect_t rect;
-	    rect = CombineRect(&rtp->split.BranchBuf[i].rect,
-			       &rtp->split.BranchBuf[j].rect);
+	    Rect_t rect = CombineRect(&rtp->split.BranchBuf[i].rect,
+	                              &rtp->split.BranchBuf[j].rect);
 	    uint64_t waste = RectArea(&rect) - area[i] - area[j];
 	    if (waste > worst) {
 		worst = waste;
