@@ -141,12 +141,12 @@ static void MethodZero(RTree_t * rtp)
 		rect = CombineRect(r, &rtp->split.Partitions[0].cover[1]);
 		growth1 =
 		    RectArea(&rect) - rtp->split.Partitions[0].area[1];
-		diff = growth1 - growth0;
-		if (diff >= 0)
+		if (growth1 >= growth0) {
+		    diff = growth1 - growth0;
 		    group = 0;
-		else {
+		} else {
+		    diff = growth0 - growth1;
 		    group = 1;
-		    diff = -diff;
 		}
 
 		if (diff > biggestDiff) {
