@@ -130,7 +130,8 @@ static void MethodZero(RTree_t * rtp)
 	   rtp->split.Partitions[0].count[0] < NODECARD + 1 - rtp->MinFill
 	   && rtp->split.Partitions[0].count[1] <
 	   NODECARD + 1 - rtp->MinFill) {
-	biggestDiff = -1;
+	bool biggestDiffSet = false;
+	biggestDiff = 0;
 	for (int i = 0; i < NODECARD + 1; i++) {
 	    if (!rtp->split.Partitions[0].taken[i]) {
 		Rect_t rect;
@@ -149,8 +150,9 @@ static void MethodZero(RTree_t * rtp)
 		    group = 1;
 		}
 
-		if (diff > biggestDiff) {
+		if (!biggestDiffSet || diff > biggestDiff) {
 		    biggestDiff = diff;
+		    biggestDiffSet = true;
 		    chosen = i;
 		    betterGroup = group;
 		} else if (diff == biggestDiff &&
