@@ -650,12 +650,9 @@ void graph_init(graph_t * g, bool use_rankdir)
 #ifdef HAVE_SETENV
 	setenv("GDFONTPATH", p, 1);
 #else
-	static char *buf = 0;
-
-	buf = grealloc(buf, strlen("GDFONTPATH=") + strlen(p) + 1);
-	strcpy(buf, "GDFONTPATH=");
-	strcat(buf, p);
-	putenv(buf);
+	static agxbuf buf;
+	agxbprint(&buf, "GDFONTPATH=%s", p);
+	putenv(agxbuse(&buf));
 #endif
     }
 
