@@ -38,6 +38,7 @@
 #include <fcntl.h>
 #endif
 
+#include <cgraph/agxbuf.h>
 #include <cgraph/exit.h>
 #include <gvc/gvplugin_device.h>
 
@@ -286,7 +287,6 @@ static void init_window(GVJ_t *job, Display *dpy, int scr)
     XSizeHints *normalhints;
     XClassHint *classhint;
     uint64_t attributemask = 0;
-    char *name;
     window_t *window;
     double zoom_to_fit;
 
@@ -337,9 +337,8 @@ static void init_window(GVJ_t *job, Display *dpy, int scr)
                              InputOutput, window->visual,
                              attributemask, &attributes);
 
-    name = malloc(strlen("graphviz: ") + strlen(base) + 1);
-    strcpy(name, "graphviz: ");
-    strcat(name, base);
+    agxbuf name = {0};
+    agxbprint(&name, "graphviz: %s", base);
 
     normalhints = XAllocSizeHints();
     normalhints->flags = 0;
@@ -358,12 +357,12 @@ static void init_window(GVJ_t *job, Display *dpy, int scr)
     wmhints->flags = InputHint;
     wmhints->input = True;
 
-    Xutf8SetWMProperties(dpy, window->win, name, base, 0, 0,
+    Xutf8SetWMProperties(dpy, window->win, agxbuse(&name), base, 0, 0,
                          normalhints, wmhints, classhint);
     XFree(wmhints);
     XFree(classhint);
     XFree(normalhints);
-    free(name);
+    agxbfree(&name);
 
     assert(window->depth >= 0 && "Xlib returned invalid window depth");
     window->pix = XCreatePixmap(dpy, window->win, job->width, job->height,
