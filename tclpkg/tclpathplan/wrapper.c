@@ -63,7 +63,6 @@ int Plegal_arrangement(Ppoly_t ** polys, int n_polys)
     }
 
     input.nvertices = nverts;
-    input.npolygons = n_polys;
 
     find_ints(vertex_list, &input, ilist);
 
