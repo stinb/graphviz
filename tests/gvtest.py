@@ -139,13 +139,6 @@ def gvpr(program: Path) -> str:
     )
 
 
-def is_centos() -> bool:
-    """
-    is the current environment CentOS-based?
-    """
-    return freedesktop_os_release().get("ID") == "centos"
-
-
 def is_cmake() -> bool:
     """was the Graphviz under test built with CMake?"""
     return os.getenv("build_system") == "cmake"
@@ -159,22 +152,6 @@ def is_mingw() -> bool:
 def is_python36() -> bool:
     """are we running Python 3.6?"""
     return sys.version_info.major == 3 and sys.version_info.minor == 6
-
-
-def is_using_asan() -> bool:
-    """was Graphviz built with Address Sanitizer?"""
-
-    # if we do not have `ldd`, assume Graphviz was not built with ASan
-    ldd = shutil.which("ldd")
-    if ldd is None:
-        return False
-
-    # what dynamic libraries is `dot` linked against?
-    dot_exe = shutil.which("dot")
-    shared_libs = subprocess.check_output([ldd, dot_exe], universal_newlines=True)
-
-    # was `dot` linked against the ASan supporting library?
-    return re.search(r"\blibasan\b", shared_libs) is not None
 
 
 def remove_xtype_warnings(s: str) -> str:
