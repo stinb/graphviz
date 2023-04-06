@@ -341,7 +341,6 @@ make_barriers(vgpane_t * vgp, int pp, int qp, Pedge_t ** barriers,
 	      int *n_barriers)
 {
     int j, k, n, b;
-    Pedge_t *bar;
 
     n = 0;
     for (size_t i = 0; i < polys_size(&vgp->poly); i++) {
@@ -351,7 +350,7 @@ make_barriers(vgpane_t * vgp, int pp, int qp, Pedge_t ** barriers,
 	    continue;
 	n = n + polys_get(&vgp->poly, i).boundary.pn;
     }
-    bar = malloc(n * sizeof(Pedge_t));
+    Pedge_t *bar = gv_calloc(n, sizeof(Pedge_t));
     b = 0;
     for (size_t i = 0; i < polys_size(&vgp->poly); i++) {
 	if (polys_get(&vgp->poly, i).id == pp)
