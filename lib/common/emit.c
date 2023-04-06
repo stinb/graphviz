@@ -2797,16 +2797,15 @@ static void emit_edge(GVJ_t * job, edge_t * e)
 
     if (edge_in_box(e, job->clip) && edge_in_layer(job, e) ) {
 
-	s = malloc(strlen(agnameof(agtail(e))) + 2 + strlen(agnameof(aghead(e))) + 1);
-	strcpy(s,agnameof(agtail(e)));
+	agxbuf edge = {0};
+	agxbput(&edge, agnameof(agtail(e)));
 	if (agisdirected(agraphof(aghead(e))))
-
-	    strcat(s,"->");
+	    agxbput(&edge, "->");
 	else
-	    strcat(s,"--");
-	strcat(s,agnameof(aghead(e)));
-	gvrender_comment(job, s);
-	free(s);
+	    agxbput(&edge, "--");
+	agxbput(&edge, agnameof(aghead(e)));
+	gvrender_comment(job, agxbuse(&edge));
+	agxbfree(&edge);
 
 	s = late_string(e, E_comment, "");
 	if (s[0])
