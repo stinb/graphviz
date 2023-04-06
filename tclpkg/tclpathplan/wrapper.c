@@ -8,6 +8,7 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
+#include <cgraph/alloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "simple.h"
@@ -37,18 +38,16 @@ int Plegal_arrangement(Ppoly_t **polys, size_t n_polys) {
 
     int j, rv;
 
-    struct vertex *vertex_list;
-    struct polygon *polygon_list;
     struct data input;
     struct intersection ilist[10000];
 
-    polygon_list = malloc(n_polys * sizeof(struct polygon));
+    struct polygon *polygon_list = gv_calloc(n_polys, sizeof(struct polygon));
 
     size_t nverts = 0;
     for (size_t i = 0; i < n_polys; i++)
 	nverts += polys[i]->pn;
 
-    vertex_list = malloc(nverts * sizeof(struct vertex));
+    struct vertex *vertex_list = gv_calloc(nverts, sizeof(struct vertex));
 
     for (size_t i = 0, vno = 0; i < n_polys; i++) {
 	polygon_list[i].start = &vertex_list[vno];
