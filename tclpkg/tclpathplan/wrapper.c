@@ -84,15 +84,15 @@ int Plegal_arrangement(Ppoly_t **polys, size_t n_polys) {
 		fprintf(stderr, "\nintersection %d at %.3f %.3f\n",
 			i, ilist[i].x, ilist[i].y);
 		fprintf(stderr, "seg#1 : (%.3f, %.3f) (%.3f, %.3f)\n",
-			(double) (ilist[i].firstv->pos.x)
-			, (double) (ilist[i].firstv->pos.y)
-			, (double) (after(ilist[i].firstv)->pos.x)
-			, (double) (after(ilist[i].firstv)->pos.y));
+			ilist[i].firstv->pos.x
+			, ilist[i].firstv->pos.y
+			, after(ilist[i].firstv)->pos.x
+			, after(ilist[i].firstv)->pos.y);
 		fprintf(stderr, "seg#2 : (%.3f, %.3f) (%.3f, %.3f)\n",
-			(double) (ilist[i].secondv->pos.x)
-			, (double) (ilist[i].secondv->pos.y)
-			, (double) (after(ilist[i].secondv)->pos.x)
-			, (double) (after(ilist[i].secondv)->pos.y));
+			ilist[i].secondv->pos.x
+			, ilist[i].secondv->pos.y
+			, after(ilist[i].secondv)->pos.x
+			, after(ilist[i].secondv)->pos.y);
 	    }
 	}
     }
