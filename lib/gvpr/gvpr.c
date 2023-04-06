@@ -190,10 +190,9 @@ static int parseArgs(char *s, int argc, char ***argv)
 static char*
 concat (char* pfx, char* sfx)
 {
-    char *sp = gv_alloc(strlen(pfx) + strlen(sfx) + 1);
-    strcpy(sp, pfx);
-    strcat(sp, sfx);
-    return sp;
+  agxbuf sp = {0};
+  agxbprint(&sp, "%s%s", pfx, sfx);
+  return agxbdisown(&sp);
 }
 
 /* resolve:
