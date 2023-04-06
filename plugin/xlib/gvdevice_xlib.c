@@ -513,7 +513,6 @@ static void xlib_finalize(GVJ_t *firstjob)
     int wd=0;
     int inotify_fd=0;
     bool watching_file_p = false;
-    static char *dir;
     char *p, *cwd = NULL;
 
     inotify_fd = inotify_init();
@@ -535,22 +534,20 @@ static void xlib_finalize(GVJ_t *firstjob)
 #ifdef HAVE_SYS_INOTIFY_H
 	    watching_file_p = true;
 
+	    static agxbuf dir;
 	    if (firstjob->input_filename[0] != '/') {
     	        cwd = getcwd(NULL, 0);
-	        dir = realloc(dir, strlen(cwd) + 1 + strlen(firstjob->input_filename) + 1);
-	        strcpy(dir, cwd);
-	        strcat(dir, "/");
-	        strcat(dir, firstjob->input_filename);
+	        agxbprint(&dir, "%s/%s", cwd, firstjob->input_filename);
 	        free(cwd);
 	    }
 	    else {
-	        dir = realloc(dir, strlen(firstjob->input_filename) + 1);
-	        strcpy(dir, firstjob->input_filename);
+	        agxbput(&dir, firstjob->input_filename);
 	    }
-	    p = strrchr(dir,'/');
+	    char *dirstr = agxbuse(&dir);
+	    p = strrchr(dirstr,'/');
 	    *p = '\0';
     
-    	    wd = inotify_add_watch(inotify_fd, dir, IN_MODIFY );
+    	    wd = inotify_add_watch(inotify_fd, dirstr, IN_MODIFY);
 
             numfds = MAX(inotify_fd, numfds);
 #endif
