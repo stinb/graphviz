@@ -11,7 +11,7 @@
 #include "simple.h"
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <cgraph/alloc.h>
 #include <cgraph/exit.h>
 
 void find_intersection(struct vertex *l, struct vertex *m,
@@ -24,14 +24,14 @@ void find_ints(struct vertex vertex_list[],
 {
     int j, k;
     struct active_edge_list all;
-    struct active_edge *new, *tempa;
-    struct vertex *pt1, *pt2, *templ, **pvertex;
+    struct active_edge *tempa;
+    struct vertex *pt1, *pt2, *templ;
 
     input->ninters = 0;
     all.first = all.final = NULL;
     all.number = 0;
 
-    pvertex = malloc((input->nvertices) * sizeof(struct vertex *));
+    struct vertex **pvertex = gv_calloc(input->nvertices, sizeof(struct vertex*));
 
     for (size_t i = 0; i < input->nvertices; i++)
 	pvertex[i] = vertex_list + i;
@@ -52,7 +52,7 @@ void find_ints(struct vertex vertex_list[],
 		     j++, tempa = tempa->next)
 		    find_intersection(tempa->name, templ, ilist, input);	/* test */
 
-		new = malloc(sizeof(struct active_edge));
+		struct active_edge *new = gv_alloc(sizeof(struct active_edge));
 		if (all.number == 0) {
 		    all.first = new;
 		    new->last = NULL;
