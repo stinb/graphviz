@@ -534,7 +534,7 @@ static void xlib_finalize(GVJ_t *firstjob)
 #ifdef HAVE_SYS_INOTIFY_H
 	    watching_file_p = true;
 
-	    static agxbuf dir;
+	    agxbuf dir = {0};
 	    if (firstjob->input_filename[0] != '/') {
     	        cwd = getcwd(NULL, 0);
 	        agxbprint(&dir, "%s/%s", cwd, firstjob->input_filename);
@@ -548,6 +548,7 @@ static void xlib_finalize(GVJ_t *firstjob)
 	    *p = '\0';
     
     	    wd = inotify_add_watch(inotify_fd, dirstr, IN_MODIFY);
+	    agxbfree(&dir);
 
             numfds = MAX(inotify_fd, numfds);
 #endif
