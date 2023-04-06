@@ -832,9 +832,7 @@ vgpane(ClientData clientData, Tcl_Interp * interp, int argc, char *argv[])
     (void)argv;
 
     char *vbuf = NULL;
-    vgpane_t *vgp;
-
-    vgp = malloc(sizeof(vgpane_t));
+    vgpane_t *vgp = gv_alloc(sizeof(vgpane_t));
     *(vgpane_t **) tclhandleAlloc(vgpaneTable, &vbuf, NULL) = vgp;
     assert(vbuf != NULL);
 
