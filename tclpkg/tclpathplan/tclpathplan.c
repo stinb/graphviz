@@ -77,7 +77,7 @@ extern void sincos(double x, double *s, double *c);
 
 tblHeader_pt vgpaneTable;
 
-extern int Plegal_arrangement(Ppoly_t ** polys, int n_polys);
+extern int Plegal_arrangement(Ppoly_t **polys, size_t n_polys);
 
 static int polyid = 0;		/* unique and unchanging id for each poly */
 
@@ -106,7 +106,7 @@ static int vc_refresh(vgpane_t * vgp)
 	obs = malloc(polys_size(&vgp->poly) * sizeof(Ppoly_t));
 	for (size_t i = 0; i < polys_size(&vgp->poly); i++)
 	    obs[i] = &polys_at(&vgp->poly, i)->boundary;
-	if (!Plegal_arrangement(obs, (int)polys_size(&vgp->poly)))
+	if (!Plegal_arrangement(obs, polys_size(&vgp->poly)))
 	    fprintf(stderr, "bad arrangement\n");
 	else
 	    vgp->vc = Pobsopen(obs, (int)polys_size(&vgp->poly));
