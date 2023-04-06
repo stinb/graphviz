@@ -64,10 +64,7 @@ void setColor(glCompColor* c,GLfloat R,GLfloat G,GLfloat B,GLfloat A)
 glCompPoint getPointFromStr(char* str)
 {
 
-    glCompPoint p;
-    p.x=0;
-    p.y=0;
-    p.z=0;
+    glCompPoint p = {0};
     (void)sscanf(str, "%f,%f,%f", &p.x, &p.y, &p.z);
     return p;
 }
