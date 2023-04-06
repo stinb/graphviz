@@ -101,7 +101,7 @@ static void vc_stale(vgpane_t * vgp)
 static int vc_refresh(vgpane_t * vgp)
 {
     if (vgp->vc == NULL) {
-	Ppoly_t **obs = gv_calloc(polys_size(&vgp->poly), sizeof(Ppoly_t));
+	Ppoly_t **obs = gv_calloc(polys_size(&vgp->poly), sizeof(Ppoly_t*));
 	for (size_t i = 0; i < polys_size(&vgp->poly); i++)
 	    obs[i] = &polys_at(&vgp->poly, i)->boundary;
 	if (!Plegal_arrangement(obs, polys_size(&vgp->poly)))
