@@ -74,12 +74,9 @@ int Plegal_arrangement(Ppoly_t **polys, size_t n_polys) {
 	    avft = after(ilist[i].firstv)->pos;
 	    vsd = ilist[i].secondv->pos;
 	    avsd = after(ilist[i].secondv)->pos;
-	    if (((vft.x != avft.x) && (vsd.x != avsd.x)) ||
-		((vft.x == avft.x) &&
-		 !EQ_PT(vft, ilist[i]) &&
-		 !EQ_PT(avft, ilist[i])) ||
-		((vsd.x == avsd.x) &&
-		 !EQ_PT(vsd, ilist[i]) && !EQ_PT(avsd, ilist[i]))) {
+	    if ((vft.x != avft.x && vsd.x != avsd.x) ||
+		(vft.x == avft.x && !EQ_PT(vft, ilist[i]) && !EQ_PT(avft, ilist[i])) ||
+		(vsd.x == avsd.x && !EQ_PT(vsd, ilist[i]) && !EQ_PT(avsd, ilist[i]))) {
 		rv = 0;
 		fprintf(stderr, "\nintersection %d at %.3f %.3f\n",
 			i, ilist[i].x, ilist[i].y);
