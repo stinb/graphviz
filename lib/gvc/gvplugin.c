@@ -155,8 +155,6 @@ gvplugin_library_t *gvplugin_library_load(GVC_t * gvc, char *path)
     lt_ptr ptr;
     char *s, *sym;
     size_t len;
-    static char *p;
-    static size_t lenp;
     char *libdir;
     char *suffix = "_LTX_library";
 
@@ -164,27 +162,22 @@ gvplugin_library_t *gvplugin_library_load(GVC_t * gvc, char *path)
         return NULL;
 
     libdir = gvconfig_libdir(gvc);
-    len = strlen(libdir) + 1 + strlen(path) + 1;
-    if (len > lenp) {
-        lenp = len + 20;
-        p = grealloc(p, lenp);
-    }
+    static agxbuf fullpath;
 #ifdef _WIN32
     if (path[1] == ':') {
 #else
     if (path[0] == '/') {
 #endif
-        strcpy(p, path);
+        agxbput(&fullpath, path);
     } else {
-        strcpy(p, libdir);
-        strcat(p, DIRSEP);
-        strcat(p, path);
+        agxbprint(&fullpath, "%s%s%s", libdir, DIRSEP, path);
     }
 
     if (lt_dlinit()) {
         agerr(AGERR, "failed to init libltdl\n");
         return NULL;
     }
+    char *p = agxbuse(&fullpath);
     hndl = lt_dlopen(p);
     if (!hndl) {
         if (access(p, R_OK) == 0) {
