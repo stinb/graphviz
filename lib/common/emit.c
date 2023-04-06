@@ -2002,27 +2002,18 @@ static void emit_attachment(GVJ_t * job, textlabel_t * lp, splines * spl)
  * so we commpute a default pencolor with the same number of colors. */
 static char* default_pencolor(char *pencolor, char *deflt)
 {
-    static char *buf;
-    static size_t bufsz;
+    static agxbuf buf;
     char *p;
-    size_t len, ncol;
-
-    ncol = 1;
+    size_t ncol = 1;
     for (p = pencolor; *p; p++) {
 	if (*p == ':')
 	    ncol++;
     }
-    len = ncol * (strlen(deflt) + 1);
-    if (bufsz < len) {
-	bufsz = len + 10;
-	buf = realloc(buf, bufsz);
-    }
-    strcpy(buf, deflt);
+    agxbput(&buf, deflt);
     while(--ncol) {
-	strcat(buf, ":");
-	strcat(buf, deflt);
+	agxbprint(&buf, ":%s", deflt);
     }
-    return buf;
+    return agxbuse(&buf);
 }
 
 /* approxLen:
