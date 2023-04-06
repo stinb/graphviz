@@ -61,9 +61,8 @@ void setColor(glCompColor* c,GLfloat R,GLfloat G,GLfloat B,GLfloat A)
     c->B=B;
     c->A=A;
 }
-glCompPoint getPointFromStr(char* str)
-{
 
+glCompPoint getPointFromStr(const char *str) {
     glCompPoint p = {0};
     (void)sscanf(str, "%f,%f,%f", &p.x, &p.y, &p.z);
     return p;
