@@ -414,15 +414,15 @@ def genOutname(name, alg, fmt, flags: List[str]):
 
 
 @pytest.mark.parametrize(
-    "name,GRAPH,algorithm,format,flags",
+    "name,input,algorithm,format,flags",
     ((c.name, c.input, c.algorithm, c.format, c.flags) for c in TESTS),
 )
-def test_graph(name: str, GRAPH: Path, algorithm: str, format: str, flags: List[str]):
+def test_graph(name: str, input: Path, algorithm: str, format: str, flags: List[str]):
     """
     Run a single test.
     """
-    if GRAPH.suffix == ".gv":
-        INFILE = GRAPHDIR / GRAPH
+    if input.suffix == ".gv":
+        INFILE = GRAPHDIR / input
     else:
         pytest.skip(f"Unknown graph spec, test {name} - ignoring")
 
