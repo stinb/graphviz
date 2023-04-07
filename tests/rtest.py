@@ -27,7 +27,6 @@ OUTHTML = "nhtml"  # Directory for html test report
 REFDIR = os.environ.get("REFDIR", "")  # Directory for expected test output
 GENERATE = False  # If set, generate test data
 VERBOSE = False  # If set, give verbose output
-NOOP = False  # If set, just print list of tests
 
 CRASH_CNT = 0
 DIFF_CNT = 0
@@ -268,8 +267,6 @@ def doTest(test):
         testcmd += SUBTEST["FLAGS"] + ["-o", OUTPATH, INFILE]
         if VERBOSE:
             print(" ".join(testcmd))
-        if NOOP:
-            continue
         # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1786 is
         # fixed
         if os.environ.get("build_system") == "cmake" and SUBTEST["FMT"] == "png:gd":
@@ -373,11 +370,9 @@ parser.add_argument(
     "-g", dest="generate", action="store_true", help="generate test data"
 )
 parser.add_argument("-v", dest="verbose", action="store_true", help="verbose")
-parser.add_argument("-n", dest="noop", action="store_true", help="noop")
 parser.add_argument("testfile", nargs="?", help="test files")
 args = parser.parse_args()
-VERBOSE = args.verbose or args.noop
-NOOP = args.noop
+VERBOSE = args.verbose
 GENERATE = args.generate
 if GENERATE:
     if not os.path.isdir(REFDIR):
@@ -393,10 +388,9 @@ if args.testfile:
 
 # Check environment and initialize
 
-if not NOOP:
-    if not os.path.isdir(REFDIR):
-        print(f"Test data directory {REFDIR} does not exist", file=sys.stderr)
-        sys.exit(1)
+if not os.path.isdir(REFDIR):
+    print(f"Test data directory {REFDIR} does not exist", file=sys.stderr)
+    sys.exit(1)
 
 if not os.path.isdir(OUTDIR):
     os.mkdir(OUTDIR)
@@ -412,9 +406,7 @@ with open(TESTFILE, "rt", encoding="utf-8") as testfile:
         if TEST is None:
             break
         doTest(TEST)
-if NOOP:
-    print(f"No. tests: {TOT_CNT}", file=sys.stderr)
-elif GENERATE:
+if GENERATE:
     print(f"No. tests: {TOT_CNT} Layout failures: {CRASH_CNT}", file=sys.stderr)
 else:
     print(
