@@ -429,10 +429,7 @@ def test_graph(name: str, input: Path, algorithm: str, format: str, flags: List[
     OUTFILE = genOutname(name, algorithm, format, flags)
     OUTDIR.mkdir(exist_ok=True)
     OUTPATH = OUTDIR / OUTFILE
-    KFLAGS = f"-K{algorithm}"
-    TFLAGS = f"-T{format}"
-    testcmd = ["dot", KFLAGS, TFLAGS]
-    testcmd += flags + ["-o", OUTPATH, INFILE]
+    testcmd = ["dot", f"-K{algorithm}", f"-T{format}"] + flags + ["-o", OUTPATH, INFILE]
     # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1786 is
     # fixed
     if os.environ.get("build_system") == "cmake" and format == "png:gd":
