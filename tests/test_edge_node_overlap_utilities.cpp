@@ -27,7 +27,6 @@ union_(const std::unordered_set<std::string_view> &a,
 static const std::unordered_set<std::string_view>
     shapes_not_meeting_edge_vertically = {
         "plaintext",       //
-        "plain",           //
         "none",            //
         "promoter",        //
         "cds",             //
