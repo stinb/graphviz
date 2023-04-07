@@ -8,8 +8,7 @@ TODO:
 """
 
 import argparse
-import atexit
-import filecmp
+import io
 import os
 import platform
 import re
@@ -31,8 +30,6 @@ CRASH_CNT = 0
 DIFF_CNT = 0
 TOT_CNT = 0
 TESTTYPES = {}
-TMPFILE1 = f"tmpnew{os.getpid()}"
-TMPFILE2 = f"tmpref{os.getpid()}"
 
 
 def readLine(f3: TextIO):
@@ -128,26 +125,25 @@ def doDiff(OUTFILE, testname, subtest_index, fmt):
         )
         return
     if F in ["ps", "ps2"]:
-
         with open(FILE1, "rt", encoding="latin-1") as src:
-            with open(TMPFILE1, "wt", encoding="latin-1") as dst:
-                done_setup = False
-                for line in src:
-                    if done_setup:
-                        dst.write(line)
-                    else:
-                        done_setup = re.match(r"%%End.*Setup", line) is not None
+            dst1 = io.StringIO()
+            done_setup = False
+            for line in src:
+                if done_setup:
+                    dst1.write(line)
+                else:
+                    done_setup = re.match(r"%%End.*Setup", line) is not None
 
         with open(FILE2, "rt", encoding="latin-1") as src:
-            with open(TMPFILE2, "wt", encoding="latin-1") as dst:
-                done_setup = False
-                for line in src:
-                    if done_setup:
-                        dst.write(line)
-                    else:
-                        done_setup = re.match(r"%%End.*Setup", line) is not None
+            dst2 = io.StringIO()
+            done_setup = False
+            for line in src:
+                if done_setup:
+                    dst2.write(line)
+                else:
+                    done_setup = re.match(r"%%End.*Setup", line) is not None
 
-        returncode = 0 if filecmp.cmp(TMPFILE1, TMPFILE2) else -1
+        returncode = 0 if dst1.getvalue() == dst2.getvalue() else -1
     elif F == "svg":
         with open(FILE1, "rt", encoding="utf-8") as f:
             a = re.sub(r"^<!--.*-->$", "", f.read(), flags=re.MULTILINE)
@@ -325,16 +321,6 @@ def doTest(test):
     # clear TESTTYPES
     TESTTYPES = {}
 
-
-def cleanup():
-    """
-    Delete temporary files.
-    """
-    shutil.rmtree(TMPFILE1, ignore_errors=True)
-    shutil.rmtree(TMPFILE2, ignore_errors=True)
-
-
-atexit.register(cleanup)
 
 # Set REFDIR
 if platform.system() == "Linux":
