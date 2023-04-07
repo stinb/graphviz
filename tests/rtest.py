@@ -224,9 +224,7 @@ def doTest(test):
     if len(SUBTESTS) == 0:
         return
     GRAPH = test["GRAPH"]
-    if GRAPH == "=":
-        INFILE = GRAPHDIR / f"{TESTNAME}.gv"
-    elif os.path.splitext(GRAPH)[1] == ".gv":
+    if os.path.splitext(GRAPH)[1] == ".gv":
         INFILE = GRAPHDIR / GRAPH
     else:
         print(f"Unknown graph spec, test {TESTNAME} - ignoring", file=sys.stderr)
