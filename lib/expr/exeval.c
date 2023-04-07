@@ -21,6 +21,7 @@
 #define _BLD_sfio 1
 #endif
 
+#include <cgraph/agxbuf.h>
 #include <cgraph/strview.h>
 #include <cgraph/exit.h>
 #include <expr/exlib.h>
@@ -748,52 +749,11 @@ static char *str_mpy(Expr_t *ex, const char *l, const char *r) {
   return result;
 }
 
-// a dynamically resizable vmalloc-allocated buffer
-typedef struct {
-  Vmalloc_t *allocator;
-  char *base;
-  size_t size;
-  size_t capacity;
-} buffer_t;
-
-/** append new string content to a buffer
- *
- * \param b Buffer to append to
- * \param s Start of string content to append
- * \param len Number of bytes in `s`
- * \return 0 on success
- */
-static int buffer_append(buffer_t *b, const char *s, size_t len) {
-
-  // do we need to expand the buffer?
-  if (b->capacity - b->size < len + 1) {
-    size_t c = b->capacity == 0 ? BUFSIZ : (b->capacity * 2);
-    // is this new adjustment still not large enough?
-    if (c - b->size < len + 1)
-      c = b->size + len + 1;
-    char *p = vmresize(b->allocator, b->base, c);
-    if (p == NULL)
-      return -1;
-    b->base = p;
-    b->capacity = c;
-  }
-
-  assert(b->capacity - b->size >= len + 1 &&
-         "incorrect logic in buffer expansion; still no room for appended "
-         "string");
-
-  strncpy(b->base + b->size, s, len);
-  b->size += len;
-  b->base[b->size] = '\0'; // keep buffer NUL-terminated
-
-  return 0;
-}
-
 /* replace:
  * Add replacement string.
  * \digit is replaced with a subgroup match, if any.
  */
-static int replace(buffer_t *s, char *base, char *repl, int ng, int *sub) {
+static void replace(agxbuf *s, char *base, char *repl, int ng, int *sub) {
   char c;
   int idx, offset;
 
@@ -803,25 +763,16 @@ static int replace(buffer_t *s, char *base, char *repl, int ng, int *sub) {
         idx = c - '0';
         if (idx < ng) {
           offset = sub[2 * idx];
-          if (buffer_append(s, base + offset,
-                            (size_t)(sub[2 * idx + 1] - offset)) != 0) {
-            return -1;
-          }
+          agxbput_n(s, base + offset, (size_t)(sub[2 * idx + 1] - offset));
         }
         repl++;
       } else {
-        if (buffer_append(s, "\\", 1) != 0) {
-          return -1;
-        }
+        agxbputc(s, '\\');
       }
     } else {
-      if (buffer_append(s, &c, 1) != 0) {
-        return -1;
-      }
+      agxbputc(s, c);
     }
   }
-
-  return 0;
 }
 
 #define MCNT(s) (sizeof(s)/(2*sizeof(int)))
@@ -992,43 +943,29 @@ static Extype_t exsub(Expr_t *ex, Exnode_t *exnode, void *env, bool global) {
 		return v;
     } 
 
-	buffer_t buffer = {.allocator = ex->ve};
+	agxbuf buffer = {0};
 
-	if (buffer_append(&buffer, str, (size_t)sub[0]) != 0) {
-		v.string = exnospace();
-		return v;
-	}
+	agxbput_n(&buffer, str, (size_t)sub[0]);
 
 	if (repl) {
-		if (replace(&buffer, str, repl, ng, sub) != 0) {
-			v.string = exnospace();
-			return v;
-		}
+		replace(&buffer, str, repl, ng, sub);
 	}
 
 	s = str + sub[1];
 	if (global) {
 		while ((ng = strgrpmatch(s, pat, sub, MCNT(sub), flags))) {
-			if (buffer_append(&buffer, s, (size_t)sub[0]) != 0) {
-				v.string = exnospace();
-				return v;
-			}
+			agxbput_n(&buffer, s, (size_t)sub[0]);
 			if (repl) {
-				if (replace(&buffer, s, repl, ng, sub) != 0) {
-					v.string = exnospace();
-					return v;
-				}
+				replace(&buffer, s, repl, ng, sub);
 			}
 			s = s + sub[1];
 		}
 	}
 
-	if (buffer_append(&buffer, s, strlen(s)) != 0) {
-		v.string = exnospace();
-		return v;
-	}
+	agxbput(&buffer, s);
 
-	v.string = buffer.base;
+	v.string = vmstrdup(ex->ve, agxbuse(&buffer));
+	agxbfree(&buffer);
 	return v;
 }
 
