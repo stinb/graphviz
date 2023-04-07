@@ -230,26 +230,6 @@ static void gdgen_end_page(GVJ_t * job)
     }
 }
 
-#ifdef HAVE_GD_FREETYPE
-static void gdgen_missingfont(char *fontreq) {
-    static char *lastmissing = 0;
-    static int n_errors = 0;
-
-    if (n_errors >= 20)
-	return;
-    if (lastmissing == 0 || strcmp(lastmissing, fontreq)) {
-#ifndef HAVE_GD_FONTCONFIG
-	char *p = getenv("GDFONTPATH");
-	if (!p)
-	    p = DEFAULT_FONTPATH;
-#endif
-	free(lastmissing);
-	lastmissing = gv_strdup(fontreq);
-	n_errors++;
-    }
-}
-#endif
-
 /* fontsize at which text is omitted entirely */
 #define FONTSIZE_MUCH_TOO_SMALL 0.15
 /* fontsize at which text is rendered by a simple line */
@@ -301,7 +281,6 @@ void gdgen_text(gdImagePtr im, pointf spf, pointf epf, int fontcolor, double fon
 
         if (err) {
             /* revert to builtin fonts */
-            gdgen_missingfont(fontname);
 #endif
             sp.y += 2;
             if (fontsize <= 8.5) {
