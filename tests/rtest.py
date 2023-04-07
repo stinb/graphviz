@@ -231,12 +231,8 @@ def doTest(test):
         OUTFILE = genOutname(TESTNAME, SUBTEST["ALG"], SUBTEST["FMT"])
         OUTPATH = OUTDIR / OUTFILE
         KFLAGS = f"-K{SUBTEST['ALG']}"
-        TFLAGS = SUBTEST["FMT"]
-        if TFLAGS:
-            TFLAGS = f"-T{TFLAGS}"
-        testcmd = ["dot", KFLAGS]
-        if TFLAGS:
-            testcmd += [TFLAGS]
+        TFLAGS = f"-T{SUBTEST['FMT']}"
+        testcmd = ["dot", KFLAGS, TFLAGS]
         testcmd += SUBTEST["FLAGS"] + ["-o", OUTPATH, INFILE]
         # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1786 is
         # fixed
