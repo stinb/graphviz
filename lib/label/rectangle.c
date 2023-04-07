@@ -11,9 +11,9 @@
 #include "config.h"
 
 #include <label/index.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
-#include <limits.h>
 #include <stdlib.h>
 #include <common/arith.h>
 #include <label/rectangle.h>
@@ -62,18 +62,17 @@ void PrintRect(Rect_t * r)
 | Calculate the n-dimensional area of a rectangle
 -----------------------------------------------------------------------------*/
 
-unsigned int RectArea(Rect_t * r)
-{
+uint64_t RectArea(Rect_t *r) {
   assert(r);
 
     if (Undefined(r))
 	return 0;
 
-    unsigned area = 1;
+    uint64_t area = 1;
     for (size_t i = 0; i < NUMDIMS; i++) {
       unsigned int dim = r->boundary[i + NUMDIMS] - r->boundary[i];
       if (dim == 0) return 0;
-      if (UINT_MAX / dim < area) {
+      if (UINT64_MAX / dim < area) {
 	agerr (AGERR, "label: area too large for rtree\n");
 	graphviz_exit(EXIT_FAILURE);
       }

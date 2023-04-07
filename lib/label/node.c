@@ -9,10 +9,11 @@
  *************************************************************************/
 
 #include <stdlib.h>
-
+#include <inttypes.h>
 #include <label/index.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
 #include <label/node.h>
@@ -102,24 +103,23 @@ Rect_t NodeCover(Node_t * n)
 */
 int PickBranch(Rect_t * r, Node_t * n)
 {
-    Rect_t *rr=0;
-    int flag=1, increase=0, bestIncr=0, area=0, bestArea=0;
+    uint64_t bestIncr = 0;
+    uint64_t bestArea = 0;
     int best=0;
+    bool bestSet = false;
     assert(r && n);
 
     for (int i = 0; i < NODECARD; i++) {
 	if (n->branch[i].child) {
-	    Rect_t rect;
-	    rr = &n->branch[i].rect;
-	    area = RectArea(rr);
-	    /* increase = RectArea(&CombineRect(r, rr)) - area; */
-	    rect = CombineRect(r, rr);
-	    increase = RectArea(&rect) - area;
-	    if (increase < bestIncr || flag) {
+	    Rect_t *rr = &n->branch[i].rect;
+	    uint64_t area = RectArea(rr);
+	    Rect_t rect = CombineRect(r, rr);
+	    uint64_t increase = RectArea(&rect) - area;
+	    if (!bestSet || increase < bestIncr) {
 		best = i;
 		bestArea = area;
 		bestIncr = increase;
-		flag = 0;
+		bestSet = true;
 	    } else if (increase == bestIncr && area < bestArea) {
 		best = i;
 		bestArea = area;
@@ -127,8 +127,8 @@ int PickBranch(Rect_t * r, Node_t * n)
 	    }
 #			ifdef RTDEBUG
 	    fprintf(stderr,
-		    "i=%d  area before=%d  area after=%d  increase=%d\n",
-		    i, area, area + increase, increase);
+		    "i=%d  area before=%" PRIu64 "  area after=%" PRIu64 "  increase=%" PRIu64
+		    "\n", i, area, area + increase, increase);
 #			endif
 	}
     }

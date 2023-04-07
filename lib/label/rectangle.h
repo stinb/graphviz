@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -22,7 +24,7 @@ void InitRect(Rect_t * r);
 #ifdef RTDEBUG
 void PrintRect(Rect_t *);
 #endif
-unsigned int RectArea(Rect_t *);
+uint64_t RectArea(Rect_t*);
 int Overlap(Rect_t *, Rect_t *);
 int Contained(Rect_t *, Rect_t *);
 Rect_t CombineRect(Rect_t *, Rect_t *);

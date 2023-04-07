@@ -8,8 +8,10 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
+#include <inttypes.h>
 #include <label/index.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
 #include <label/split.q.h>
@@ -118,8 +120,6 @@ static void GetBranches(RTree_t * rtp, Node_t * n, Branch_t * b)
 -----------------------------------------------------------------------------*/
 static void MethodZero(RTree_t * rtp)
 {
-    Rect_t *r;
-    int growth0, growth1, diff, biggestDiff;
     int group, chosen = 0, betterGroup = 0;
 
     InitPVars(rtp);
@@ -130,27 +130,27 @@ static void MethodZero(RTree_t * rtp)
 	   rtp->split.Partitions[0].count[0] < NODECARD + 1 - rtp->MinFill
 	   && rtp->split.Partitions[0].count[1] <
 	   NODECARD + 1 - rtp->MinFill) {
-	biggestDiff = -1;
+	bool biggestDiffSet = false;
+	uint64_t biggestDiff = 0;
 	for (int i = 0; i < NODECARD + 1; i++) {
 	    if (!rtp->split.Partitions[0].taken[i]) {
-		Rect_t rect;
-		r = &rtp->split.BranchBuf[i].rect;
-		rect = CombineRect(r, &rtp->split.Partitions[0].cover[0]);
-		growth0 =
-		    RectArea(&rect) - rtp->split.Partitions[0].area[0];
+		Rect_t *r = &rtp->split.BranchBuf[i].rect;
+		Rect_t rect = CombineRect(r, &rtp->split.Partitions[0].cover[0]);
+		uint64_t growth0 = RectArea(&rect) - rtp->split.Partitions[0].area[0];
 		rect = CombineRect(r, &rtp->split.Partitions[0].cover[1]);
-		growth1 =
-		    RectArea(&rect) - rtp->split.Partitions[0].area[1];
-		diff = growth1 - growth0;
-		if (diff >= 0)
+		uint64_t growth1 = RectArea(&rect) - rtp->split.Partitions[0].area[1];
+		uint64_t diff;
+		if (growth1 >= growth0) {
+		    diff = growth1 - growth0;
 		    group = 0;
-		else {
+		} else {
+		    diff = growth0 - growth1;
 		    group = 1;
-		    diff = -diff;
 		}
 
-		if (diff > biggestDiff) {
+		if (!biggestDiffSet || diff > biggestDiff) {
 		    biggestDiff = diff;
+		    biggestDiffSet = true;
 		    chosen = i;
 		    betterGroup = group;
 		} else if (diff == biggestDiff &&
@@ -190,18 +190,17 @@ static void MethodZero(RTree_t * rtp)
 static void PickSeeds(RTree_t * rtp)
 {
   int seed0 = 0, seed1 = 0;
-  unsigned int area[NODECARD + 1];
+  uint64_t area[NODECARD + 1];
 
     for (int i = 0; i < NODECARD + 1; i++)
 	area[i] = RectArea(&rtp->split.BranchBuf[i].rect);
 
-    unsigned worst=0;
+    uint64_t worst=0;
     for (int i = 0; i < NODECARD; i++) {
 	for (int j = i + 1; j < NODECARD + 1; j++) {
-	    Rect_t rect;
-	    rect = CombineRect(&rtp->split.BranchBuf[i].rect,
-			       &rtp->split.BranchBuf[j].rect);
-	    unsigned waste = RectArea(&rect) - area[i] - area[j];
+	    Rect_t rect = CombineRect(&rtp->split.BranchBuf[i].rect,
+	                              &rtp->split.BranchBuf[j].rect);
+	    uint64_t waste = RectArea(&rect) - area[i] - area[j];
 	    if (waste > worst) {
 		worst = waste;
 		seed0 = i;
@@ -313,15 +312,15 @@ PrintPVars(RTree_t * rtp)
     }
     fprintf(stderr, "\n");
 
-    fprintf(stderr, "count[0] = %d  area = %d\n",
+    fprintf(stderr, "count[0] = %d  area = %" PRIu64 "\n",
 	    rtp->split.Partitions[0].count[0],
 	    rtp->split.Partitions[0].area[0]);
-    fprintf(stderr, "count[1] = %d  area = %d\n",
+    fprintf(stderr, "count[1] = %d  area = %" PRIu64 "\n",
 	    rtp->split.Partitions[0].count[1],
 	    rtp->split.Partitions[0].area[1]);
     if (rtp->split.Partitions[0].area[0] +
 	rtp->split.Partitions[0].area[1] > 0) {
-	fprintf(stderr, "total area = %d  effectiveness = %3.2f\n",
+	fprintf(stderr, "total area = %" PRIu64 "  effectiveness = %3.2f\n",
 		rtp->split.Partitions[0].area[0] +
 		rtp->split.Partitions[0].area[1],
 		(float) rtp->split.CoverSplitArea /
