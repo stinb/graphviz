@@ -361,20 +361,12 @@ parser = argparse.ArgumentParser(description="Run regression tests.")
 parser.add_argument(
     "-g", dest="generate", action="store_true", help="generate test data"
 )
-parser.add_argument("testfile", nargs="?", help="test files")
 args = parser.parse_args()
 GENERATE = args.generate
 if GENERATE:
     if not os.path.isdir(REFDIR):
         os.mkdir(OUTDIR)
     OUTDIR = REFDIR
-
-if args.testfile:
-    if os.path.exists(args.testfile):
-        TESTFILE = args.testfile
-    else:
-        print(f"Test file {args.testfile} does not exist", file=sys.stderr)
-        sys.exit(1)
 
 # Check environment and initialize
 
