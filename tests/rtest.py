@@ -7,7 +7,6 @@ TODO:
  Report differences with shared version and with new output.
 """
 
-import argparse
 import io
 import os
 import platform
@@ -24,7 +23,6 @@ GRAPHDIR = Path(__file__).parent / "graphs"
 # Directory of input graphs and data
 OUTDIR = Path("ndata")  # Directory for test output
 OUTHTML = Path("nhtml")  # Directory for html test report
-GENERATE = False  # If set, generate test data
 
 CRASH_CNT = 0
 DIFF_CNT = 0
@@ -297,8 +295,6 @@ def doTest(test):
             CRASH_CNT += 1
             print(f"Test {TESTNAME}:{i} : == Layout failed ==", file=sys.stderr)
             print(f'  {" ".join(str(a) for a in testcmd)}', file=sys.stderr)
-        elif GENERATE:
-            continue
         elif (REFDIR / OUTFILE).exists():
             doDiff(OUTFILE, TESTNAME, i, SUBTEST["FMT"])
         else:
@@ -322,17 +318,6 @@ else:
     print(f'Unrecognized system "{platform.system()}"', file=sys.stderr)
     REFDIR = Path("nshare")
 
-parser = argparse.ArgumentParser(description="Run regression tests.")
-parser.add_argument(
-    "-g", dest="generate", action="store_true", help="generate test data"
-)
-args = parser.parse_args()
-GENERATE = args.generate
-if GENERATE:
-    if not REFDIR.is_dir():
-        OUTDIR.mkdir()
-    OUTDIR = REFDIR
-
 # Check environment and initialize
 
 if not REFDIR.is_dir():
@@ -352,12 +337,9 @@ with open(TESTFILE, "rt", encoding="utf-8") as testfile:
         if TEST is None:
             break
         doTest(TEST)
-if GENERATE:
-    print(f"No. tests: {TOT_CNT} Layout failures: {CRASH_CNT}", file=sys.stderr)
-else:
-    print(
-        f"No. tests: {TOT_CNT} Layout failures: {CRASH_CNT} Changes: " f"{DIFF_CNT}",
-        file=sys.stderr,
-    )
+print(
+    f"No. tests: {TOT_CNT} Layout failures: {CRASH_CNT} Changes: " f"{DIFF_CNT}",
+    file=sys.stderr,
+)
 EXIT_STATUS = CRASH_CNT + DIFF_CNT
 sys.exit(EXIT_STATUS)
