@@ -16,11 +16,12 @@ import re
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 from typing import TextIO
 
 TESTFILE = os.path.join(os.path.dirname(__file__), "tests.txt")
 # Test specifications
-GRAPHDIR = os.path.join(os.path.dirname(__file__), "graphs")
+GRAPHDIR = Path(__file__).parent / "graphs"
 # Directory of input graphs and data
 OUTDIR = "ndata"  # Directory for test output
 OUTHTML = "nhtml"  # Directory for html test report
@@ -232,13 +233,13 @@ def doTest(test):
         return
     GRAPH = test["GRAPH"]
     if GRAPH == "=":
-        INFILE = os.path.join(GRAPHDIR, f"{TESTNAME}.gv")
+        INFILE = GRAPHDIR / f"{TESTNAME}.gv"
     elif GRAPH.startswith("graph") or GRAPH.startswith("digraph"):
         with open(TMPINFILE, mode="wt", encoding="utf-8") as fd:
             fd.write(GRAPH)
         INFILE = TMPINFILE
     elif os.path.splitext(GRAPH)[1] == ".gv":
-        INFILE = os.path.join(GRAPHDIR, GRAPH)
+        INFILE = GRAPHDIR / GRAPH
     else:
         print(f"Unknown graph spec, test {TESTNAME} - ignoring", file=sys.stderr)
         return
@@ -318,7 +319,7 @@ def doTest(test):
         if RVAL != 0 or not os.path.exists(OUTPATH):
             CRASH_CNT += 1
             print(f"Test {TESTNAME}:{i} : == Layout failed ==", file=sys.stderr)
-            print(f'  {" ".join(testcmd)}', file=sys.stderr)
+            print(f'  {" ".join(str(a) for a in testcmd)}', file=sys.stderr)
         elif GENERATE:
             continue
         elif os.path.exists(os.path.join(REFDIR, OUTFILE)):
