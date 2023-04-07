@@ -26,7 +26,6 @@ OUTDIR = "ndata"  # Directory for test output
 OUTHTML = "nhtml"  # Directory for html test report
 REFDIR = os.environ.get("REFDIR", "")  # Directory for expected test output
 GENERATE = False  # If set, generate test data
-VERBOSE = False  # If set, give verbose output
 
 CRASH_CNT = 0
 DIFF_CNT = 0
@@ -190,11 +189,6 @@ def doDiff(OUTFILE, testname, subtest_index, fmt):
             f"Test {testname}:{subtest_index} : == Failed == {OUTFILE}", file=sys.stderr
         )
         DIFF_CNT += 1
-    else:
-        if VERBOSE:
-            print(
-                f"Test {testname}:{subtest_index} : == OK == {OUTFILE}", file=sys.stderr
-            )
 
 
 def genOutname(name, alg, fmt):
@@ -265,8 +259,6 @@ def doTest(test):
         if TFLAGS:
             testcmd += [TFLAGS]
         testcmd += SUBTEST["FLAGS"] + ["-o", OUTPATH, INFILE]
-        if VERBOSE:
-            print(" ".join(testcmd))
         # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1786 is
         # fixed
         if os.environ.get("build_system") == "cmake" and SUBTEST["FMT"] == "png:gd":
@@ -369,10 +361,8 @@ parser = argparse.ArgumentParser(description="Run regression tests.")
 parser.add_argument(
     "-g", dest="generate", action="store_true", help="generate test data"
 )
-parser.add_argument("-v", dest="verbose", action="store_true", help="verbose")
 parser.add_argument("testfile", nargs="?", help="test files")
 args = parser.parse_args()
-VERBOSE = args.verbose
 GENERATE = args.generate
 if GENERATE:
     if not os.path.isdir(REFDIR):
