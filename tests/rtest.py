@@ -25,7 +25,6 @@ GRAPHDIR = Path(__file__).parent / "graphs"
 # Directory of input graphs and data
 OUTDIR = "ndata"  # Directory for test output
 OUTHTML = "nhtml"  # Directory for html test report
-REFDIR = os.environ.get("REFDIR", "")  # Directory for expected test output
 GENERATE = False  # If set, generate test data
 
 CRASH_CNT = 0
@@ -346,17 +345,15 @@ def cleanup():
 atexit.register(cleanup)
 
 # Set REFDIR
-REFDIR = os.environ.get("REFDIR")
-if not REFDIR:
-    if platform.system() == "Linux":
-        REFDIR = "linux.x86"
-    elif platform.system() == "Darwin":
-        REFDIR = "macosx"
-    elif platform.system() == "Windows":
-        REFDIR = "nshare"
-    else:
-        print(f'Unrecognized system "{platform.system()}"', file=sys.stderr)
-        REFDIR = "nshare"
+if platform.system() == "Linux":
+    REFDIR = "linux.x86"
+elif platform.system() == "Darwin":
+    REFDIR = "macosx"
+elif platform.system() == "Windows":
+    REFDIR = "nshare"
+else:
+    print(f'Unrecognized system "{platform.system()}"', file=sys.stderr)
+    REFDIR = "nshare"
 
 parser = argparse.ArgumentParser(description="Run regression tests.")
 parser.add_argument(
