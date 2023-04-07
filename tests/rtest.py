@@ -295,9 +295,7 @@ def doTest(test):
             )
             continue
 
-        with subprocess.Popen(testcmd, stderr=subprocess.STDOUT) as result:
-            result.communicate()
-            RVAL = result.returncode
+        RVAL = subprocess.call(testcmd, stderr=subprocess.STDOUT)
 
         if RVAL != 0 or not OUTPATH.exists():
             CRASH_CNT += 1
