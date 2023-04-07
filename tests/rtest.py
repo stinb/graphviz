@@ -285,40 +285,41 @@ def doTest(test, SUBTEST):
         )
 
 
-# Set REFDIR
-if platform.system() == "Linux":
-    REFDIR = Path("linux.x86")
-elif platform.system() == "Darwin":
-    REFDIR = Path("macosx")
-elif platform.system() == "Windows":
-    REFDIR = Path("nshare")
-else:
-    print(f'Unrecognized system "{platform.system()}"', file=sys.stderr)
-    REFDIR = Path("nshare")
+if __name__ == "__main__":
+    # Set REFDIR
+    if platform.system() == "Linux":
+        REFDIR = Path("linux.x86")
+    elif platform.system() == "Darwin":
+        REFDIR = Path("macosx")
+    elif platform.system() == "Windows":
+        REFDIR = Path("nshare")
+    else:
+        print(f'Unrecognized system "{platform.system()}"', file=sys.stderr)
+        REFDIR = Path("nshare")
 
-# Check environment and initialize
+    # Check environment and initialize
 
-if not REFDIR.is_dir():
-    print(f"Test data directory {REFDIR} does not exist", file=sys.stderr)
-    sys.exit(1)
+    if not REFDIR.is_dir():
+        print(f"Test data directory {REFDIR} does not exist", file=sys.stderr)
+        sys.exit(1)
 
-if not OUTDIR.is_dir():
-    OUTDIR.mkdir()
+    if not OUTDIR.is_dir():
+        OUTDIR.mkdir()
 
-OUTHTML.mkdir(exist_ok=True)
-for entry in OUTHTML.iterdir():
-    entry.unlink()
+    OUTHTML.mkdir(exist_ok=True)
+    for entry in OUTHTML.iterdir():
+        entry.unlink()
 
-with open(TESTFILE, "rt", encoding="utf-8") as testfile:
-    while True:
-        TEST = readTest(testfile)
-        if TEST is None:
-            break
-        for subtest in TEST["SUBTESTS"]:
-            doTest(TEST, subtest)
-print(
-    f"No. tests: {TOT_CNT} Layout failures: {CRASH_CNT} Changes: " f"{DIFF_CNT}",
-    file=sys.stderr,
-)
-EXIT_STATUS = CRASH_CNT + DIFF_CNT
-sys.exit(EXIT_STATUS)
+    with open(TESTFILE, "rt", encoding="utf-8") as testfile:
+        while True:
+            TEST = readTest(testfile)
+            if TEST is None:
+                break
+            for subtest in TEST["SUBTESTS"]:
+                doTest(TEST, subtest)
+    print(
+        f"No. tests: {TOT_CNT} Layout failures: {CRASH_CNT} Changes: " f"{DIFF_CNT}",
+        file=sys.stderr,
+    )
+    EXIT_STATUS = CRASH_CNT + DIFF_CNT
+    sys.exit(EXIT_STATUS)
