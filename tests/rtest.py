@@ -99,7 +99,7 @@ def readTest(f3: TextIO):
     }
 
 
-def doDiff(OUTFILE, testname, subtest_index, fmt):
+def doDiff(OUTFILE, testname, fmt):
     """
     Compare old and new output and report if different.
      Args: testname index fmt
@@ -117,7 +117,7 @@ def doDiff(OUTFILE, testname, subtest_index, fmt):
     ):
         print(
             f"Warning: Skipping {F} output comparison for test "
-            f"{testname}:{subtest_index} : format {fmt} because the order of "
+            f"{testname}: format {fmt} because the order of "
             "clusters in gv or ps output is not stable on Windows (#1789)",
             file=sys.stderr,
         )
@@ -153,7 +153,7 @@ def doDiff(OUTFILE, testname, subtest_index, fmt):
         if os.environ.get("build_system") == "cmake" and platform.system() == "Windows":
             print(
                 f"Warning: Skipping PNG image comparison for test {testname}:"
-                f"{subtest_index} : format: {fmt} because CMake builds on Windows "
+                f" format: {fmt} because CMake builds on Windows "
                 "do not contain the diffimg utility (#1788)",
                 file=sys.stderr,
             )
@@ -176,9 +176,7 @@ def doDiff(OUTFILE, testname, subtest_index, fmt):
             with open(FILE1, "rt", encoding="utf-8") as b:
                 returncode = 0 if a.read().strip() == b.read().strip() else -1
     if returncode != 0:
-        print(
-            f"Test {testname}:{subtest_index} : == Failed == {OUTFILE}", file=sys.stderr
-        )
+        print(f"Test {testname}: == Failed == {OUTFILE}", file=sys.stderr)
         DIFF_CNT += 1
 
 
@@ -210,7 +208,7 @@ def genOutname(name, alg, fmt):
     return OUTFILE
 
 
-def doTest(test):
+def doTest(test, SUBTEST):
     """
     Run a single test.
     """
@@ -218,7 +216,6 @@ def doTest(test):
     global CRASH_CNT
     global TESTTYPES
     TESTNAME = test["TESTNAME"]
-    SUBTESTS = test["SUBTESTS"]
     GRAPH = test["GRAPH"]
     if os.path.splitext(GRAPH)[1] == ".gv":
         INFILE = GRAPHDIR / GRAPH
@@ -226,74 +223,72 @@ def doTest(test):
         print(f"Unknown graph spec, test {TESTNAME} - ignoring", file=sys.stderr)
         return
 
-    for i, SUBTEST in enumerate(SUBTESTS):
-        TOT_CNT += 1
-        OUTFILE = genOutname(TESTNAME, SUBTEST["ALG"], SUBTEST["FMT"])
-        OUTPATH = OUTDIR / OUTFILE
-        KFLAGS = f"-K{SUBTEST['ALG']}"
-        TFLAGS = f"-T{SUBTEST['FMT']}"
-        testcmd = ["dot", KFLAGS, TFLAGS]
-        testcmd += SUBTEST["FLAGS"] + ["-o", OUTPATH, INFILE]
-        # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1786 is
-        # fixed
-        if os.environ.get("build_system") == "cmake" and SUBTEST["FMT"] == "png:gd":
-            print(
-                f'Skipping test {TESTNAME}:{i} : format {SUBTEST["FMT"]} because '
-                "CMake builds does not support format png:gd (#1786)",
-                file=sys.stderr,
-            )
-            continue
-        # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1269 is
-        # fixed
-        if (
-            platform.system() == "Windows"
-            and os.environ.get("build_system") == "msbuild"
-            and "-Goverlap=false" in SUBTEST["FLAGS"]
-        ):
-            print(
-                f"Skipping test {TESTNAME}:{i} : with flag -Goverlap=false because "
-                "it fails with Windows MSBuild builds which are not built with "
-                "triangulation library (#1269)",
-                file=sys.stderr,
-            )
-            continue
-        # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1787 is
-        # fixed
-        if (
-            platform.system() == "Windows"
-            and os.environ.get("build_system") == "msbuild"
-            and os.environ.get("configuration") == "Debug"
-            and TESTNAME == "user_shapes"
-        ):
-            print(
-                f"Skipping test {TESTNAME}:{i} : using shapefile because it fails "
-                "with Windows MSBuild Debug builds (#1787)",
-                file=sys.stderr,
-            )
-            continue
-        # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1790 is
-        # fixed
-        if platform.system() == "Windows" and TESTNAME == "ps_user_shapes":
-            print(
-                f"Skipping test {TESTNAME}:{i} : using PostScript shapefile "
-                "because it fails with Windows builds (#1790)",
-                file=sys.stderr,
-            )
-            continue
+    TOT_CNT += 1
+    OUTFILE = genOutname(TESTNAME, SUBTEST["ALG"], SUBTEST["FMT"])
+    OUTPATH = OUTDIR / OUTFILE
+    KFLAGS = f"-K{SUBTEST['ALG']}"
+    TFLAGS = f"-T{SUBTEST['FMT']}"
+    testcmd = ["dot", KFLAGS, TFLAGS]
+    testcmd += SUBTEST["FLAGS"] + ["-o", OUTPATH, INFILE]
+    # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1786 is
+    # fixed
+    if os.environ.get("build_system") == "cmake" and SUBTEST["FMT"] == "png:gd":
+        print(
+            f'Skipping test {TESTNAME}: format {SUBTEST["FMT"]} because '
+            "CMake builds does not support format png:gd (#1786)",
+            file=sys.stderr,
+        )
+        return
+    # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1269 is
+    # fixed
+    if (
+        platform.system() == "Windows"
+        and os.environ.get("build_system") == "msbuild"
+        and "-Goverlap=false" in SUBTEST["FLAGS"]
+    ):
+        print(
+            f"Skipping test {TESTNAME}: with flag -Goverlap=false because "
+            "it fails with Windows MSBuild builds which are not built with "
+            "triangulation library (#1269)",
+            file=sys.stderr,
+        )
+        return
+    # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1787 is
+    # fixed
+    if (
+        platform.system() == "Windows"
+        and os.environ.get("build_system") == "msbuild"
+        and os.environ.get("configuration") == "Debug"
+        and TESTNAME == "user_shapes"
+    ):
+        print(
+            f"Skipping test {TESTNAME}: using shapefile because it fails "
+            "with Windows MSBuild Debug builds (#1787)",
+            file=sys.stderr,
+        )
+        return
+    # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1790 is
+    # fixed
+    if platform.system() == "Windows" and TESTNAME == "ps_user_shapes":
+        print(
+            f"Skipping test {TESTNAME}: using PostScript shapefile "
+            "because it fails with Windows builds (#1790)",
+            file=sys.stderr,
+        )
+        return
 
-        RVAL = subprocess.call(testcmd, stderr=subprocess.STDOUT)
+    RVAL = subprocess.call(testcmd, stderr=subprocess.STDOUT)
 
-        if RVAL != 0 or not OUTPATH.exists():
-            CRASH_CNT += 1
-            print(f"Test {TESTNAME}:{i} : == Layout failed ==", file=sys.stderr)
-            print(f'  {" ".join(str(a) for a in testcmd)}', file=sys.stderr)
-        elif (REFDIR / OUTFILE).exists():
-            doDiff(OUTFILE, TESTNAME, i, SUBTEST["FMT"])
-        else:
-            sys.stderr.write(
-                f"Test {TESTNAME}:{i} : == No file {REFDIR}/{OUTFILE} "
-                "for comparison ==\n"
-            )
+    if RVAL != 0 or not OUTPATH.exists():
+        CRASH_CNT += 1
+        print(f"Test {TESTNAME}: == Layout failed ==", file=sys.stderr)
+        print(f'  {" ".join(str(a) for a in testcmd)}', file=sys.stderr)
+    elif (REFDIR / OUTFILE).exists():
+        doDiff(OUTFILE, TESTNAME, SUBTEST["FMT"])
+    else:
+        sys.stderr.write(
+            f"Test {TESTNAME}: == No file {REFDIR}/{OUTFILE} for comparison ==\n"
+        )
 
     # clear TESTTYPES
     TESTTYPES = {}
@@ -328,7 +323,8 @@ with open(TESTFILE, "rt", encoding="utf-8") as testfile:
         TEST = readTest(testfile)
         if TEST is None:
             break
-        doTest(TEST)
+        for subtest in TEST["SUBTESTS"]:
+            doTest(TEST, subtest)
 print(
     f"No. tests: {TOT_CNT} Layout failures: {CRASH_CNT} Changes: " f"{DIFF_CNT}",
     file=sys.stderr,
