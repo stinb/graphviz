@@ -7,6 +7,7 @@ TODO:
  Report differences with shared version and with new output.
 """
 
+import hashlib
 import io
 import os
 import platform
@@ -15,7 +16,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import TextIO
+from typing import List, TextIO
 
 TESTFILE = Path(__file__).parent / "tests.txt"
 # Test specifications
@@ -27,7 +28,6 @@ OUTHTML = Path("nhtml")  # Directory for html test report
 CRASH_CNT = 0
 DIFF_CNT = 0
 TOT_CNT = 0
-TESTTYPES = {}
 
 
 def readLine(f3: TextIO):
@@ -180,13 +180,12 @@ def doDiff(OUTFILE, testname, fmt):
         DIFF_CNT += 1
 
 
-def genOutname(name, alg, fmt):
+def genOutname(name, alg, fmt, flags: List[str]):
     """
-    Generate output file name given 3 parameters.
-      testname layout format
+    Generate output file name given 4 parameters.
+      testname layout format flags
     If format ends in :*, remove this, change the colons to underscores,
     and append to basename
-    If the last two parameters have been used before, add numeric suffix.
     """
     fmt_split = fmt.split(":")
     if len(fmt_split) >= 2:
@@ -196,15 +195,11 @@ def genOutname(name, alg, fmt):
         F = fmt
         XFMT = ""
 
-    IDX = alg + XFMT + F
-    j = TESTTYPES.get(IDX, 0)
-    if j == 0:
-        TESTTYPES[IDX] = 1
-        J = ""
-    else:
-        TESTTYPES[IDX] = j + 1
-        J = str(j)
-    OUTFILE = f"{name}_{alg}{XFMT}{J}.{F}"
+    suffix = hashlib.sha256()
+    for flag in flags:
+        suffix.update(f"{flag} ".encode("utf-8"))
+
+    OUTFILE = f"{name}_{alg}{XFMT}_{suffix.hexdigest()}.{F}"
     return OUTFILE
 
 
@@ -214,7 +209,6 @@ def doTest(test, SUBTEST):
     """
     global TOT_CNT
     global CRASH_CNT
-    global TESTTYPES
     TESTNAME = test["TESTNAME"]
     GRAPH = test["GRAPH"]
     if os.path.splitext(GRAPH)[1] == ".gv":
@@ -224,7 +218,7 @@ def doTest(test, SUBTEST):
         return
 
     TOT_CNT += 1
-    OUTFILE = genOutname(TESTNAME, SUBTEST["ALG"], SUBTEST["FMT"])
+    OUTFILE = genOutname(TESTNAME, SUBTEST["ALG"], SUBTEST["FMT"], SUBTEST["FLAGS"])
     OUTPATH = OUTDIR / OUTFILE
     KFLAGS = f"-K{SUBTEST['ALG']}"
     TFLAGS = f"-T{SUBTEST['FMT']}"
@@ -289,9 +283,6 @@ def doTest(test, SUBTEST):
         sys.stderr.write(
             f"Test {TESTNAME}: == No file {REFDIR}/{OUTFILE} for comparison ==\n"
         )
-
-    # clear TESTTYPES
-    TESTTYPES = {}
 
 
 # Set REFDIR
