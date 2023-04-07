@@ -221,8 +221,6 @@ def doTest(test):
     global TESTTYPES
     TESTNAME = test["TESTNAME"]
     SUBTESTS = test["SUBTESTS"]
-    if len(SUBTESTS) == 0:
-        return
     GRAPH = test["GRAPH"]
     if os.path.splitext(GRAPH)[1] == ".gv":
         INFILE = GRAPHDIR / GRAPH
