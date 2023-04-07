@@ -47,7 +47,7 @@ def is_ndebug_defined() -> bool:
     return False
 
 
-# The terminology used in rtest.py is a little inconsistent. At the
+# The terminology used in test_rtest.py is a little inconsistent. At the
 # end it reports the total number of tests, the number of "failures"
 # (crashes) and the number of "changes" (which is the number of tests
 # where the output file did not match the reference file). However,
@@ -65,7 +65,9 @@ def test_regression_failure():
 
     os.chdir(Path(__file__).resolve().parent)
     with subprocess.Popen(
-        [sys.executable, "rtest.py"], stderr=subprocess.PIPE, universal_newlines=True
+        [sys.executable, "test_rtest.py"],
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
     ) as result:
         text = result.communicate()[1]
     print(text)
