@@ -28,7 +28,6 @@ REFDIR = os.environ.get("REFDIR", "")  # Directory for expected test output
 GENERATE = False  # If set, generate test data
 VERBOSE = False  # If set, give verbose output
 NOOP = False  # If set, just print list of tests
-DOT = os.environ.get("DOT", shutil.which("dot"))
 DIFFIMG = os.environ.get("DIFFIMG", shutil.which("diffimg"))
 
 CRASH_CNT = 0
@@ -262,7 +261,7 @@ def doTest(test):
             KFLAGS = f"-K{KFLAGS}"
         if TFLAGS:
             TFLAGS = f"-T{TFLAGS}"
-        testcmd = [DOT]
+        testcmd = ["dot"]
         if KFLAGS:
             testcmd += [KFLAGS]
         if TFLAGS:
@@ -407,13 +406,6 @@ if not os.path.isdir(OUTHTML):
     os.mkdir(OUTHTML)
 for filename in os.listdir(OUTHTML):
     os.unlink(os.path.join(OUTHTML, filename))
-
-if not DOT:
-    print("Could not find a value for DOT", file=sys.stderr)
-    sys.exit(1)
-if not os.path.isfile(DOT) or not os.access(DOT, os.X_OK):
-    print(f"{DOT} program is not executable")
-    sys.exit(1)
 
 if not GENERATE:
     if DIFFIMG:
