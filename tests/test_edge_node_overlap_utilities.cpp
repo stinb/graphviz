@@ -404,17 +404,18 @@ static std::string generate_dot(const graph_options &graph_options) {
                                      graph_options.primitive_arrowhead_shape);
   const auto arrowtail = fmt::format("{}{}", graph_options.arrowtail_modifier,
                                      graph_options.primitive_arrowtail_shape);
-  return fmt::format("digraph g1 {{"
-                     "  graph [rankdir={}]"
-                     "  node [penwidth={} shape={} color={} fontname=Courier]"
-                     "  edge [penwidth={} color={} dir={} arrowhead={} "
-                     "arrowtail={} arrowsize={}]"
-                     "  a -> b"
-                     "}}",
-                     graph_options.rankdir, graph_options.node_penwidth,
-                     graph_options.node_shape, color,
-                     graph_options.edge_penwidth, color, graph_options.dir,
-                     arrowhead, arrowtail, graph_options.edge_arrowsize);
+  return fmt::format(
+      "digraph g1 {{"
+      "  graph [rankdir={}]"
+      "  node [penwidth={} shape={} color={} fontname=Courier fontsize={}]"
+      "  edge [penwidth={} color={} dir={} arrowhead={} "
+      "arrowtail={} arrowsize={}]"
+      "  a -> b"
+      "}}",
+      graph_options.rankdir, graph_options.node_penwidth,
+      graph_options.node_shape, color, graph_options.node_fontsize,
+      graph_options.edge_penwidth, color, graph_options.dir, arrowhead,
+      arrowtail, graph_options.edge_arrowsize);
 }
 
 void test_edge_node_overlap(const graph_options &graph_options,
