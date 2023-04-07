@@ -23,7 +23,7 @@ TESTFILE = Path(__file__).parent / "tests.txt"
 # Test specifications
 GRAPHDIR = Path(__file__).parent / "graphs"
 # Directory of input graphs and data
-OUTDIR = "ndata"  # Directory for test output
+OUTDIR = Path("ndata")  # Directory for test output
 OUTHTML = "nhtml"  # Directory for html test report
 GENERATE = False  # If set, generate test data
 
@@ -111,7 +111,7 @@ def doDiff(OUTFILE, testname, subtest_index, fmt):
      Args: testname index fmt
     """
     global DIFF_CNT
-    FILE1 = os.path.join(OUTDIR, OUTFILE)
+    FILE1 = OUTDIR / OUTFILE
     FILE2 = os.path.join(REFDIR, OUTFILE)
     F = fmt.split(":")[0]
     # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1789 is
@@ -246,7 +246,7 @@ def doTest(test):
     for i, SUBTEST in enumerate(SUBTESTS):
         TOT_CNT += 1
         OUTFILE = genOutname(TESTNAME, SUBTEST["ALG"], SUBTEST["FMT"])
-        OUTPATH = os.path.join(OUTDIR, OUTFILE)
+        OUTPATH = OUTDIR / OUTFILE
         KFLAGS = SUBTEST["ALG"]
         TFLAGS = SUBTEST["FMT"]
         if KFLAGS:
@@ -315,7 +315,7 @@ def doTest(test):
         if errout:
             print(errout)
 
-        if RVAL != 0 or not os.path.exists(OUTPATH):
+        if RVAL != 0 or not OUTPATH.exists():
             CRASH_CNT += 1
             print(f"Test {TESTNAME}:{i} : == Layout failed ==", file=sys.stderr)
             print(f'  {" ".join(str(a) for a in testcmd)}', file=sys.stderr)
@@ -363,8 +363,8 @@ args = parser.parse_args()
 GENERATE = args.generate
 if GENERATE:
     if not os.path.isdir(REFDIR):
-        os.mkdir(OUTDIR)
-    OUTDIR = REFDIR
+        OUTDIR.mkdir()
+    OUTDIR = Path(REFDIR)
 
 # Check environment and initialize
 
@@ -372,8 +372,8 @@ if not os.path.isdir(REFDIR):
     print(f"Test data directory {REFDIR} does not exist", file=sys.stderr)
     sys.exit(1)
 
-if not os.path.isdir(OUTDIR):
-    os.mkdir(OUTDIR)
+if not OUTDIR.is_dir():
+    OUTDIR.mkdir()
 
 if not os.path.isdir(OUTHTML):
     os.mkdir(OUTHTML)
