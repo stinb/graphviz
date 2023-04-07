@@ -108,7 +108,7 @@ def doDiff(OUTFILE, testname, subtest_index, fmt):
     """
     global DIFF_CNT
     FILE1 = OUTDIR / OUTFILE
-    FILE2 = os.path.join(REFDIR, OUTFILE)
+    FILE2 = REFDIR / OUTFILE
     F = fmt.split(":")[0]
     # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1789 is
     # fixed
@@ -310,7 +310,7 @@ def doTest(test):
             print(f'  {" ".join(str(a) for a in testcmd)}', file=sys.stderr)
         elif GENERATE:
             continue
-        elif os.path.exists(os.path.join(REFDIR, OUTFILE)):
+        elif (REFDIR / OUTFILE).exists():
             doDiff(OUTFILE, TESTNAME, i, SUBTEST["FMT"])
         else:
             sys.stderr.write(
@@ -324,14 +324,14 @@ def doTest(test):
 
 # Set REFDIR
 if platform.system() == "Linux":
-    REFDIR = "linux.x86"
+    REFDIR = Path("linux.x86")
 elif platform.system() == "Darwin":
-    REFDIR = "macosx"
+    REFDIR = Path("macosx")
 elif platform.system() == "Windows":
-    REFDIR = "nshare"
+    REFDIR = Path("nshare")
 else:
     print(f'Unrecognized system "{platform.system()}"', file=sys.stderr)
-    REFDIR = "nshare"
+    REFDIR = Path("nshare")
 
 parser = argparse.ArgumentParser(description="Run regression tests.")
 parser.add_argument(
@@ -340,13 +340,13 @@ parser.add_argument(
 args = parser.parse_args()
 GENERATE = args.generate
 if GENERATE:
-    if not os.path.isdir(REFDIR):
+    if not REFDIR.is_dir():
         OUTDIR.mkdir()
-    OUTDIR = Path(REFDIR)
+    OUTDIR = REFDIR
 
 # Check environment and initialize
 
-if not os.path.isdir(REFDIR):
+if not REFDIR.is_dir():
     print(f"Test data directory {REFDIR} does not exist", file=sys.stderr)
     sys.exit(1)
 
