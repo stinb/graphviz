@@ -2,7 +2,7 @@
 # Tests are separated by blank or comment lines.
 # Tests have the following syntax:
 #  testname
-#  Test input (one-line graph or name of .gv file or =)
+#  Test input (name of .gv file or =)
 #    In the last case, the input file is taken as testname.gv
 #  One or more subtests of the form: 
 #     layout_alg output_format additional_flags

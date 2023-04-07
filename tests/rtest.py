@@ -31,7 +31,6 @@ CRASH_CNT = 0
 DIFF_CNT = 0
 TOT_CNT = 0
 TESTTYPES = {}
-TMPINFILE = f"tmp{os.getpid()}.gv"
 TMPFILE1 = f"tmpnew{os.getpid()}"
 TMPFILE2 = f"tmpref{os.getpid()}"
 
@@ -231,10 +230,6 @@ def doTest(test):
     GRAPH = test["GRAPH"]
     if GRAPH == "=":
         INFILE = GRAPHDIR / f"{TESTNAME}.gv"
-    elif GRAPH.startswith("graph") or GRAPH.startswith("digraph"):
-        with open(TMPINFILE, mode="wt", encoding="utf-8") as fd:
-            fd.write(GRAPH)
-        INFILE = TMPINFILE
     elif os.path.splitext(GRAPH)[1] == ".gv":
         INFILE = GRAPHDIR / GRAPH
     else:
@@ -337,7 +332,6 @@ def cleanup():
     """
     shutil.rmtree(TMPFILE1, ignore_errors=True)
     shutil.rmtree(TMPFILE2, ignore_errors=True)
-    shutil.rmtree(TMPINFILE, ignore_errors=True)
 
 
 atexit.register(cleanup)
