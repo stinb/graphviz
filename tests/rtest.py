@@ -24,7 +24,7 @@ TESTFILE = Path(__file__).parent / "tests.txt"
 GRAPHDIR = Path(__file__).parent / "graphs"
 # Directory of input graphs and data
 OUTDIR = Path("ndata")  # Directory for test output
-OUTHTML = "nhtml"  # Directory for html test report
+OUTHTML = Path("nhtml")  # Directory for html test report
 GENERATE = False  # If set, generate test data
 
 CRASH_CNT = 0
@@ -166,20 +166,18 @@ def doDiff(OUTFILE, testname, subtest_index, fmt):
             )
             return
         returncode = subprocess.call(
-            ["diffimg", FILE1, FILE2, os.path.join(OUTHTML, f"dif_{OUTFILE}")],
+            ["diffimg", FILE1, FILE2, OUTHTML / f"dif_{OUTFILE}"],
         )
         if returncode != 0:
-            with open(
-                os.path.join(OUTHTML, "index.html"), "at", encoding="utf-8"
-            ) as fd:
+            with open(OUTHTML / "index.html", "at", encoding="utf-8") as fd:
                 fd.write("<p>\n")
-                shutil.copyfile(FILE2, os.path.join(OUTHTML, f"old_{OUTFILE}"))
+                shutil.copyfile(FILE2, OUTHTML / f"old_{OUTFILE}")
                 fd.write(f'<img src="old_{OUTFILE}" width="192" height="192">\n')
-                shutil.copyfile(FILE1, os.path.join(OUTHTML, f"new_{OUTFILE}"))
+                shutil.copyfile(FILE1, OUTHTML / f"new_{OUTFILE}")
                 fd.write(f'<img src="new_{OUTFILE}" width="192" height="192">\n')
                 fd.write(f'<img src="dif_{OUTFILE}" width="192" height="192">\n')
         else:
-            os.unlink(os.path.join(OUTHTML, f"dif_{OUTFILE}"))
+            (OUTHTML / f"dif_{OUTFILE}").unlink()
     else:
         with open(FILE2, "rt", encoding="utf-8") as a:
             with open(FILE1, "rt", encoding="utf-8") as b:
@@ -375,10 +373,9 @@ if not os.path.isdir(REFDIR):
 if not OUTDIR.is_dir():
     OUTDIR.mkdir()
 
-if not os.path.isdir(OUTHTML):
-    os.mkdir(OUTHTML)
-for filename in os.listdir(OUTHTML):
-    os.unlink(os.path.join(OUTHTML, filename))
+OUTHTML.mkdir(exist_ok=True)
+for entry in OUTHTML.iterdir():
+    entry.unlink()
 
 with open(TESTFILE, "rt", encoding="utf-8") as testfile:
     while True:
