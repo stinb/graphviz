@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 from typing import TextIO
 
-TESTFILE = os.path.join(os.path.dirname(__file__), "tests.txt")
+TESTFILE = Path(__file__).parent / "tests.txt"
 # Test specifications
 GRAPHDIR = Path(__file__).parent / "graphs"
 # Directory of input graphs and data
