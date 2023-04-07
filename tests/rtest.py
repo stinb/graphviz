@@ -28,7 +28,6 @@ REFDIR = os.environ.get("REFDIR", "")  # Directory for expected test output
 GENERATE = False  # If set, generate test data
 VERBOSE = False  # If set, give verbose output
 NOOP = False  # If set, just print list of tests
-DIFFIMG = os.environ.get("DIFFIMG", shutil.which("diffimg"))
 
 CRASH_CNT = 0
 DIFF_CNT = 0
@@ -169,7 +168,7 @@ def doDiff(OUTFILE, testname, subtest_index, fmt):
             )
             return
         returncode = subprocess.call(
-            [DIFFIMG, FILE1, FILE2, os.path.join(OUTHTML, f"dif_{OUTFILE}")],
+            ["diffimg", FILE1, FILE2, os.path.join(OUTHTML, f"dif_{OUTFILE}")],
         )
         if returncode != 0:
             with open(
@@ -406,20 +405,6 @@ if not os.path.isdir(OUTHTML):
     os.mkdir(OUTHTML)
 for filename in os.listdir(OUTHTML):
     os.unlink(os.path.join(OUTHTML, filename))
-
-if not GENERATE:
-    if DIFFIMG:
-        if not os.path.isfile(DIFFIMG) or not os.access(DIFFIMG, os.X_OK):
-            print(f"{DIFFIMG} program is not executable")
-            sys.exit(1)
-    else:
-        print("Could not find a value for DIFFIMG", file=sys.stderr)
-        # FIXME: Remove workaround for missing diffimg when
-        # https://gitlab.com/graphviz/graphviz/-/issues/1788 is fixed
-        if os.environ.get("build_system") != "cmake" or platform.system() != "Windows":
-            sys.exit(1)
-#    sys.exit(1)
-
 
 with open(TESTFILE, "rt", encoding="utf-8") as testfile:
     while True:
