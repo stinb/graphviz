@@ -230,15 +230,11 @@ def doTest(test):
         TOT_CNT += 1
         OUTFILE = genOutname(TESTNAME, SUBTEST["ALG"], SUBTEST["FMT"])
         OUTPATH = OUTDIR / OUTFILE
-        KFLAGS = SUBTEST["ALG"]
+        KFLAGS = f"-K{SUBTEST['ALG']}"
         TFLAGS = SUBTEST["FMT"]
-        if KFLAGS:
-            KFLAGS = f"-K{KFLAGS}"
         if TFLAGS:
             TFLAGS = f"-T{TFLAGS}"
-        testcmd = ["dot"]
-        if KFLAGS:
-            testcmd += [KFLAGS]
+        testcmd = ["dot", KFLAGS]
         if TFLAGS:
             testcmd += [TFLAGS]
         testcmd += SUBTEST["FLAGS"] + ["-o", OUTPATH, INFILE]
