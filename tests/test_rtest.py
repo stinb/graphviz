@@ -414,21 +414,19 @@ def genOutname(name, alg, fmt, flags: List[str]):
 
 
 @pytest.mark.parametrize(
-    "TESTNAME,GRAPH,algorithm,format,flags",
+    "name,GRAPH,algorithm,format,flags",
     ((c.name, c.input, c.algorithm, c.format, c.flags) for c in TESTS),
 )
-def test_graph(
-    TESTNAME: str, GRAPH: Path, algorithm: str, format: str, flags: List[str]
-):
+def test_graph(name: str, GRAPH: Path, algorithm: str, format: str, flags: List[str]):
     """
     Run a single test.
     """
     if GRAPH.suffix == ".gv":
         INFILE = GRAPHDIR / GRAPH
     else:
-        pytest.skip(f"Unknown graph spec, test {TESTNAME} - ignoring")
+        pytest.skip(f"Unknown graph spec, test {name} - ignoring")
 
-    OUTFILE = genOutname(TESTNAME, algorithm, format, flags)
+    OUTFILE = genOutname(name, algorithm, format, flags)
     OUTDIR.mkdir(exist_ok=True)
     OUTPATH = OUTDIR / OUTFILE
     KFLAGS = f"-K{algorithm}"
@@ -439,7 +437,7 @@ def test_graph(
     # fixed
     if os.environ.get("build_system") == "cmake" and format == "png:gd":
         pytest.skip(
-            f"Skipping test {TESTNAME}: format {format} because "
+            f"Skipping test {name}: format {format} because "
             "CMake builds does not support format png:gd (#1786)"
         )
     # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1269 is
@@ -450,7 +448,7 @@ def test_graph(
         and "-Goverlap=false" in flags
     ):
         pytest.skip(
-            f"Skipping test {TESTNAME}: with flag -Goverlap=false because "
+            f"Skipping test {name}: with flag -Goverlap=false because "
             "it fails with Windows MSBuild builds which are not built with "
             "triangulation library (#1269)"
         )
@@ -460,17 +458,17 @@ def test_graph(
         platform.system() == "Windows"
         and os.environ.get("build_system") == "msbuild"
         and os.environ.get("configuration") == "Debug"
-        and TESTNAME == "user_shapes"
+        and name == "user_shapes"
     ):
         pytest.skip(
-            f"Skipping test {TESTNAME}: using shapefile because it fails "
+            f"Skipping test {name}: using shapefile because it fails "
             "with Windows MSBuild Debug builds (#1787)"
         )
     # FIXME: Remove when https://gitlab.com/graphviz/graphviz/-/issues/1790 is
     # fixed
-    if platform.system() == "Windows" and TESTNAME == "ps_user_shapes":
+    if platform.system() == "Windows" and name == "ps_user_shapes":
         pytest.skip(
-            f"Skipping test {TESTNAME}: using PostScript shapefile "
+            f"Skipping test {name}: using PostScript shapefile "
             "because it fails with Windows builds (#1790)"
         )
 
@@ -478,14 +476,13 @@ def test_graph(
 
     if RVAL != 0 or not OUTPATH.exists():
         pytest.fail(
-            f"Test {TESTNAME}: == Layout failed ==\n"
-            f'  {" ".join(str(a) for a in testcmd)}'
+            f'Test {name}: == Layout failed ==\n  {" ".join(str(a) for a in testcmd)}'
         )
     elif (REFDIR / OUTFILE).exists():
-        doDiff(OUTFILE, TESTNAME, format)
+        doDiff(OUTFILE, name, format)
     else:
         sys.stderr.write(
-            f"Test {TESTNAME}: == No file {REFDIR}/{OUTFILE} for comparison ==\n"
+            f"Test {name}: == No file {REFDIR}/{OUTFILE} for comparison ==\n"
         )
 
 
