@@ -151,10 +151,7 @@ static unsigned int hd_hil_s_from_xy(point p, int n)
 */
 static double aabbaabb(Rect_t * r, Rect_t * s)
 {
-    /* per dimension if( max < omin || min > omax) */
-    if (r->boundary[2] < s->boundary[0] || r->boundary[0] > s->boundary[2])
-	return 0;
-    if (r->boundary[3] < s->boundary[1] || r->boundary[1] > s->boundary[3])
+    if (!Overlap(r, s))
 	return 0;
 
     /* if we get here we have an intersection */
