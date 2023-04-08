@@ -190,12 +190,13 @@ static int lblenclosing(object_t * objp, object_t * objp1)
 }
 
 /*fill in rectangle from the object */
-static void objp2rect(object_t * op, Rect_t * r)
-{
-    r->boundary[0] = op->pos.x;
-    r->boundary[1] = op->pos.y;
-    r->boundary[2] = op->pos.x + op->sz.x;
-    r->boundary[3] = op->pos.y + op->sz.y;
+static Rect_t objp2rect(const object_t *op) {
+  Rect_t r = {0};
+  r.boundary[0] = op->pos.x;
+  r.boundary[1] = op->pos.y;
+  r.boundary[2] = op->pos.x + op->sz.x;
+  r.boundary[3] = op->pos.y + op->sz.y;
+  return r;
 }
 
 /*fill in rectangle from the objects xlabel */
@@ -275,9 +276,8 @@ recordointrsx(object_t * op, object_t * cp, Rect_t * rp,
 	i = 5;
     if (intrsx[i] != NULL) {
 	double sa, maxa = 0.0;
-	Rect_t srect;
 	/* keep maximally overlapping object */
-	objp2rect(intrsx[i], &srect);
+	Rect_t srect = objp2rect(intrsx[i]);
 	sa = aabbaabb(rp, &srect);
 	if (sa > a)
 	    maxa = sa;
@@ -308,9 +308,8 @@ recordlintrsx(object_t * op, object_t * cp, Rect_t * rp,
 	i = 5;
     if (intrsx[i] != NULL) {
 	double sa, maxa = 0.0;
-	Rect_t srect;
 	/* keep maximally overlapping object */
-	objp2rect(intrsx[i], &srect);
+	Rect_t srect = objp2rect(intrsx[i]);
 	sa = aabbaabb(rp, &srect);
 	if (sa > a)
 	    maxa = sa;
@@ -335,7 +334,7 @@ recordlintrsx(object_t * op, object_t * cp, Rect_t * rp,
 static BestPos_t
 xlintersections(XLabels_t * xlp, object_t * objp, object_t * intrsx[XLNBR])
 {
-    Rect_t rect, srect;
+    Rect_t rect;
     BestPos_t bp;
 
     assert(objp->lbl);
@@ -366,7 +365,7 @@ xlintersections(XLabels_t * xlp, object_t * objp, object_t * intrsx[XLNBR])
 	    continue;
 
 	/*label-object intersect */
-	objp2rect(cp, &srect);
+	Rect_t srect = objp2rect(cp);
 	a = aabbaabb(&rect, &srect);
 	if (a > 0.0) {
 	  ra = recordointrsx(objp, cp, &rect, a, intrsx);
