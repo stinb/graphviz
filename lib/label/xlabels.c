@@ -10,6 +10,7 @@
 
 #include <assert.h>
 #include <cgraph/alloc.h>
+#include <cgraph/exit.h>
 #include <errno.h>
 #include <limits.h>
 #include <math.h>
@@ -48,13 +49,13 @@ static XLabels_t *xlnew(object_t * objs, int n_objs, xlabel_t * lbls,
     /* used to load the rtree in hilbert space filling curve order */
     if (!(xlp->hdx = dtopen(&Hdisc, Dtobag))) {
 	fprintf(stderr, "out of memory\n");
-	goto bad;
+	graphviz_exit(EXIT_FAILURE);
     }
 
     /* for querying intersection candidates */
     if (!(xlp->spdx = RTreeOpen())) {
 	fprintf(stderr, "out of memory\n");
-	goto bad;
+	graphviz_exit(EXIT_FAILURE);
     }
     /* save arg pointers in the handle */
     xlp->objs = objs;
@@ -64,14 +65,6 @@ static XLabels_t *xlnew(object_t * objs, int n_objs, xlabel_t * lbls,
     xlp->params = params;
 
     return xlp;
-
-  bad:
-    if (xlp->hdx)
-	dtclose(xlp->hdx);
-    if (xlp->spdx)
-	RTreeClose(xlp->spdx);
-    free(xlp);
-    return 0;
 }
 
 static void xlfree(XLabels_t * xlp)
