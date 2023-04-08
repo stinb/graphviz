@@ -200,7 +200,6 @@ static void objp2rect(object_t * op, Rect_t * r)
     r->boundary[1] = op->pos.y;
     r->boundary[2] = op->pos.x + op->sz.x;
     r->boundary[3] = op->pos.y + op->sz.y;
-    return;
 }
 
 /*fill in rectangle from the objects xlabel */
