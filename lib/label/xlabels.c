@@ -79,7 +79,6 @@ static void xlfree(XLabels_t * xlp)
 {
     RTreeClose(xlp->spdx);
     free(xlp);
-    return;
 }
 
 /***************************************************************************/
