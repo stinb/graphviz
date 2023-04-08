@@ -210,7 +210,6 @@ static void objplp2rect(object_t * objp, Rect_t * r)
     r->boundary[1] = lp->pos.y;
     r->boundary[2] = lp->pos.x + lp->sz.x;
     r->boundary[3] = lp->pos.y + lp->sz.y;
-    return;
 }
 
 /* compute boundary that encloses all possible label boundaries */
