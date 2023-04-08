@@ -225,36 +225,35 @@ static Rect_t objplpmks(object_t * objp)
 /* determine the position clp will occupy in intrsx[] */
 static int getintrsxi(object_t * op, object_t * cp)
 {
-    int i = -1;
     xlabel_t *lp = op->lbl, *clp = cp->lbl;
     assert(lp != clp);
 
     if (lp->set == 0 || clp->set == 0)
-	return i;
+	return -1;
     if ((op->pos.x == 0.0 && op->pos.y == 0.0) ||
 	(cp->pos.x == 0.0 && cp->pos.y == 0.0))
-	return i;
+	return -1;
 
-    if (cp->pos.y < op->pos.y)
+    if (cp->pos.y < op->pos.y) {
 	if (cp->pos.x < op->pos.x)
-	    i = XLPXPY;
-	else if (cp->pos.x > op->pos.x)
-	    i = XLNXPY;
-	else
-	    i = XLCXPY;
-    else if (cp->pos.y > op->pos.y)
+	    return XLPXPY;
+	if (cp->pos.x > op->pos.x)
+	    return XLNXPY;
+	return XLCXPY;
+    }
+    if (cp->pos.y > op->pos.y) {
 	if (cp->pos.x < op->pos.x)
-	    i = XLPXNY;
-	else if (cp->pos.x > op->pos.x)
-	    i = XLNXNY;
-	else
-	    i = XLCXNY;
-    else if (cp->pos.x < op->pos.x)
-	i = XLPXCY;
-    else if (cp->pos.x > op->pos.x)
-	i = XLNXCY;
+	    return XLPXNY;
+	if (cp->pos.x > op->pos.x)
+	    return XLNXNY;
+	return XLCXNY;
+    }
+    if (cp->pos.x < op->pos.x)
+	return XLPXCY;
+    if (cp->pos.x > op->pos.x)
+	return XLNXCY;
 
-    return i;
+    return -1;
 
 }
 
