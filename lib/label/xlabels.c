@@ -20,8 +20,6 @@
 #define XLABEL_INT
 #include <label/xlabels.h>
 
-extern int Verbose;
-
 static int icompare(Dt_t *, void *, void *, Dtdisc_t *);
 
 Dtdisc_t Hdisc = { offsetof(HDict_t, key), sizeof(int), -1, 0, 0,
