@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -25,7 +26,7 @@ void InitRect(Rect_t * r);
 void PrintRect(Rect_t *);
 #endif
 uint64_t RectArea(Rect_t*);
-int Overlap(const Rect_t*, const Rect_t*);
+bool Overlap(const Rect_t*, const Rect_t*);
 Rect_t CombineRect(const Rect_t*, const Rect_t*);
 Rect_t NullRect(void);
 
