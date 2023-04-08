@@ -578,13 +578,11 @@ static void xlhdxunload(XLabels_t * xlp)
   (void)size;
 }
 
-static int xlspdxload(XLabels_t * xlp)
-{
+static void xlspdxload(XLabels_t *xlp) {
     for (HDict_t *op = dtfirst(xlp->hdx); op; op = dtnext(xlp->hdx, op)) {
 	/*          tree       rectangle    data        node             lvl */
 	RTreeInsert(xlp->spdx, &op->d.rect, op->d.data, &xlp->spdx->root, 0);
     }
-    return 0;
 }
 
 static int xlinitialize(XLabels_t * xlp)
@@ -592,8 +590,7 @@ static int xlinitialize(XLabels_t * xlp)
     int r=0;
     if ((r = xlhdxload(xlp)) < 0)
 	return r;
-    if ((r = xlspdxload(xlp)) < 0)
-	return r;
+    xlspdxload(xlp);
     xlhdxunload(xlp);
     return dtclose(xlp->hdx);
 }
