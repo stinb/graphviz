@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <math.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -175,13 +176,12 @@ static double aabbaabb(Rect_t * r, Rect_t * s)
  * test if objp1, a size 0 object is enclosed in the xlabel
  * associated with objp
  */
-static int lblenclosing(object_t * objp, object_t * objp1)
-{
+static bool lblenclosing(object_t *objp, object_t *objp1) {
   xlabel_t * xlp = objp->lbl;;
 
   assert(objp1->sz.x == 0 && objp1->sz.y == 0);
 
-  if(! xlp) return 0;
+  if(! xlp) return false;
 
   return objp1->pos.x > xlp->pos.x &&
 	 objp1->pos.x < (xlp->pos.x + xlp->sz.x) &&
