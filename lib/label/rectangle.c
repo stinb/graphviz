@@ -63,7 +63,7 @@ void PrintRect(Rect_t * r)
 | Calculate the n-dimensional area of a rectangle
 -----------------------------------------------------------------------------*/
 
-uint64_t RectArea(Rect_t *r) {
+uint64_t RectArea(const Rect_t *r) {
   assert(r);
 
     if (Undefined(r))
