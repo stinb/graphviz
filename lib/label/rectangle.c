@@ -84,8 +84,7 @@ uint64_t RectArea(Rect_t *r) {
 /*-----------------------------------------------------------------------------
 | Combine two rectangles, make one that includes both.
 -----------------------------------------------------------------------------*/
-Rect_t CombineRect(Rect_t * r, Rect_t * rr)
-{
+Rect_t CombineRect(const Rect_t *r, const Rect_t *rr) {
     Rect_t new;
     assert(r && rr);
 
