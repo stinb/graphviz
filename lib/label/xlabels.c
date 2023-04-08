@@ -125,7 +125,7 @@ static unsigned int hd_hil_s_from_xy(point p, int n)
     for (int i = n - 1; i >= 0; i--) {
 	int xi = (x >> i) & 1;	/* Get bit i of x. */
 	int yi = (y >> i) & 1;	/* Get bit i of y. */
-	s = 4 * s + 2 * xi + (xi ^ yi);	/* Append two bits to s. */
+	s = 4 * s + 2 * (unsigned)xi + ((unsigned)xi ^ (unsigned)yi); // Append two bits to s.
 
 	x = x ^ y;		/* These 3 lines swap */
 	y = y ^ (x & (yi - 1));	/* x and y if yi = 0. */
