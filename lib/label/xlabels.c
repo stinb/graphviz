@@ -385,8 +385,8 @@ xlintersections(XLabels_t * xlp, object_t * objp, object_t * intrsx[XLNBR])
 static BestPos_t xladjust(XLabels_t * xlp, object_t * objp)
 {
     xlabel_t *lp = objp->lbl;
-    double xincr = ((2 * lp->sz.x) + objp->sz.x) / XLXDENOM;
-    double yincr = ((2 * lp->sz.y) + objp->sz.y) / XLYDENOM;
+    double xincr = (2 * lp->sz.x + objp->sz.x) / XLXDENOM;
+    double yincr = (2 * lp->sz.y + objp->sz.y) / XLYDENOM;
     object_t *intrsx[XLNBR] = {0};
     BestPos_t bp, nbp;
 
@@ -541,7 +541,7 @@ static int xlhdxload(XLabels_t * xlp)
 
 	hp->key = hd_hil_s_from_xy(pi, order);
 
-	if (!(dtinsert(xlp->hdx, hp)))
+	if (!dtinsert(xlp->hdx, hp))
 	    return -1;
     }
     return 0;
