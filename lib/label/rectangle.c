@@ -104,8 +104,7 @@ Rect_t CombineRect(const Rect_t *r, const Rect_t *rr) {
 /*-----------------------------------------------------------------------------
 | Decide whether two rectangles overlap.
 -----------------------------------------------------------------------------*/
-int Overlap(Rect_t * r, Rect_t * s)
-{
+int Overlap(const Rect_t *r, const Rect_t *s) {
     assert(r && s);
 
     for (size_t i = 0; i < NUMDIMS; i++) {
