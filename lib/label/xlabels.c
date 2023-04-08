@@ -200,13 +200,14 @@ static Rect_t objp2rect(const object_t *op) {
 }
 
 /*fill in rectangle from the objects xlabel */
-static void objplp2rect(object_t * objp, Rect_t * r)
-{
-    xlabel_t *lp = objp->lbl;
-    r->boundary[0] = lp->pos.x;
-    r->boundary[1] = lp->pos.y;
-    r->boundary[2] = lp->pos.x + lp->sz.x;
-    r->boundary[3] = lp->pos.y + lp->sz.y;
+static Rect_t objplp2rect(const object_t *objp) {
+  Rect_t r = {0};
+  const xlabel_t *lp = objp->lbl;
+  r.boundary[0] = lp->pos.x;
+  r.boundary[1] = lp->pos.y;
+  r.boundary[2] = lp->pos.x + lp->sz.x;
+  r.boundary[3] = lp->pos.y + lp->sz.y;
+  return r;
 }
 
 /* compute boundary that encloses all possible label boundaries */
@@ -283,7 +284,7 @@ recordointrsx(object_t * op, object_t * cp, Rect_t * rp,
 	    maxa = sa;
 	/*keep maximally overlapping label */
 	if (intrsx[i]->lbl) {
-	    objplp2rect(intrsx[i], &srect);
+	    srect = objplp2rect(intrsx[i]);
 	    sa = aabbaabb(rp, &srect);
 	    if (sa > a)
 		maxa = fmax(sa, maxa);
@@ -315,7 +316,7 @@ recordlintrsx(object_t * op, object_t * cp, Rect_t * rp,
 	    maxa = sa;
 	/*keep maximally overlapping label */
 	if (intrsx[i]->lbl) {
-	    objplp2rect(intrsx[i], &srect);
+	    srect = objplp2rect(intrsx[i]);
 	    sa = aabbaabb(rp, &srect);
 	    if (sa > a)
 		maxa = fmax(sa, maxa);
@@ -334,7 +335,6 @@ recordlintrsx(object_t * op, object_t * cp, Rect_t * rp,
 static BestPos_t
 xlintersections(XLabels_t * xlp, object_t * objp, object_t * intrsx[XLNBR])
 {
-    Rect_t rect;
     BestPos_t bp;
 
     assert(objp->lbl);
@@ -351,7 +351,7 @@ xlintersections(XLabels_t * xlp, object_t * objp, object_t * intrsx[XLNBR])
       }
     }
 
-    objplp2rect(objp, &rect);
+    Rect_t rect = objplp2rect(objp);
 
     LeafList_t *llp = RTreeSearch(xlp->spdx, xlp->spdx->root, &rect);
     if (!llp)
@@ -375,7 +375,7 @@ xlintersections(XLabels_t * xlp, object_t * objp, object_t * intrsx[XLNBR])
 	/*label-label intersect */
 	if (!cp->lbl || !cp->lbl->set)
 	    continue;
-	objplp2rect(cp, &srect);
+	srect = objplp2rect(cp);
 	a = aabbaabb(&rect, &srect);
 	if (a > 0.0) {
 	  ra = recordlintrsx(objp, cp, &rect, a, intrsx);
