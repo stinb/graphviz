@@ -16,14 +16,6 @@
 #include	<dotgen/dot.h>
 #include	<stdbool.h>
 
-/* pf2s:
- * Convert a pointf to its string representation.
- */
-static char *pf2s(pointf p, agxbuf *xb) {
-  agxbprint(xb, "(%.5g,%.5g)", p.x, p.y);
-  return agxbuse(xb);
-}
-
 /* Return point where line segment [pp,cp] intersects
  * the box bp. Assume cp is outside the box, and pp is
  * on or in the box. 
@@ -66,19 +58,12 @@ static pointf boxIntersectf(pointf pp, pointf cp, boxf * bp)
     }
 
     /* failure */
-    {
-	agxbuf ppbuf = {0}, cpbuf = {0}, llbuf = {0}, urbuf = {0};
+    agerr(AGERR,
+          "segment [(%.5g, %.5g),(%.5g,%.5g)] does not intersect box "
+          "ll=(%.5g,%.5g),ur=(%.5g,%.5g)\n", pp.x, pp.y, cp.x, cp.y, ll.x, ll.y,
+          ur.x, ur.y);
+    assert(0);
 
-	agerr(AGERR,
-		"segment [%s,%s] does not intersect box ll=%s,ur=%s\n",
-		pf2s(pp, &ppbuf), pf2s(cp, &cpbuf),
-		pf2s(ll, &llbuf), pf2s(ur, &urbuf));
-	agxbfree(&ppbuf);
-	agxbfree(&cpbuf);
-	agxbfree(&llbuf);
-	agxbfree(&urbuf);
-	assert(0);
-    }
     return ipp;
 }
 
