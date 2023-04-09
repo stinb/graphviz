@@ -309,7 +309,6 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
     node_t *head;
     node_t *tail;
     boxf *bb;
-    int i, j;
     int size;
     pointf pts[4];
     pointf p;
@@ -439,10 +438,10 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 		}
 	    } else {
 		for (starti = endi; starti > 0; starti -= 3) {
-		    for (i = 0; i < 4; i++)
+		    for (int i = 0; i < 4; i++)
 			pts[i] = bez->list[starti - i];
 		    if (splineIntersectf(pts, bb)) {
-			for (i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			    bez->list[starti - i] = pts[i];
 			break;
 		    }
@@ -471,7 +470,7 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
      */
     nbez->size = endi - starti + 1;
     nbez->list = N_GNEW(nbez->size, pointf);
-    for (i = 0, j = starti; i < nbez->size; i++, j++)
+    for (int i = 0, j = starti; i < nbez->size; i++, j++)
 	nbez->list[i] = bez->list[j];
     free(bez->list);
     free(bez);
