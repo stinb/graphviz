@@ -437,11 +437,10 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 			break;
 		    }
 		}
-		if (starti == 0) {
-		    assert(bez->sflag);
+		if (starti == 0 && bez->sflag) {
 		    nbez->sp =
 			boxIntersectf(bez->sp, bez->list[starti], bb);
-		} else {
+		} else if (starti != 0) {
 		    starti -= 3;
 		    if (bez->sflag)
 			starti = arrowStartClip(e, bez->list, starti,

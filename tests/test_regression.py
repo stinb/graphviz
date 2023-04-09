@@ -1194,7 +1194,6 @@ def test_1869(variant: int):
     assert "penwidth=2" in output, "penwidth=2 not found in DOT output"
 
 
-@pytest.mark.xfail()  # FIXME
 def test_1879():
     """https://gitlab.com/graphviz/graphviz/-/issues/1879"""
 
@@ -1214,7 +1213,6 @@ def test_1879():
     assert re.search(r"\bAssertion\b.*\bfailed\b", stdout) is None
 
 
-@pytest.mark.xfail()  # FIXME
 def test_1879_2():
     """
     another variant of lhead/ltail + compound
