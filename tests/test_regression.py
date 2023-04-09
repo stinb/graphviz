@@ -1214,6 +1214,21 @@ def test_1879():
     assert re.search(r"\bAssertion\b.*\bfailed\b", stdout) is None
 
 
+@pytest.mark.xfail()  # FIXME
+def test_1879_2():
+    """
+    another variant of lhead/ltail + compound
+    https://gitlab.com/graphviz/graphviz/-/issues/1879
+    """
+
+    # locate our associated test case in this directory
+    input = Path(__file__).parent / "1879-2.dot"
+    assert input.exists(), "unexpectedly missing test case"
+
+    # process it with DOT
+    subprocess.check_call(["dot", "-Gmargin=0", "-Tpng", "-o", os.devnull, input])
+
+
 def test_1893():
     """
     an HTML label containing just a ] should work
