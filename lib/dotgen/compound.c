@@ -302,7 +302,6 @@ static int splineIntersectf(pointf * pts, boxf * bb)
  */
 static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
     int starti = 0, endi = 0;	/* index of first and last control point */
-    pointf p;
 
     /* find head and tail target clusters, if defined */
     graph_t *lh = getCluster(agget(e, "lhead"), clustMap); // cluster containing head
@@ -356,7 +355,7 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 			  agnameof(agtail(e)), agnameof(aghead(e)), agget(e, "lhead"));
 		} else {
 		    assert(bez->sflag);	/* must be arrowhead on tail */
-		    p = boxIntersectf(bez->list[0], bez->sp, bb);
+		    pointf p = boxIntersectf(bez->list[0], bez->sp, bb);
 		    bez->list[3] = p;
 		    bez->list[1] = mid_pointf(p, bez->sp);
 		    bez->list[0] = mid_pointf(bez->list[1], bez->sp);
@@ -416,7 +415,7 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 		  	agnameof(agtail(e)), agnameof(aghead(e)), agget(e, "ltail"));
 		} else {
 		    assert(bez->eflag);	/* must be arrowhead on head */
-		    p = boxIntersectf(bez->list[endi], nbez->ep, bb);
+		    pointf p = boxIntersectf(bez->list[endi], nbez->ep, bb);
 		    starti = endi - 3;
 		    bez->list[starti] = p;
 		    bez->list[starti + 2] = mid_pointf(p, nbez->ep);
