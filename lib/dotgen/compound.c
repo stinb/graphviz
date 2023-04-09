@@ -302,7 +302,6 @@ static int splineIntersectf(pointf * pts, boxf * bb)
  */
 static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
     int starti = 0, endi = 0;	/* index of first and last control point */
-    boxf *bb;
     pointf pts[4];
     pointf p;
 
@@ -341,7 +340,7 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
      */
     bool fixed = false;
     if (lh) {
-	bb = &(GD_bb(lh));
+	boxf *bb = &GD_bb(lh);
 	if (!inBoxf(ND_coord(head), bb)) {
 	    agerr(AGWARN, "%s -> %s: head not inside head cluster %s\n",
 		  agnameof(agtail(e)), agnameof(aghead(e)), agget(e, "lhead"));
@@ -401,7 +400,7 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
      */
     fixed = false;
     if (lt) {
-	bb = &(GD_bb(lt));
+	boxf *bb = &GD_bb(lt);
 	if (!inBoxf(ND_coord(tail), bb)) {
 	    agerr(AGWARN, "%s -> %s: tail not inside tail cluster %s\n",
 		agnameof(agtail(e)), agnameof(aghead(e)), agget(e, "ltail"));
