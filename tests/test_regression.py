@@ -1211,7 +1211,6 @@ def test_1879():
     )
 
     # check we did not trigger an assertion failure
-    print(stdout)
     assert re.search(r"\bAssertion\b.*\bfailed\b", stdout) is None
 
 
