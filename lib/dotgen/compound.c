@@ -302,7 +302,6 @@ static int splineIntersectf(pointf * pts, boxf * bb)
  */
 static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
     int starti = 0, endi = 0;	/* index of first and last control point */
-    pointf pts[4];
     pointf p;
 
     /* find head and tail target clusters, if defined */
@@ -430,6 +429,7 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 		}
 	    } else {
 		for (starti = endi; starti > 0; starti -= 3) {
+		    pointf pts[4];
 		    for (int i = 0; i < 4; i++)
 			pts[i] = bez->list[starti - i];
 		    if (splineIntersectf(pts, bb)) {
