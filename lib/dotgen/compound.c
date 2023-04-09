@@ -14,6 +14,7 @@
 
 #include	<cgraph/agxbuf.h>
 #include	<dotgen/dot.h>
+#include	<stdbool.h>
 
 /* pf2s:
  * Convert a pointf to its string representation.
@@ -312,7 +313,6 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
     int size;
     pointf pts[4];
     pointf p;
-    int fixed;
 
     /* find head and tail target clusters, if defined */
     lh = getCluster(agget(e, "lhead"), clustMap);
@@ -347,7 +347,7 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
      * box edge.
      * Otherwise, leave end alone.
      */
-    fixed = 0;
+    bool fixed = false;
     if (lh) {
 	bb = &(GD_bb(lh));
 	if (!inBoxf(ND_coord(head), bb)) {
@@ -375,7 +375,7 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 			endi = arrowEndClip(e, bez->list,
 					 starti, 0, nbez, bez->eflag);
 		    endi += 3;
-		    fixed = 1;
+		    fixed = true;
 		}
 	    } else {
 		for (endi = 0; endi < size - 1; endi += 3) {
@@ -392,11 +392,11 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 					 starti, endi, nbez, bez->eflag);
 		    endi += 3;
 		}
-		fixed = 1;
+		fixed = true;
 	    }
 	}
     }
-    if (fixed == 0) {		/* if no lh, or something went wrong, use original head */
+    if (!fixed) { // if no lh, or something went wrong, use original head
 	endi = size - 1;
 	if (bez->eflag)
 	    nbez->ep = bez->ep;
@@ -407,7 +407,7 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
      * box edge.
      * Otherwise, leave end alone.
      */
-    fixed = 0;
+    fixed = false;
     if (lt) {
 	bb = &(GD_bb(lt));
 	if (!inBoxf(ND_coord(tail), bb)) {
@@ -435,7 +435,7 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 		    if (bez->sflag)
 			starti = arrowStartClip(e, bez->list, starti,
 				endi - 3, nbez, bez->sflag);
-		    fixed = 1;
+		    fixed = true;
 		}
 	    } else {
 		for (starti = endi; starti > 0; starti -= 3) {
@@ -457,11 +457,11 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 			starti = arrowStartClip(e, bez->list, starti,
 				endi - 3, nbez, bez->sflag);
 		}
-		fixed = 1;
+		fixed = true;
 	    }
 	}
     }
-    if (fixed == 0) {		/* if no lt, or something went wrong, use original tail */
+    if (!fixed) { // if no lt, or something went wrong, use original tail
 	/* Note: starti == 0 */
 	if (bez->sflag)
 	    nbez->sp = bez->sp;
