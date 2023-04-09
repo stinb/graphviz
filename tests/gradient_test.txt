@@ -2,8 +2,7 @@
 # Tests are separated by blank or comment lines.
 # Tests have the following syntax:
 #  testname
-#  Test input (one-line graph or name of .gv file or =)
-#    In the last case, the input file is taken as testname.gv
+#  Test input (name of .gv file)
 #  One or more subtests of the form: 
 #     layout_alg output_format additional_flags
 #  
@@ -20,67 +19,67 @@
 
 #shapes_test
 grdshapes
-=
+grdshapes.gv
 dot png
 dot svg
 
 #colors_test
 grdcolors
-=
+grdcolors.gv
 dot png
 dot svg
 
 #angles_test
 grdangles
-=
+grdangles.gv
 dot png
 dot svg
 
 #linear_node_test
 grdlinear_node
-=
+grdlinear_node.gv
 dot png
 dot svg
 
 #radial_node_test
 grdradial_node
-=
+grdradial_node.gv
 dot png
 dot svg
 
 #linear_table_test
 grdlinear
-=
+grdlinear.gv
 dot png
 dot svg
 
 #linear_angle_table_test
 grdlinear_angle
-=
+grdlinear_angle.gv
 dot png
 dot svg
 
 #radial_table_test
 grdradial
-=
+grdradial.gv
 dot png
 dot svg
 
 #radial_angle_table_test
 grdradial_angle
-=
+grdradial_angle.gv
 dot png
 dot svg
 
 #fillcolor_test
 grdfillcolor
-=
+grdfillcolor.gv
 dot png
 dot svg
 
 #clusters
 grdcluster
-=
+grdcluster.gv
 dot png
 dot svg
 

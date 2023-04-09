@@ -47,35 +47,6 @@ def is_ndebug_defined() -> bool:
     return False
 
 
-# The terminology used in rtest.py is a little inconsistent. At the
-# end it reports the total number of tests, the number of "failures"
-# (crashes) and the number of "changes" (which is the number of tests
-# where the output file did not match the reference file). However,
-# for each test that detects "changes", it prints an error message
-# saying "== Failed ==" which thus is not counted as a failure at the
-# end.
-
-
-def test_regression_failure():
-    """
-    Run all tests but ignore differences and fail the test only if there is a
-    crash. This will leave the differences for png output in
-    tests/nhtml/index.html for review.
-    """
-
-    os.chdir(Path(__file__).resolve().parent)
-    with subprocess.Popen(
-        [sys.executable, "rtest.py"], stderr=subprocess.PIPE, universal_newlines=True
-    ) as result:
-        text = result.communicate()[1]
-    print(text)
-    assert "Layout failures: 0" in text
-
-
-# FIXME: re-enable when all tests pass on all platforms
-#    assert result.returncode == 0
-
-
 @pytest.mark.xfail(
     platform.system() == "Windows", reason="#56", strict=not is_ndebug_defined()
 )  # FIXME
