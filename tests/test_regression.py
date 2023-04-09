@@ -1413,6 +1413,21 @@ def test_1931():
     assert "line 5\nline 6" in xdot
 
 
+@pytest.mark.xfail()  # FIXME
+def test_1949():
+    """
+    rankdir=LR + compound=true should not lead to an assertion failure
+    https://gitlab.com/graphviz/graphviz/-/issues/1949
+    """
+
+    # locate our associated test case in this directory
+    input = Path(__file__).parent / "1949.dot"
+    assert input.exists(), "unexpectedly missing test case"
+
+    # run it through Graphviz
+    dot("png", input)
+
+
 @pytest.mark.skipif(which("edgepaint") is None, reason="edgepaint not available")
 def test_1971():
     """
