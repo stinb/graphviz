@@ -308,9 +308,9 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
     node_t *tail = agtail(e);
 
     /* allocate new Bezier */
-    bezier *nbez = GNEW(bezier); // new Bezier  for e
-    nbez->eflag = bez->eflag;
-    nbez->sflag = bez->sflag;
+    bezier nbez = {0}; // new Bezier  for e
+    nbez.eflag = bez->eflag;
+    nbez.sflag = bez->sflag;
 
     /* if Bezier has four points, almost collinear,
      * make line - unimplemented optimization?
@@ -347,7 +347,7 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 		    bez->list[2] = mid_pointf(bez->list[1], p);
 		    if (bez->eflag)
 			endi = arrowEndClip(e, bez->list,
-					 starti, 0, nbez, bez->eflag);
+					 starti, 0, &nbez, bez->eflag);
 		    endi += 3;
 		    fixed = true;
 		}
@@ -358,12 +358,12 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 		}
 		if (endi == size - 1) {	/* no intersection */
 		    assert(bez->eflag);
-		    nbez->ep = boxIntersectf(bez->ep, bez->list[endi], bb);
+		    nbez.ep = boxIntersectf(bez->ep, bez->list[endi], bb);
 		} else {
 		    if (bez->eflag)
 			endi =
 			    arrowEndClip(e, bez->list,
-					 starti, endi, nbez, bez->eflag);
+					 starti, endi, &nbez, bez->eflag);
 		    endi += 3;
 		}
 		fixed = true;
@@ -373,7 +373,7 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
     if (!fixed) { // if no lh, or something went wrong, use original head
 	endi = size - 1;
 	if (bez->eflag)
-	    nbez->ep = bez->ep;
+	    nbez.ep = bez->ep;
     }
 
     /* If tail cluster defined, find last Bezier
@@ -400,15 +400,15 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 		  	agnameof(agtail(e)), agnameof(aghead(e)), agget(e, "ltail"));
 		} else {
 		    assert(bez->eflag);	/* must be arrowhead on head */
-		    pointf p = boxIntersectf(bez->list[endi], nbez->ep, bb);
+		    pointf p = boxIntersectf(bez->list[endi], nbez.ep, bb);
 		    starti = endi - 3;
 		    bez->list[starti] = p;
-		    bez->list[starti + 2] = mid_pointf(p, nbez->ep);
-		    bez->list[starti + 3] = mid_pointf(bez->list[starti + 2], nbez->ep);
+		    bez->list[starti + 2] = mid_pointf(p, nbez.ep);
+		    bez->list[starti + 3] = mid_pointf(bez->list[starti + 2], nbez.ep);
 		    bez->list[starti + 1] = mid_pointf(bez->list[starti + 2], p);
 		    if (bez->sflag)
 			starti = arrowStartClip(e, bez->list, starti,
-				endi - 3, nbez, bez->sflag);
+				endi - 3, &nbez, bez->sflag);
 		    fixed = true;
 		}
 	    } else {
@@ -423,13 +423,12 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 		    }
 		}
 		if (starti == 0 && bez->sflag) {
-		    nbez->sp =
-			boxIntersectf(bez->sp, bez->list[starti], bb);
+		    nbez.sp = boxIntersectf(bez->sp, bez->list[starti], bb);
 		} else if (starti != 0) {
 		    starti -= 3;
 		    if (bez->sflag)
 			starti = arrowStartClip(e, bez->list, starti,
-				endi - 3, nbez, bez->sflag);
+				endi - 3, &nbez, bez->sflag);
 		}
 		fixed = true;
 	    }
@@ -438,18 +437,17 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
     if (!fixed) { // if no lt, or something went wrong, use original tail
 	/* Note: starti == 0 */
 	if (bez->sflag)
-	    nbez->sp = bez->sp;
+	    nbez.sp = bez->sp;
     }
 
     /* complete Bezier, free garbage and attach new Bezier to edge 
      */
-    nbez->size = endi - starti + 1;
-    nbez->list = N_GNEW(nbez->size, pointf);
-    for (int i = 0, j = starti; i < nbez->size; i++, j++)
-	nbez->list[i] = bez->list[j];
+    nbez.size = endi - starti + 1;
+    nbez.list = N_GNEW(nbez.size, pointf);
+    for (int i = 0, j = starti; i < nbez.size; i++, j++)
+	nbez.list[i] = bez->list[j];
     free(bez->list);
-    free(bez);
-    ED_spl(e)->list = nbez;
+    *ED_spl(e)->list = nbez;
 }
 
 /* dot_compoundEdges:
