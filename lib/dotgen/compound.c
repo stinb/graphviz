@@ -443,10 +443,7 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
     /* complete Bezier, free garbage and attach new Bezier to edge 
      */
     nbez.size = endi - starti + 1;
-    nbez.list = N_GNEW(nbez.size, pointf);
-    for (int i = 0, j = starti; i < nbez.size; i++, j++)
-	nbez.list[i] = bez->list[j];
-    free(bez->list);
+    nbez.list = bez->list;
     *ED_spl(e)->list = nbez;
 }
 
