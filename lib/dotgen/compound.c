@@ -301,21 +301,14 @@ static int splineIntersectf(pointf * pts, boxf * bb)
  * If edge has arrowheads, reposition them.
  */
 static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
-    graph_t *lh;		/* cluster containing head */
-    graph_t *lt;		/* cluster containing tail */
-    bezier *bez;		/* original Bezier for e */
-    bezier *nbez;		/* new Bezier  for e */
     int starti = 0, endi = 0;	/* index of first and last control point */
-    node_t *head;
-    node_t *tail;
     boxf *bb;
-    int size;
     pointf pts[4];
     pointf p;
 
     /* find head and tail target clusters, if defined */
-    lh = getCluster(agget(e, "lhead"), clustMap);
-    lt = getCluster(agget(e, "ltail"), clustMap);
+    graph_t *lh = getCluster(agget(e, "lhead"), clustMap); // cluster containing head
+    graph_t *lt = getCluster(agget(e, "ltail"), clustMap); // cluster containing tail
     if (!lt && !lh)
 	return;
     if (!ED_spl(e)) return;
@@ -326,14 +319,14 @@ static void makeCompoundEdge(edge_t *e, Dt_t *clustMap) {
 	      agnameof(agtail(e)), agnameof(aghead(e)));
 	return;
     }
-    bez = ED_spl(e)->list;
-    size = bez->size;
+    bezier *bez = ED_spl(e)->list; // original Bezier for e
+    int size = bez->size;
 
-    head = aghead(e);
-    tail = agtail(e);
+    node_t *head = aghead(e);
+    node_t *tail = agtail(e);
 
     /* allocate new Bezier */
-    nbez = GNEW(bezier);
+    bezier *nbez = GNEW(bezier); // new Bezier  for e
     nbez->eflag = bez->eflag;
     nbez->sflag = bez->sflag;
 
