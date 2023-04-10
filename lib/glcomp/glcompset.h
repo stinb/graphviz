@@ -31,8 +31,7 @@ extern "C" {
     extern void glCompDrawBegin(void);
     extern void glCompDrawEnd(void);
     extern void glCompSetAddObj(glCompSet * s, glCompObj * obj);
-    glCompObj *glCompGetObjByMouse(glCompSet * s, glCompMouse * m,
-				   int onlyClickable);
+    glCompObj *glCompGetObjByMouse(glCompSet *s, glCompMouse *m);
 
 #ifdef __cplusplus
 }

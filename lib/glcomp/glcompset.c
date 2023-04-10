@@ -28,8 +28,7 @@ static int glCompPointInObject(glCompObj * p, float x, float y)
 	    && y < p->common.refPos.y + p->common.height;
 }
 
-glCompObj *glCompGetObjByMouse(glCompSet * s, glCompMouse * m,
-			       int onlyClickable)
+glCompObj *glCompGetObjByMouse(glCompSet * s, glCompMouse * m)
 {
     glCompObj *rv = NULL;
     if (!s || !m)
@@ -38,9 +37,7 @@ glCompObj *glCompGetObjByMouse(glCompSet * s, glCompMouse * m,
 	if (s->obj[ind]->common.visible
 	    && glCompPointInObject(s->obj[ind], m->pos.x, m->pos.y)) {
 	    if (!rv || s->obj[ind]->common.layer >= rv->common.layer) {
-		if ((onlyClickable
-		     && s->obj[ind]->common.functions.click)
-		    || !onlyClickable)
+		if (s->obj[ind]->common.functions.click)
 		    rv = s->obj[ind];
 	    }
 	}
@@ -82,8 +79,7 @@ static void glCompSetMouseDown(void *obj, GLfloat x, GLfloat y,
 	((glCompSet *) obj)->mouse.clickedObj =
 	    glCompGetObjByMouse(((glCompObj *) obj)->common.compset,
 				&((glCompSet *) (((glCompObj *) obj)->
-						 common.compset))->mouse,
-				1);
+						 common.compset))->mouse);
 	if (((glCompSet *) obj)->mouse.clickedObj)
 	    if (((glCompSet *) obj)->mouse.clickedObj->common.functions.
 		mousedown)
@@ -113,7 +109,7 @@ static void glCompSetMouseUp(void *obj, GLfloat x, GLfloat y,
 	((glCompSet *) obj)->mouse.pos.y = tempY;
 	((glCompSet *) obj)->mouse.pos.z = 0;
 	if (o_clicked)
-	    o = glCompGetObjByMouse(obj, &((glCompSet *) obj)->mouse, 1);
+	    o = glCompGetObjByMouse(obj, &((glCompSet *) obj)->mouse);
 	if (!o)
 	    return;
 	if (o == o_clicked)
