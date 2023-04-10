@@ -11,7 +11,6 @@
 #include <glcomp/glpangofont.h>
 
 #define DEFAULT_FONT_FAMILY "Arial"
-#define DEFAULT_FONT_SIZE 32
 #define ANTIALIAS
 
 static PangoLayout *get_pango_layout(char *markup_text,
