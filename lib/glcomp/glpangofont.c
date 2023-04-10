@@ -10,7 +10,6 @@
 
 #include <glcomp/glpangofont.h>
 
-#define DEFAULT_FONT_FAMILY "Arial"
 #define ANTIALIAS
 
 static PangoLayout *get_pango_layout(char *markup_text,
