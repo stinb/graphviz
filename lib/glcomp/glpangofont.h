@@ -24,8 +24,6 @@ extern "C" {
 					int fontsize, char *txt,
 					cairo_surface_t * surface, int *w,
 					int *h);
-    int glCompCreateFontFile(char *fontdescription, int fs, char *fontfile,
-			 float gw, float gh);
 
 #ifdef __cplusplus
 }
