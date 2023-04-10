@@ -266,7 +266,7 @@ static bool pango_textlayout(textspan_t * span, char **fontpath)
 #endif
 
     /* The distance below midline for y centering of text strings */
-    span->yoffset_centerline = 0.2 * span->font->size;
+    span->yoffset_centerline = 0.05 * span->font->size;
 
     return logical_rect.width != 0 || strcmp(text, "") == 0;
 }
