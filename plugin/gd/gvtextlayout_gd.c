@@ -131,7 +131,7 @@ static bool gd_textlayout(textspan_t * span, char **fontpath)
     span->layout = NULL;
     span->free_layout = NULL;
 
-    span->yoffset_centerline = 0.1 * fontsize;
+    span->yoffset_centerline = 0.05 * fontsize;
 
     if (fontname) {
 	if (fontsize <= FONTSIZE_MUCH_TOO_SMALL) {
