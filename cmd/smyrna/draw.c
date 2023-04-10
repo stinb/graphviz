@@ -309,7 +309,7 @@ static void InsertImage(sdot_op * o, int param)
     if(!o->img) {
 	x = o->op.u.image.pos.x;
 	y = o->op.u.image.pos.y;
-	i = o->img = glCompImageNewFile (NULL, x, y, o->op.u.image.name, 0);
+	i = o->img = glCompImageNewFile (NULL, x, y, o->op.u.image.name);
 	if (!o->img) {
 	    fprintf (stderr, "Could not open file \"%s\" to read image.\n", o->op.u.image.name);
 	    return;

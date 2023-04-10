@@ -33,15 +33,14 @@ glCompImage *glCompImageNew(glCompObj * par, GLfloat x, GLfloat y)
  * At present, we assume png input.
  * Return 0 on failure.
  */
-glCompImage *glCompImageNewFile (glCompObj * par, GLfloat x, GLfloat y, char* imgfile, int is2D)
-{
+glCompImage *glCompImageNewFile(glCompObj *par, GLfloat x, GLfloat y, char *imgfile) {
     int imageWidth, imageHeight;
     unsigned char *data = glCompLoadPng (imgfile, &imageWidth, &imageHeight);
     glCompImage *p;
 
     if (!data) return NULL;
     p = glCompImageNew (par, x, y);
-    if (!glCompImageLoad (p, data, imageWidth, imageHeight, is2D)) {
+    if (!glCompImageLoad(p, data, imageWidth, imageHeight, 0)) {
 	glCompImageDelete (p);
 	return NULL;
     }
