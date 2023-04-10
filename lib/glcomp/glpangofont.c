@@ -10,8 +10,6 @@
 
 #include <glcomp/glpangofont.h>
 
-#define ANTIALIAS
-
 static PangoLayout *get_pango_layout(char *markup_text,
 				     char *fontdescription, int fontsize,
 				     double *width, double *height)
