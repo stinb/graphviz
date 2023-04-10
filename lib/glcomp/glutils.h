@@ -23,11 +23,6 @@ extern "C" {
     typedef struct {
 	glCompPoint u, v;
     } line;
-    typedef struct {
-	glCompPoint N;		/* normal */
-	double d;		/* offset */
-    } plane;
-
 
     int GetOGLPosRef(int x, int y, float *X, float *Y);
     float GetOGLDistance(int l);
