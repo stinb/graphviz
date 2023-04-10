@@ -9,6 +9,7 @@
  *************************************************************************/
 
 #include <glcomp/glpangofont.h>
+#include <stddef.h>
 
 static PangoLayout *get_pango_layout(char *markup_text,
 				     char *fontdescription, int fontsize,
@@ -64,6 +65,9 @@ unsigned char *glCompCreatePangoTexture(char *fontdescription, int fontsize,
 
     layout =
 	get_pango_layout(txt, fontdescription, fontsize, &width, &height);
+    if (layout == NULL) {
+        return NULL;
+    }
     //create the right size canvas for character set
     surface =
 	cairo_image_surface_create(CAIRO_FORMAT_ARGB32, (int) width,
