@@ -595,11 +595,18 @@ static double overlap(double i0, double i1, double j0, double j1) {
     return 0;
   if (i0 >= j1)
     return 0;
+
+  // does the first interval subsume the second?
+  if (i0 <= j0 && i1 >= j1)
+    return i1 - i0;
+  // does the second interval subsume the first?
+  if (j0 <= i0 && j1 >= i1)
+    return j1 - j0;
+
   if (j0 <= i0 && i0 <= j1)
     return j1 - i0;
-  if (j0 <= i1 && i1 <= j1)
-    return i1 - j0;
-  return fmin(i1 - i0, j1 - j0);
+  assert(j0 <= i1 && i1 <= j1);
+  return i1 - j0;
 }
 
 
