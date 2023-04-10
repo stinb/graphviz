@@ -46,14 +46,10 @@ static PangoLayout *get_pango_layout(char *markup_text,
     pango_font_description_free(desc);
     pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
 
-    if (width || height)
-	pango_layout_get_size(layout, &pango_width, &pango_height);
+    pango_layout_get_size(layout, &pango_width, &pango_height);
 
-    if (width)
-	*width = (double) pango_width / PANGO_SCALE;
-
-    if (height)
-	*height = (double) pango_height / PANGO_SCALE;
+    *width = (double) pango_width / PANGO_SCALE;
+    *height = (double) pango_height / PANGO_SCALE;
 
     return layout;
 }
