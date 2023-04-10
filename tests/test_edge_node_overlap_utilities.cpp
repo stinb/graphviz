@@ -483,6 +483,15 @@ void test_edge_node_overlap(const graph_options &graph_options,
           ? graph_options.node_penwidth / 2 * (std::sqrt(2) - 1)
           : 0;
 
+  const auto extra_node_edge_overlap_margin =
+      graph_options.node_shape == "plain"
+          // The plain shape has no visible borders and its bounding box is
+          // solely determined by the invisible bounding box of the text and it
+          // may vary between text renderers. We therefore can, and need to,
+          // allow more margin when checking for overlap.
+          ? 0.7
+          : 0;
+
   const check_options check_options = {
       .check_max_edge_node_overlap =
           tc_check_options.check_max_edge_node_overlap,
@@ -492,9 +501,10 @@ void test_edge_node_overlap(const graph_options &graph_options,
           tc_check_options.check_max_edge_stem_arrow_overlap,
       .check_min_edge_stem_arrow_overlap =
           tc_check_options.check_min_edge_stem_arrow_overlap,
-      .max_node_edge_overlap =
-          graphviz_bezier_clip_margin + extra_max_node_edge_overlap,
-      .min_node_edge_overlap = 0,
+      .max_node_edge_overlap = graphviz_bezier_clip_margin +
+                               extra_max_node_edge_overlap +
+                               extra_node_edge_overlap_margin,
+      .min_node_edge_overlap = 0 - extra_node_edge_overlap_margin,
       .max_edge_stem_arrow_overlap = max_edge_stem_arrow_overlap,
       .min_edge_stem_arrow_overlap = 0,
       .svg_rounding_error = graphviz_max_svg_rounding_error,
