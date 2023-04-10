@@ -20,10 +20,6 @@
 extern "C" {
 #endif
 
-    typedef struct {
-	glCompPoint u, v;
-    } line;
-
     int GetOGLPosRef(int x, int y, float *X, float *Y);
     float GetOGLDistance(int l);
     void to3D(int x, int y, GLfloat * X, GLfloat * Y, GLfloat * Z);
