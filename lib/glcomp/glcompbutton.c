@@ -53,7 +53,7 @@ glCompButton *glCompButtonNew(glCompObj * par, GLfloat x, GLfloat y,
 
     /*caption */
     p->common.font = glNewFontFromParent ((glCompObj *) p, NULL);
-    p->label = glCompLabelNew((glCompObj *) p, 0, 0, caption);
+    p->label = glCompLabelNew((glCompObj*) p, caption);
     p->label->common.font->justify.VJustify = glFontVJustifyCenter;
     p->label->common.font->justify.HJustify = glFontHJustifyCenter;
     p->label->common.align = glAlignParent;

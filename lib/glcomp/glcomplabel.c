@@ -14,11 +14,9 @@
 #include <glcomp/glcompset.h>
 #include <glcomp/glutils.h>
 
-glCompLabel *glCompLabelNew(glCompObj * par, GLfloat x, GLfloat y,
-			    char *text)
-{
+glCompLabel *glCompLabelNew(glCompObj *par, char *text) {
     glCompLabel *p = gv_alloc(sizeof(glCompLabel));
-    glCompInitCommon((glCompObj *) p, par, x, y);
+    glCompInitCommon((glCompObj*)p, par, 0, 0);
     p->objType = glLabelObj;
     p->transparent=1;
 

@@ -16,8 +16,7 @@
 extern "C" {
 #endif
 
-    extern glCompLabel *glCompLabelNew(glCompObj * par, GLfloat x,
-				       GLfloat y, char *text);
+extern glCompLabel *glCompLabelNew(glCompObj *par, char *text);
 
 /*events*/
     extern int glCompLabelDraw(glCompLabel * p);
