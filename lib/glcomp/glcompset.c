@@ -28,8 +28,7 @@ static int glCompPointInObject(glCompObj * p, float x, float y)
 	    && y < p->common.refPos.y + p->common.height;
 }
 
-glCompObj *glCompGetObjByMouse(glCompSet * s, glCompMouse * m)
-{
+static glCompObj *glCompGetObjByMouse(glCompSet *s, glCompMouse *m) {
     glCompObj *rv = NULL;
     if (!s || !m)
 	return NULL;
