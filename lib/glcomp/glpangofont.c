@@ -32,13 +32,9 @@ static PangoLayout *get_pango_layout(char *markup_text,
     cairo_font_options_set_hint_metrics(options, CAIRO_HINT_METRICS_ON);
     cairo_font_options_set_subpixel_order(options,
 					  CAIRO_SUBPIXEL_ORDER_BGR);
-//      pango_cairo_context_set_font_options(context, options);
 
     desc = pango_font_description_from_string(fontdescription);
-//      pango_font_description_set_family(desc, "CENTAUR.TTF");
     pango_font_description_set_size(desc, (gint) (fontsize * PANGO_SCALE));
-
-//      pango_font_description_set_style    (desc,PANGO_STYLE_ITALIC);
 
     if (!pango_parse_markup
 	(markup_text, -1, '\0', &attr_list, &text, NULL, NULL))
@@ -66,12 +62,6 @@ unsigned char *glCompCreatePangoTexture(char *fontdescription, int fontsize,
 				    char *txt, cairo_surface_t * surface,
 				    int *w, int *h)
 {
-
-//    char buf[] = " ";
-//    int ncolumns = 16;
-//    int counter = 0;
-//    int X = 0;
-//    int Y = 0;
     cairo_t *cr;
     PangoLayout *layout;
     double width, height;
@@ -82,14 +72,8 @@ unsigned char *glCompCreatePangoTexture(char *fontdescription, int fontsize,
     surface =
 	cairo_image_surface_create(CAIRO_FORMAT_ARGB32, (int) width,
 				   (int) height);
-//      surface =cairo_image_surface_create(CAIRO_FORMAT_A8,(int)width,(int)height);
 
     cr = cairo_create(surface);
-    //draw a rectangle with same size of canvas
-//    cairo_rectangle(cr, 5, 5, width*1.8,height*1.8);
-    //fill rectangle with black
-//    cairo_set_source_rgba(cr, 0.5, 0.5, 0.5,0.3);
-//    cairo_fill(cr);
     //set pen color to white
     cairo_set_source_rgba(cr, 1, 1, 1, 1);
     //draw the text
