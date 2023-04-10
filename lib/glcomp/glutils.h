@@ -29,7 +29,7 @@ extern "C" {
     } plane;
 
 
-    int GetOGLPosRef(int x, int y, float *X, float *Y, float *Z);
+    int GetOGLPosRef(int x, int y, float *X, float *Y);
     float GetOGLDistance(int l);
     void to3D(int x, int y, GLfloat * X, GLfloat * Y, GLfloat * Z);
     double point_to_lineseg_dist(glCompPoint p, glCompPoint a, glCompPoint b);

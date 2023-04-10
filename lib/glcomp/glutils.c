@@ -14,8 +14,7 @@
 #include <glcomp/glcompdefs.h>
 
 /*transforms 2d windows location to 3d gl coords but depth is calculated unlike the previous function*/
-int GetOGLPosRef(int x, int y, float *X, float *Y, float *Z)
-{
+int GetOGLPosRef(int x, int y, float *X, float *Y) {
     GLdouble wwinX;
     GLdouble wwinY;
     GLdouble wwinZ;
@@ -44,7 +43,7 @@ int GetOGLPosRef(int x, int y, float *X, float *Y, float *Z)
 
     *X = (float) posX;
     *Y = (float) posY;
-    *Z = (float) posZ;
+    (void)posZ; // ignore Z that the caller does not need
 
     return 1;
 }
