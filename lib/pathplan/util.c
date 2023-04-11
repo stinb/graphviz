@@ -25,13 +25,12 @@ int Ppolybarriers(Ppoly_t ** polys, int npolys, Pedge_t ** barriers,
 {
     Ppoly_t pp;
     int i, j, k, n, b;
-    Pedge_t *bar;
 
     n = 0;
     for (i = 0; i < npolys; i++)
 	n = n + polys[i]->pn;
 
-    bar = malloc(n * sizeof(Pedge_t));
+    Pedge_t *bar = gv_calloc(n, sizeof(Pedge_t));
 
     b = 0;
     for (i = 0; i < npolys; i++) {
