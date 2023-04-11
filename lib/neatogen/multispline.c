@@ -682,23 +682,16 @@ router_t *mkRouter(Ppoly_t** obsp, int npoly)
  * if necessary, and adding edge labels
  */
 static void finishEdge(edge_t* e, Ppoly_t spl, int flip) {
-    int j;
-    pointf *spline = gv_calloc(spl.pn, sizeof(pointf));
-
     if (flip) {
-	for (j = 0; j < spl.pn; j++) {
-	    spline[spl.pn - 1 - j] = spl.ps[j];
-	}
-    }
-    else {
-	for (j = 0; j < spl.pn; j++) {
-	    spline[j] = spl.ps[j];
+	for (int j = 0; j < spl.pn / 2; j++) {
+	    pointf tmp = spl.ps[spl.pn - 1 - j];
+	    spl.ps[spl.pn - 1 - j] = spl.ps[j];
+	    spl.ps[j] = tmp;
 	}
     }
     if (Verbose > 1)
 	fprintf(stderr, "spline %s %s\n", agnameof(agtail(e)), agnameof(aghead(e)));
-    clip_and_install(e, aghead(e), spline, spl.pn, &sinfo);
-    free(spline);
+    clip_and_install(e, aghead(e), spl.ps, spl.pn, &sinfo);
 
     addEdgeLabels(e);
 }
