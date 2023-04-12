@@ -74,7 +74,7 @@ void attach_edge_colors(Agraph_t* g, int dim, double *colors){
  * Assumes g is connected and simple, i.e., we can have a->b and b->a
  * but not a->b and a->b
  */
-SparseMatrix SparseMatrix_import_dot(Agraph_t *g, int dim, double **label_sizes,
+SparseMatrix SparseMatrix_import_dot(Agraph_t *g, int dim,
                                      double **x, int format) {
   SparseMatrix A = 0;
   Agnode_t* n;
@@ -89,7 +89,6 @@ SparseMatrix SparseMatrix_import_dot(Agraph_t *g, int dim, double **label_sizes,
   double *val;
   double v;
   int type = MATRIX_TYPE_REAL;
-  double padding = 10;
 
   if (!g) return NULL;
   nnodes = agnnodes (g);
@@ -136,23 +135,6 @@ SparseMatrix SparseMatrix_import_dot(Agraph_t *g, int dim, double **label_sizes,
     }
   }
   
-  if (label_sizes) *label_sizes = MALLOC(sizeof(double)*2*nnodes);
-  for (n = agfstnode (g); n; n = agnxtnode (g, n)) {
-    double sz;
-    i = ND_id(n);
-    if (label_sizes){
-      if (agget(n, "width") && agget(n, "height")){
-	sscanf(agget(n, "width"), "%lf", &sz);
-	(*label_sizes)[i*2] = POINTS(sz)*.5 + padding*0.5;
-	sscanf(agget(n, "height"), "%lf", &sz);
-	(*label_sizes)[i*2+1] = POINTS(sz)*.5  + padding*0.5;
-      } else {
-	(*label_sizes)[i*2] = 4*POINTS(0.75)*.5;
-	(*label_sizes)[i*2+1] = 4*POINTS(0.5)*.5;
-      }
-    }
-  }
-
   if (x && (psym = agattr(g, AGNODE, "pos", NULL))) {
     bool has_positions = true;
     char* pval;
