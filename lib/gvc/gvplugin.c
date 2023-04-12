@@ -155,8 +155,6 @@ gvplugin_library_t *gvplugin_library_load(GVC_t * gvc, char *path)
     lt_ptr ptr;
     char *s, *sym;
     size_t len;
-    static char *p;
-    static size_t lenp;
     char *libdir;
     char *suffix = "_LTX_library";
 
@@ -164,27 +162,23 @@ gvplugin_library_t *gvplugin_library_load(GVC_t * gvc, char *path)
         return NULL;
 
     libdir = gvconfig_libdir(gvc);
-    len = strlen(libdir) + 1 + strlen(path) + 1;
-    if (len > lenp) {
-        lenp = len + 20;
-        p = grealloc(p, lenp);
-    }
+    agxbuf fullpath = {0};
 #ifdef _WIN32
     if (path[1] == ':') {
 #else
     if (path[0] == '/') {
 #endif
-        strcpy(p, path);
+        agxbput(&fullpath, path);
     } else {
-        strcpy(p, libdir);
-        strcat(p, DIRSEP);
-        strcat(p, path);
+        agxbprint(&fullpath, "%s%s%s", libdir, DIRSEP, path);
     }
 
     if (lt_dlinit()) {
         agerr(AGERR, "failed to init libltdl\n");
+        agxbfree(&fullpath);
         return NULL;
     }
+    char *p = agxbuse(&fullpath);
     hndl = lt_dlopen(p);
     if (!hndl) {
         if (access(p, R_OK) == 0) {
@@ -193,6 +187,7 @@ gvplugin_library_t *gvplugin_library_load(GVC_t * gvc, char *path)
         else {
             agerr(AGWARN, "Could not load \"%s\" - %s\n", p, lt_dlerror());
         }
+        agxbfree(&fullpath);
         return NULL;
     }
     if (gvc->common.verbose >= 2)
@@ -206,6 +201,7 @@ gvplugin_library_t *gvplugin_library_load(GVC_t * gvc, char *path)
     if (len < strlen("/libgvplugin_x")) {
 #endif
         agerr(AGERR, "invalid plugin path \"%s\"\n", p);
+        agxbfree(&fullpath);
         return NULL;
     }
     sym = gmalloc(len + strlen(suffix) + 1);
@@ -225,9 +221,11 @@ gvplugin_library_t *gvplugin_library_load(GVC_t * gvc, char *path)
     if (!ptr) {
         agerr(AGERR, "failed to resolve %s in %s\n", sym, p);
         free(sym);
+        agxbfree(&fullpath);
         return NULL;
     }
     free(sym);
+    agxbfree(&fullpath);
     return (gvplugin_library_t *)ptr;
 #else
     agerr(AGERR, "dynamic loading not available\n");

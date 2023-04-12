@@ -38,6 +38,7 @@
 #include <fcntl.h>
 #endif
 
+#include <cgraph/agxbuf.h>
 #include <cgraph/exit.h>
 #include <gvc/gvplugin_device.h>
 
@@ -286,7 +287,6 @@ static void init_window(GVJ_t *job, Display *dpy, int scr)
     XSizeHints *normalhints;
     XClassHint *classhint;
     uint64_t attributemask = 0;
-    char *name;
     window_t *window;
     double zoom_to_fit;
 
@@ -337,9 +337,8 @@ static void init_window(GVJ_t *job, Display *dpy, int scr)
                              InputOutput, window->visual,
                              attributemask, &attributes);
 
-    name = malloc(strlen("graphviz: ") + strlen(base) + 1);
-    strcpy(name, "graphviz: ");
-    strcat(name, base);
+    agxbuf name = {0};
+    agxbprint(&name, "graphviz: %s", base);
 
     normalhints = XAllocSizeHints();
     normalhints->flags = 0;
@@ -358,12 +357,12 @@ static void init_window(GVJ_t *job, Display *dpy, int scr)
     wmhints->flags = InputHint;
     wmhints->input = True;
 
-    Xutf8SetWMProperties(dpy, window->win, name, base, 0, 0,
+    Xutf8SetWMProperties(dpy, window->win, agxbuse(&name), base, 0, 0,
                          normalhints, wmhints, classhint);
     XFree(wmhints);
     XFree(classhint);
     XFree(normalhints);
-    free(name);
+    agxbfree(&name);
 
     assert(window->depth >= 0 && "Xlib returned invalid window depth");
     window->pix = XCreatePixmap(dpy, window->win, job->width, job->height,
@@ -514,7 +513,6 @@ static void xlib_finalize(GVJ_t *firstjob)
     int wd=0;
     int inotify_fd=0;
     bool watching_file_p = false;
-    static char *dir;
     char *p, *cwd = NULL;
 
     inotify_fd = inotify_init();
@@ -536,22 +534,21 @@ static void xlib_finalize(GVJ_t *firstjob)
 #ifdef HAVE_SYS_INOTIFY_H
 	    watching_file_p = true;
 
+	    agxbuf dir = {0};
 	    if (firstjob->input_filename[0] != '/') {
     	        cwd = getcwd(NULL, 0);
-	        dir = realloc(dir, strlen(cwd) + 1 + strlen(firstjob->input_filename) + 1);
-	        strcpy(dir, cwd);
-	        strcat(dir, "/");
-	        strcat(dir, firstjob->input_filename);
+	        agxbprint(&dir, "%s/%s", cwd, firstjob->input_filename);
 	        free(cwd);
 	    }
 	    else {
-	        dir = realloc(dir, strlen(firstjob->input_filename) + 1);
-	        strcpy(dir, firstjob->input_filename);
+	        agxbput(&dir, firstjob->input_filename);
 	    }
-	    p = strrchr(dir,'/');
+	    char *dirstr = agxbuse(&dir);
+	    p = strrchr(dirstr,'/');
 	    *p = '\0';
     
-    	    wd = inotify_add_watch(inotify_fd, dir, IN_MODIFY );
+    	    wd = inotify_add_watch(inotify_fd, dirstr, IN_MODIFY);
+	    agxbfree(&dir);
 
             numfds = MAX(inotify_fd, numfds);
 #endif

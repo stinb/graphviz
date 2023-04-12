@@ -39,7 +39,7 @@
 #endif
 #include <gd.h>
 #include <stdbool.h>
-
+#include <cgraph/agxbuf.h>
 #include <cgraph/alloc.h>
 #include <cgraph/exit.h>
 
@@ -48,7 +48,7 @@ static char *pstopng="gs -dNOPAUSE -sDEVICE=pngalpha -sOutputFile=- -q -";
 static gdImagePtr imageLoad (char *filename)
 {
     FILE *f;
-    char *ext, *cmd, *tmp;
+    char *ext;
     gdImagePtr im;
     int rc;
     struct stat statbuf;
@@ -65,21 +65,17 @@ static gdImagePtr imageLoad (char *filename)
     }
     if (strcasecmp(ext, ".ps") == 0) {
 	ext = ".png";
-	tmp = gv_alloc(strlen(filename) + strlen(ext) + 1);
-	strcpy(tmp,filename);
-	strcat(tmp,ext);
+	agxbuf fname = {0};
+	agxbprint(&fname, "%s%s", filename, ext);
+	const char *tmp = agxbuse(&fname);
 	
-	cmd = gv_alloc(strlen(pstopng) + 2 + strlen(filename) + 2 + strlen(tmp) + 1);
-	strcpy(cmd,pstopng);
-	strcat(cmd," <");
-	strcat(cmd,filename);
-	strcat(cmd," >");
-	strcat(cmd,tmp);
-	rc = system(cmd);
-	free(cmd);
+	agxbuf cmd = {0};
+	agxbprint(&cmd, "%s <%s >%s", pstopng, filename, tmp);
+	rc = system(agxbuse(&cmd));
+	agxbfree(&cmd);
 	
         f = fopen(tmp, "rb");
-	free(tmp);
+	agxbfree(&fname);
         if (!f) {
             fprintf(stderr, "Failed to open converted \"%s%s\"\n", filename, ext);
             graphviz_exit(EX_NOINPUT);

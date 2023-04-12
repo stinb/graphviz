@@ -11,6 +11,7 @@
 #include <common/types.h>
 #include <common/utils.h>
 #include <limits.h>
+#include <stdio.h>
 
 int l_int(void *obj, Agsym_t * attr, int def)
 {
@@ -60,25 +61,10 @@ void setColor(glCompColor* c,GLfloat R,GLfloat G,GLfloat B,GLfloat A)
     c->B=B;
     c->A=A;
 }
-glCompPoint getPointFromStr(char* str)
-{
 
-    glCompPoint p;
-    char* a;
-    char bf[512];
-    strcpy(bf,str);
-    p.x=0;
-    p.y=0;
-    p.z=0;
-    a=strtok(bf,",");
-    if(a)
-	p.x=atof(a);
-    a=strtok(NULL,",");
-    if(a)
-	p.y=atof(a);
-    a=strtok(NULL,",");
-    if(a)
-	p.z=atof(a);
+glCompPoint getPointFromStr(const char *str) {
+    glCompPoint p = {0};
+    (void)sscanf(str, "%f,%f,%f", &p.x, &p.y, &p.z);
     return p;
 }
 

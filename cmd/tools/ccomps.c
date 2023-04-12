@@ -814,20 +814,13 @@ static Agraph_t *gread(FILE * fp)
 static char*
 chkGraphName (Agraph_t* g)
 {
-    static char* buf = NULL;
-    static size_t buflen = 0;
+    static agxbuf buf;
     char* s = agnameof(g);
 
     if (*s != '%') return s;
-    size_t len = strlen(s) + 2;   /* plus '\0' and '_' */
-    if (len > buflen) {
-	buf = gv_realloc(buf, buflen, len);
-	buflen = len;
-    }
-    buf[0] = '_';
-    strcpy (buf+1, s);
+    agxbprint(&buf, "_%s", s);
 
-    return buf;
+    return agxbuse(&buf);
 }
 
 int main(int argc, char *argv[])

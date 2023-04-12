@@ -2002,27 +2002,18 @@ static void emit_attachment(GVJ_t * job, textlabel_t * lp, splines * spl)
  * so we commpute a default pencolor with the same number of colors. */
 static char* default_pencolor(char *pencolor, char *deflt)
 {
-    static char *buf;
-    static size_t bufsz;
+    static agxbuf buf;
     char *p;
-    size_t len, ncol;
-
-    ncol = 1;
+    size_t ncol = 1;
     for (p = pencolor; *p; p++) {
 	if (*p == ':')
 	    ncol++;
     }
-    len = ncol * (strlen(deflt) + 1);
-    if (bufsz < len) {
-	bufsz = len + 10;
-	buf = realloc(buf, bufsz);
-    }
-    strcpy(buf, deflt);
+    agxbput(&buf, deflt);
     while(--ncol) {
-	strcat(buf, ":");
-	strcat(buf, deflt);
+	agxbprint(&buf, ":%s", deflt);
     }
-    return buf;
+    return agxbuse(&buf);
 }
 
 /* approxLen:
@@ -2806,16 +2797,15 @@ static void emit_edge(GVJ_t * job, edge_t * e)
 
     if (edge_in_box(e, job->clip) && edge_in_layer(job, e) ) {
 
-	s = malloc(strlen(agnameof(agtail(e))) + 2 + strlen(agnameof(aghead(e))) + 1);
-	strcpy(s,agnameof(agtail(e)));
+	agxbuf edge = {0};
+	agxbput(&edge, agnameof(agtail(e)));
 	if (agisdirected(agraphof(aghead(e))))
-
-	    strcat(s,"->");
+	    agxbput(&edge, "->");
 	else
-	    strcat(s,"--");
-	strcat(s,agnameof(aghead(e)));
-	gvrender_comment(job, s);
-	free(s);
+	    agxbput(&edge, "--");
+	agxbput(&edge, agnameof(aghead(e)));
+	gvrender_comment(job, agxbuse(&edge));
+	agxbfree(&edge);
 
 	s = late_string(e, E_comment, "");
 	if (s[0])

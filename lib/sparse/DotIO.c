@@ -293,8 +293,9 @@ static int hex2int(char h){
   if (h >= 'a' && h <= 'f') return 10 + h - 'a';
   if (h >= 'A' && h <= 'F') return 10 + h - 'A';
   return 0;
-}  
-static float hexcol2rgb(char *h){
+}
+
+static float hexcol2rgb(const char *h) {
   return (hex2int(h[0])*16 + hex2int(h[1]))/255.;
 }
 
@@ -560,9 +561,8 @@ SparseMatrix Import_coord_clusters_from_dot(Agraph_t* g, int maxcluster, int dim
      (*rgb_b)[(*clusters)[i]] = color.u.RGBA[2];
    }
 
-   if (!noclusterinfo && agget(n, "cluster") && agget(n, "clustercolor") && strlen(agget(n, "clustercolor") ) >= 7 && pal){
-     char cc[10];
-     strcpy(cc, agget(n, "clustercolor"));
+   const char *cc = agget(n, "clustercolor");
+   if (!noclusterinfo && agget(n, "cluster") && cc && strlen(cc) >= 7 && pal) {
      (*rgb_r)[(*clusters)[i]] = hexcol2rgb(cc+1);
      (*rgb_g)[(*clusters)[i]] = hexcol2rgb(cc+3);
      (*rgb_b)[(*clusters)[i]] = hexcol2rgb(cc+5);

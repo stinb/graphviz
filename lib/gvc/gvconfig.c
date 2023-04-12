@@ -14,6 +14,7 @@
 #define _GNU_SOURCE 1
 #endif
 
+#include <cgraph/agxbuf.h>
 #include <cgraph/alloc.h>
 #include <cgraph/exit.h>
 #include <gvc/gvconfig.h>
@@ -473,7 +474,7 @@ static void config_rescan(GVC_t *gvc, char *config_path)
 {
     FILE *f = NULL;
     glob_t globbuf;
-    char *config_glob, *libdir;
+    char *libdir;
     int rc;
     gvplugin_library_t *library;
 #if defined(DARWIN_DYLIB)
@@ -504,17 +505,15 @@ static void config_rescan(GVC_t *gvc, char *config_path)
 
     libdir = gvconfig_libdir(gvc);
 
-    config_glob = gmalloc(strlen(libdir) + 1 + strlen(plugin_glob) + 1);
-    strcpy(config_glob, libdir);
-	strcat(config_glob, DIRSEP);
-    strcat(config_glob, plugin_glob);
+    agxbuf config_glob = {0};
+    agxbprint(&config_glob, "%s%s%s", libdir, DIRSEP, plugin_glob);
 
     /* load all libraries even if can't save config */
 
 #if defined(_WIN32)
-    rc = glob(gvc, config_glob, GLOB_NOSORT, NULL, &globbuf);
+    rc = glob(gvc, agxbuse(&config_glob), GLOB_NOSORT, NULL, &globbuf);
 #else
-    rc = glob(config_glob, 0, NULL, &globbuf);
+    rc = glob(agxbuse(&config_glob), 0, NULL, &globbuf);
 #endif
     if (rc == 0) {
 	for (size_t i = 0; i < globbuf.gl_pathc; i++) {
@@ -540,7 +539,7 @@ static void config_rescan(GVC_t *gvc, char *config_path)
 	}
     }
     globfree(&globbuf);
-    free(config_glob);
+    agxbfree(&config_glob);
     if (f)
 	fclose(f);
 }
