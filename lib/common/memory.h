@@ -16,7 +16,6 @@
 extern "C" {
 #endif
 
-#define NEW(t)           (t*)zmalloc(sizeof(t))
 #define N_NEW(n,t)       (t*)gcalloc((n),sizeof(t))
 #define GNEW(t)          (t*)gmalloc(sizeof(t))
 
