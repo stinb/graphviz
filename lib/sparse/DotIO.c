@@ -75,8 +75,7 @@ void attach_edge_colors(Agraph_t* g, int dim, double *colors){
  * but not a->b and a->b
  */
 SparseMatrix SparseMatrix_import_dot(Agraph_t *g, int dim, double **label_sizes,
-                                     double **x, int *n_edge_label_nodes,
-                                     int **edge_label_nodes, int format) {
+                                     double **x, int format) {
   SparseMatrix A = 0;
   Agnode_t* n;
   Agedge_t* e;
@@ -91,9 +90,6 @@ SparseMatrix SparseMatrix_import_dot(Agraph_t *g, int dim, double **label_sizes,
   double v;
   int type = MATRIX_TYPE_REAL;
   double padding = 10;
-  int nedge_nodes = 0;
-
-
 
   if (!g) return NULL;
   nnodes = agnnodes (g);
@@ -123,7 +119,6 @@ SparseMatrix SparseMatrix_import_dot(Agraph_t *g, int dim, double **label_sizes,
   sym = agattr(g, AGEDGE, "weight", NULL);
   i = 0;
   for (n = agfstnode (g); n; n = agnxtnode (g, n)) {
-    if (edge_label_nodes && strncmp(agnameof(n), "|edgelabel|",11)==0) nedge_nodes++;
     row = ND_id(n);
     for (e = agfstout (g, n); e; e = agnxtout (g, e)) {
       I[i] = row;
@@ -141,19 +136,10 @@ SparseMatrix SparseMatrix_import_dot(Agraph_t *g, int dim, double **label_sizes,
     }
   }
   
-  if (edge_label_nodes) {
-    *edge_label_nodes = MALLOC(sizeof(int)*nedge_nodes);
-    nedge_nodes = 0;
-  }
-
-
   if (label_sizes) *label_sizes = MALLOC(sizeof(double)*2*nnodes);
   for (n = agfstnode (g); n; n = agnxtnode (g, n)) {
     double sz;
     i = ND_id(n);
-    if (edge_label_nodes && strncmp(agnameof(n), "|edgelabel|",11)==0) {
-      (*edge_label_nodes)[nedge_nodes++] = i;
-    }
     if (label_sizes){
       if (agget(n, "width") && agget(n, "height")){
 	sscanf(agget(n, "width"), "%lf", &sz);
@@ -231,7 +217,6 @@ SparseMatrix SparseMatrix_import_dot(Agraph_t *g, int dim, double **label_sizes,
 
   size_t sz = sizeof(double);
   if (format == FORMAT_CSR) A = SparseMatrix_from_coordinate_arrays(nedges, nnodes, nnodes, I, J, val, type, sz);
-  if (edge_label_nodes) *n_edge_label_nodes = nedge_nodes;
 
 done:
   if (format != FORMAT_COORD){
