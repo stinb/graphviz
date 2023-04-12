@@ -54,7 +54,7 @@ typedef struct polygon polygon;
 	int number;
     } active_edge_list ;
     typedef struct {
-	int nvertices, npolygons, ninters;
+	int nvertices, ninters;
     } data ;
 
 static int sign(double v) {
@@ -477,7 +477,6 @@ int Plegal_arrangement(Ppoly_t ** polys, int n_polys)
     }
 
     input.nvertices = nverts;
-    input.npolygons = n_polys;
 
     found = find_ints(vertex_list, &input, ilist);
     if (found < 0) {

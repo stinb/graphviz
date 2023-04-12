@@ -50,7 +50,7 @@
     };
     struct data {
 	size_t nvertices;
-	int npolygons, ninters;
+	int ninters;
     };
 
 void find_ints(struct vertex vertex_list[], struct data *input,
