@@ -685,8 +685,6 @@ static void pov_polyline(GVJ_t * job, pointf * A, int n)
 	gvputs(job, "//*** polyline\n");
 	z = layerz - 6;
 
-	agxbuf r = {0};
-	agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
 	agxbuf t = {0};
 	agxbprint(&t, POV_TRANSLATE, 0.0, 0.0, z);
 	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
@@ -701,10 +699,9 @@ static void pov_polyline(GVJ_t * job, pointf * A, int n)
 
 	gvprintf(job, "%s    tolerance 0.01\n", agxbuse(&pov));
 	gvprintf(job, "    " POV_SCALE3, job->scale.x, job->scale.y, 1.0);
-	gvprintf(job, "    %s    %s    %s" END,
-	         agxbuse(&r), agxbuse(&t), p);
+	gvprintf(job, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
+	gvprintf(job, "    %s    %s" END, agxbuse(&t), p);
 
-	agxbfree(&r);
 	agxbfree(&t);
 	free(p);
 	agxbfree(&pov);
