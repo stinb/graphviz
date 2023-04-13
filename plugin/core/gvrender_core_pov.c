@@ -679,17 +679,14 @@ static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
 
 static void pov_polyline(GVJ_t * job, pointf * A, int n)
 {
-	char *p;
-	int i;
-
 	gvputs(job, "//*** polyline\n");
 	z = layerz - 6;
 
-	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
+	char *p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
 	gvprintf(job, POV_SPHERE_SWEEP, "linear_spline", n);
 
-	for (i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++) {
 		gvprintf(job, "    " POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
 		          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
 	}
