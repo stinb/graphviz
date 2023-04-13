@@ -495,9 +495,6 @@ static void pov_end_edge(GVJ_t * job)
 
 static void pov_textspan(GVJ_t * job, pointf c, textspan_t * span)
 {
-	double x, y;
-	char *p;
-
 	gvprintf(job, "//*** textspan: %s, fontsize = %.3f, fontname = %s\n",
 		 span->str, span->font->size, span->font->name);
 	z = layerz - 9;
@@ -520,10 +517,10 @@ static void pov_textspan(GVJ_t * job, pointf c, textspan_t * span)
 		break;
 	}
 
-	x = (c.x + job->translation.x) * job->scale.x;
-	y = (c.y + job->translation.y) * job->scale.y;
+	double x = (c.x + job->translation.x) * job->scale.x;
+	double y = (c.y + job->translation.y) * job->scale.y;
 
-	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
+	char *p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
 	//pov bundled fonts: timrom.ttf, cyrvetic.ttf
 	agxbuf pov = {0};
