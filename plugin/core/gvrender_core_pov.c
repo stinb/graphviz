@@ -599,8 +599,6 @@ static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
 	gvputs(job, "//*** bezier\n");
 	z = layerz - 4;
 
-	agxbuf t = {0};
-	agxbprint(&t, POV_TRANSLATE, 0.0, 0.0, z - 2);
 	p = pov_color_as_str(job, job->obj->fillcolor, 0.0);
 
 	agxbuf pov = {0};
@@ -627,9 +625,9 @@ static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
 	gvprintf(job, "%s        tolerance 0.01\n", agxbuse(&pov));
 	gvprintf(job, "    " POV_SCALE3, job->scale.x, job->scale.y, 1.0);
 	gvprintf(job, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-	gvprintf(job, "    %s    %s" END, agxbuse(&t), p);
+	gvprintf(job, "    " POV_TRANSLATE, 0.0, 0.0, z - 2);
+	gvprintf(job, "    %s" END, p);
 
-	agxbfree(&t);
 	free(p);
 	agxbfree(&pov);
 }
