@@ -639,19 +639,18 @@ static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
 
 	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
-	agxbuf pov = {0};
-	agxbprint(&pov, POV_SPHERE_SWEEP, "linear_spline", n + 1);
+	gvprintf(job, POV_SPHERE_SWEEP, "linear_spline", n + 1);
 
 	for (i = 0; i < n; i++) {
-		agxbprint(&pov, "    " POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
+		gvprintf(job, "    " POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
 		          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
 	}
 
 	//close polygon, add starting point as final point^
-	agxbprint(&pov, "    " POV_VECTOR3 ", %.3f\n", A[0].x + job->translation.x,
+	gvprintf(job, "    " POV_VECTOR3 ", %.3f\n", A[0].x + job->translation.x,
 	          A[0].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
 
-	gvprintf(job, "%s    tolerance 0.1\n", agxbuse(&pov));
+	gvputs(job, "    tolerance 0.1\n");
 	gvprintf(job, "    " POV_SCALE3, job->scale.x, job->scale.y, 1.0);
 	gvprintf(job, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
 	gvprintf(job, "    " POV_TRANSLATE, 0.0, 0.0, z - 2);
@@ -663,15 +662,15 @@ static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
 	if (filled) {
 		p = pov_color_as_str(job, job->obj->fillcolor, 0.25);
 
-		agxbprint(&pov, POV_POLYGON, n);
+		gvprintf(job, POV_POLYGON, n);
 
 		for (i = 0; i < n; i++) {
 			//create on z = 0 plane, then translate to real z pos
-			agxbprint(&pov, "\n    " POV_VECTOR3,
+			gvprintf(job, "\n    " POV_VECTOR3,
 			       A[i].x + job->translation.x,
 			       A[i].y + job->translation.y, 0.0);
 		}
-		gvprintf(job, "%s\n    ", agxbuse(&pov));
+		gvputs(job, "\n    ");
 		gvprintf(job, "    " POV_SCALE3, job->scale.x, job->scale.y, 1.0);
 		gvprintf(job, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
 		gvprintf(job, "    " POV_TRANSLATE, 0.0, 0.0, z - 2);
@@ -679,7 +678,6 @@ static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
 
 		free(p);
 	}
-	agxbfree(&pov);
 }
 
 static void pov_polyline(GVJ_t * job, pointf * A, int n)
