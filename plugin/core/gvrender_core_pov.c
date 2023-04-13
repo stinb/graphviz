@@ -523,8 +523,6 @@ static void pov_textspan(GVJ_t * job, pointf c, textspan_t * span)
 	x = (c.x + job->translation.x) * job->scale.x;
 	y = (c.y + job->translation.y) * job->scale.y;
 
-	agxbuf t = {0};
-	agxbprint(&t, POV_TRANSLATE, x, y, z);
 	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
 	//pov bundled fonts: timrom.ttf, cyrvetic.ttf
@@ -533,7 +531,8 @@ static void pov_textspan(GVJ_t * job, pointf c, textspan_t * span)
 		span->font->name, span->str, 0.25, 0.0); // font, text, depth (0.5 ... 2.0), offset
 	agxbprint(&pov, "    " POV_SCALE1, span->font->size * job->scale.x);
 	agxbprint(&pov, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-	agxbprint(&pov, "    %s    %s" END, agxbuse(&t), p);
+	agxbprint(&pov, "    " POV_TRANSLATE, x, y, z);
+	agxbprint(&pov, "    %s" END, p);
 
 #ifdef DEBUG
 	GV_OBJ_EXT("Text", agxbuse(&pov), span->str);
@@ -545,7 +544,6 @@ static void pov_textspan(GVJ_t * job, pointf c, textspan_t * span)
 
 	agxbfree(&pov);
 	free(p);
-	agxbfree(&t);
 }
 
 static void pov_ellipse(GVJ_t * job, pointf * A, int filled)
