@@ -10,6 +10,11 @@ Contributed software
     Vladimir Alexiev 
     vladimir@worklogic.com
 
+  dot_url_resolve.py :
+    Python script for downloading external image sources.
+    Matthew Fernandez
+    matthew.fernandez@gmail.com
+
   gprof2dot.awk :
     Awk script to convert gprof output into a dot graph.
     Stephen C. North
