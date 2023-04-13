@@ -559,8 +559,6 @@ static void pov_ellipse(GVJ_t * job, pointf * A, int filled)
 	w = job->obj->penwidth / (rx + ry) / 2.0 * 5;
 
 	//draw rim (torus)
-	agxbuf s = {0};
-	agxbprint(&s, POV_SCALE3, rx, (rx + ry) / 4.0, ry);
 	agxbuf r = {0};
 	agxbprint(&r, POV_ROTATE, 90.0, 0.0, (float)job->rotation);
 	agxbuf t = {0};
@@ -568,8 +566,10 @@ static void pov_ellipse(GVJ_t * job, pointf * A, int filled)
 	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
 	agxbuf pov = {0};
-	agxbprint(&pov, POV_TORUS "    %s    %s    %s    %s" END, 1.0, w, // radius, size of ring
-	          agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
+	agxbprint(&pov, POV_TORUS, 1.0, w); // radius, size of ring
+	agxbprint(&pov, "    " POV_SCALE3, rx, (rx + ry) / 4.0, ry);
+	agxbprint(&pov, "    %s    %s    %s" END,
+	          agxbuse(&r), agxbuse(&t), p);
 
 #ifdef DEBUG
 	GV_OBJ_EXT("Torus", agxbuse(&pov), "");
@@ -583,17 +583,17 @@ static void pov_ellipse(GVJ_t * job, pointf * A, int filled)
 
 	//backgroud of ellipse if filled
 	if (filled) {
-		agxbprint(&s, POV_SCALE3, rx, ry, 1.0);
 		agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
 		agxbprint(&t, POV_TRANSLATE, cx, cy, z);
 		p = pov_color_as_str(job, job->obj->fillcolor, 0.0);
 
-		gvprintf(job, POV_SPHERE "    %s    %s    %s    %s" END,
-			 0.0, 0.0, 0.0, agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
+		gvprintf(job, POV_SPHERE, 0.0, 0.0, 0.0);
+		gvprintf(job, "    " POV_SCALE3, rx, ry, 1.0);
+		gvprintf(job, "    %s    %s    %s" END,
+		         agxbuse(&r), agxbuse(&t), p);
 
 		free(p);
 	}
-	agxbfree(&s);
 	agxbfree(&r);
 	agxbfree(&t);
 	agxbfree(&pov);
