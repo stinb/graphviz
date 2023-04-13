@@ -687,22 +687,20 @@ static void pov_polyline(GVJ_t * job, pointf * A, int n)
 
 	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
-	agxbuf pov = {0};
-	agxbprint(&pov, POV_SPHERE_SWEEP, "linear_spline", n);
+	gvprintf(job, POV_SPHERE_SWEEP, "linear_spline", n);
 
 	for (i = 0; i < n; i++) {
-		agxbprint(&pov, "    " POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
+		gvprintf(job, "    " POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
 		          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
 	}
 
-	gvprintf(job, "%s    tolerance 0.01\n", agxbuse(&pov));
+	gvputs(job, "    tolerance 0.01\n");
 	gvprintf(job, "    " POV_SCALE3, job->scale.x, job->scale.y, 1.0);
 	gvprintf(job, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
 	gvprintf(job, "    " POV_TRANSLATE, 0.0, 0.0, z);
 	gvprintf(job, "    %s" END, p);
 
 	free(p);
-	agxbfree(&pov);
 }
 
 gvrender_engine_t pov_engine = {
