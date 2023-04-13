@@ -545,21 +545,18 @@ static void pov_textspan(GVJ_t * job, pointf c, textspan_t * span)
 
 static void pov_ellipse(GVJ_t * job, pointf * A, int filled)
 {
-	char *p;
-	float cx, cy, rx, ry, w;
-
 	gvputs(job, "//*** ellipse\n");
 	z = layerz - 6;
 
 	// A[0] center, A[1] corner of ellipse
-	cx = (A[0].x + job->translation.x) * job->scale.x;
-	cy = (A[0].y + job->translation.y) * job->scale.y;
-	rx = (A[1].x - A[0].x) * job->scale.x;
-	ry = (A[1].y - A[0].y) * job->scale.y;
-	w = job->obj->penwidth / (rx + ry) / 2.0 * 5;
+	float cx = (A[0].x + job->translation.x) * job->scale.x;
+	float cy = (A[0].y + job->translation.y) * job->scale.y;
+	float rx = (A[1].x - A[0].x) * job->scale.x;
+	float ry = (A[1].y - A[0].y) * job->scale.y;
+	float w = job->obj->penwidth / (rx + ry) / 2.0 * 5;
 
 	//draw rim (torus)
-	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
+	char *p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
 	agxbuf pov = {0};
 	agxbprint(&pov, POV_TORUS, 1.0, w); // radius, size of ring
