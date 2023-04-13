@@ -593,18 +593,15 @@ static void pov_ellipse(GVJ_t * job, pointf * A, int filled)
 static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
 	(void)filled;
 
-	int i;
-	char *p;
-
 	gvputs(job, "//*** bezier\n");
 	z = layerz - 4;
 
-	p = pov_color_as_str(job, job->obj->fillcolor, 0.0);
+	char *p = pov_color_as_str(job, job->obj->fillcolor, 0.0);
 
 	agxbuf pov = {0};
 	agxbprint(&pov, POV_SPHERE_SWEEP, "b_spline", n + 2);
 
-	for (i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++) {
 		agxbprint(&pov, "    " POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
 		          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
 
