@@ -637,8 +637,6 @@ static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
 	gvputs(job, "//*** polygon\n");
 	z = layerz - 2;
 
-	agxbuf t = {0};
-	agxbprint(&t, POV_TRANSLATE, 0.0, 0.0, z - 2);
 	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
 	agxbuf pov = {0};
@@ -656,13 +654,13 @@ static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
 	gvprintf(job, "%s    tolerance 0.1\n", agxbuse(&pov));
 	gvprintf(job, "    " POV_SCALE3, job->scale.x, job->scale.y, 1.0);
 	gvprintf(job, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-	gvprintf(job, "    %s    %s" END, agxbuse(&t), p);
+	gvprintf(job, "    " POV_TRANSLATE, 0.0, 0.0, z - 2);
+	gvprintf(job, "    %s" END, p);
 
 	free(p);
 
 	//create fill background
 	if (filled) {
-		agxbprint(&t, POV_TRANSLATE, 0.0, 0.0, z - 2);
 		p = pov_color_as_str(job, job->obj->fillcolor, 0.25);
 
 		agxbprint(&pov, POV_POLYGON, n);
@@ -676,11 +674,11 @@ static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
 		gvprintf(job, "%s\n    ", agxbuse(&pov));
 		gvprintf(job, "    " POV_SCALE3, job->scale.x, job->scale.y, 1.0);
 		gvprintf(job, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-		gvprintf(job, "    %s    %s" END, agxbuse(&t), p);
+		gvprintf(job, "    " POV_TRANSLATE, 0.0, 0.0, z - 2);
+		gvprintf(job, "    %s" END, p);
 
 		free(p);
 	}
-	agxbfree(&t);
 	agxbfree(&pov);
 }
 
