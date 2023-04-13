@@ -599,8 +599,6 @@ static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
 	gvputs(job, "//*** bezier\n");
 	z = layerz - 4;
 
-	agxbuf s = {0};
-	agxbprint(&s, POV_SCALE3, job->scale.x, job->scale.y, 1.0);
 	agxbuf r = {0};
 	agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
 	agxbuf t = {0};
@@ -627,10 +625,12 @@ static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
 			 (A[i].y + job->translation.y) * job->scale.y, z - 2);
 #endif
 	}
-	gvprintf(job, "%s        tolerance 0.01\n    %s    %s    %s    %s" END,
-	         agxbuse(&pov), agxbuse(&s), agxbuse(&r), agxbuse(&t), p); // catenate pov & end str
+	// catenate pov & end str
+	gvprintf(job, "%s        tolerance 0.01\n", agxbuse(&pov));
+	gvprintf(job, "    " POV_SCALE3, job->scale.x, job->scale.y, 1.0);
+	gvprintf(job, "    %s    %s    %s" END,
+	         agxbuse(&r), agxbuse(&t), p); // catenate pov & end str
 
-	agxbfree(&s);
 	agxbfree(&r);
 	agxbfree(&t);
 	free(p);
