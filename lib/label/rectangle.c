@@ -11,6 +11,7 @@
 #include "config.h"
 
 #include <label/index.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
@@ -62,7 +63,7 @@ void PrintRect(Rect_t * r)
 | Calculate the n-dimensional area of a rectangle
 -----------------------------------------------------------------------------*/
 
-uint64_t RectArea(Rect_t *r) {
+uint64_t RectArea(const Rect_t *r) {
   assert(r);
 
     if (Undefined(r))
@@ -84,8 +85,7 @@ uint64_t RectArea(Rect_t *r) {
 /*-----------------------------------------------------------------------------
 | Combine two rectangles, make one that includes both.
 -----------------------------------------------------------------------------*/
-Rect_t CombineRect(Rect_t * r, Rect_t * rr)
-{
+Rect_t CombineRect(const Rect_t *r, const Rect_t *rr) {
     Rect_t new;
     assert(r && rr);
 
@@ -105,36 +105,13 @@ Rect_t CombineRect(Rect_t * r, Rect_t * rr)
 /*-----------------------------------------------------------------------------
 | Decide whether two rectangles overlap.
 -----------------------------------------------------------------------------*/
-int Overlap(Rect_t * r, Rect_t * s)
-{
+bool Overlap(const Rect_t *r, const Rect_t *s) {
     assert(r && s);
 
     for (size_t i = 0; i < NUMDIMS; i++) {
 	size_t j = i + NUMDIMS;	/* index for high sides */
 	if (r->boundary[i] > s->boundary[j] || s->boundary[i] > r->boundary[j])
-	    return FALSE;
+	    return false;
     }
-    return TRUE;
-}
-
-/*-----------------------------------------------------------------------------
-| Decide whether rectangle r is contained in rectangle s.
------------------------------------------------------------------------------*/
-int Contained(Rect_t * r, Rect_t * s)
-{
-    assert(r && s);
-
-    /* undefined rect is contained in any other */
-    if (Undefined(r))
-	return TRUE;
-    /* no rect (except an undefined one) is contained in an undef rect */
-    if (Undefined(s))
-	return FALSE;
-
-    for (size_t i = 0; i < NUMDIMS; i++) {
-	size_t j = i + NUMDIMS;	/* index for high sides */
-	if (!(r->boundary[i] >= s->boundary[i] && r->boundary[j] <= s->boundary[j]))
-	    return FALSE;
-    }
-    return TRUE;
+    return true;
 }

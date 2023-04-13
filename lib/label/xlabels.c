@@ -10,16 +10,16 @@
 
 #include <assert.h>
 #include <cgraph/alloc.h>
+#include <cgraph/exit.h>
 #include <errno.h>
 #include <limits.h>
 #include <math.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #define XLABEL_INT
 #include <label/xlabels.h>
-
-extern int Verbose;
 
 static int icompare(Dt_t *, void *, void *, Dtdisc_t *);
 
@@ -49,13 +49,13 @@ static XLabels_t *xlnew(object_t * objs, int n_objs, xlabel_t * lbls,
     /* used to load the rtree in hilbert space filling curve order */
     if (!(xlp->hdx = dtopen(&Hdisc, Dtobag))) {
 	fprintf(stderr, "out of memory\n");
-	goto bad;
+	graphviz_exit(EXIT_FAILURE);
     }
 
     /* for querying intersection candidates */
     if (!(xlp->spdx = RTreeOpen())) {
 	fprintf(stderr, "out of memory\n");
-	goto bad;
+	graphviz_exit(EXIT_FAILURE);
     }
     /* save arg pointers in the handle */
     xlp->objs = objs;
@@ -65,21 +65,12 @@ static XLabels_t *xlnew(object_t * objs, int n_objs, xlabel_t * lbls,
     xlp->params = params;
 
     return xlp;
-
-  bad:
-    if (xlp->hdx)
-	dtclose(xlp->hdx);
-    if (xlp->spdx)
-	RTreeClose(xlp->spdx);
-    free(xlp);
-    return 0;
 }
 
 static void xlfree(XLabels_t * xlp)
 {
     RTreeClose(xlp->spdx);
     free(xlp);
-    return;
 }
 
 /***************************************************************************/
@@ -134,7 +125,7 @@ static unsigned int hd_hil_s_from_xy(point p, int n)
     for (int i = n - 1; i >= 0; i--) {
 	int xi = (x >> i) & 1;	/* Get bit i of x. */
 	int yi = (y >> i) & 1;	/* Get bit i of y. */
-	s = 4 * s + 2 * xi + (xi ^ yi);	/* Append two bits to s. */
+	s = 4 * s + 2 * (unsigned)xi + ((unsigned)xi ^ (unsigned)yi); // Append two bits to s.
 
 	x = x ^ y;		/* These 3 lines swap */
 	y = y ^ (x & (yi - 1));	/* x and y if yi = 0. */
@@ -152,10 +143,7 @@ static unsigned int hd_hil_s_from_xy(point p, int n)
 */
 static double aabbaabb(Rect_t * r, Rect_t * s)
 {
-    /* per dimension if( max < omin || min > omax) */
-    if (r->boundary[2] < s->boundary[0] || r->boundary[0] > s->boundary[2])
-	return 0;
-    if (r->boundary[3] < s->boundary[1] || r->boundary[1] > s->boundary[3])
+    if (!Overlap(r, s))
 	return 0;
 
     /* if we get here we have an intersection */
@@ -179,13 +167,12 @@ static double aabbaabb(Rect_t * r, Rect_t * s)
  * test if objp1, a size 0 object is enclosed in the xlabel
  * associated with objp
  */
-static int lblenclosing(object_t * objp, object_t * objp1)
-{
+static bool lblenclosing(object_t *objp, object_t *objp1) {
   xlabel_t * xlp = objp->lbl;;
 
   assert(objp1->sz.x == 0 && objp1->sz.y == 0);
 
-  if(! xlp) return 0;
+  if(! xlp) return false;
 
   return objp1->pos.x > xlp->pos.x &&
 	 objp1->pos.x < (xlp->pos.x + xlp->sz.x) &&
@@ -194,24 +181,24 @@ static int lblenclosing(object_t * objp, object_t * objp1)
 }
 
 /*fill in rectangle from the object */
-static void objp2rect(object_t * op, Rect_t * r)
-{
-    r->boundary[0] = op->pos.x;
-    r->boundary[1] = op->pos.y;
-    r->boundary[2] = op->pos.x + op->sz.x;
-    r->boundary[3] = op->pos.y + op->sz.y;
-    return;
+static Rect_t objp2rect(const object_t *op) {
+  Rect_t r = {0};
+  r.boundary[0] = op->pos.x;
+  r.boundary[1] = op->pos.y;
+  r.boundary[2] = op->pos.x + op->sz.x;
+  r.boundary[3] = op->pos.y + op->sz.y;
+  return r;
 }
 
 /*fill in rectangle from the objects xlabel */
-static void objplp2rect(object_t * objp, Rect_t * r)
-{
-    xlabel_t *lp = objp->lbl;
-    r->boundary[0] = lp->pos.x;
-    r->boundary[1] = lp->pos.y;
-    r->boundary[2] = lp->pos.x + lp->sz.x;
-    r->boundary[3] = lp->pos.y + lp->sz.y;
-    return;
+static Rect_t objplp2rect(const object_t *objp) {
+  Rect_t r = {0};
+  const xlabel_t *lp = objp->lbl;
+  r.boundary[0] = lp->pos.x;
+  r.boundary[1] = lp->pos.y;
+  r.boundary[2] = lp->pos.x + lp->sz.x;
+  r.boundary[3] = lp->pos.y + lp->sz.y;
+  return r;
 }
 
 /* compute boundary that encloses all possible label boundaries */
@@ -238,36 +225,35 @@ static Rect_t objplpmks(object_t * objp)
 /* determine the position clp will occupy in intrsx[] */
 static int getintrsxi(object_t * op, object_t * cp)
 {
-    int i = -1;
     xlabel_t *lp = op->lbl, *clp = cp->lbl;
     assert(lp != clp);
 
     if (lp->set == 0 || clp->set == 0)
-	return i;
+	return -1;
     if ((op->pos.x == 0.0 && op->pos.y == 0.0) ||
 	(cp->pos.x == 0.0 && cp->pos.y == 0.0))
-	return i;
+	return -1;
 
-    if (cp->pos.y < op->pos.y)
+    if (cp->pos.y < op->pos.y) {
 	if (cp->pos.x < op->pos.x)
-	    i = XLPXPY;
-	else if (cp->pos.x > op->pos.x)
-	    i = XLNXPY;
-	else
-	    i = XLCXPY;
-    else if (cp->pos.y > op->pos.y)
+	    return XLPXPY;
+	if (cp->pos.x > op->pos.x)
+	    return XLNXPY;
+	return XLCXPY;
+    }
+    if (cp->pos.y > op->pos.y) {
 	if (cp->pos.x < op->pos.x)
-	    i = XLPXNY;
-	else if (cp->pos.x > op->pos.x)
-	    i = XLNXNY;
-	else
-	    i = XLCXNY;
-    else if (cp->pos.x < op->pos.x)
-	i = XLPXCY;
-    else if (cp->pos.x > op->pos.x)
-	i = XLNXCY;
+	    return XLPXNY;
+	if (cp->pos.x > op->pos.x)
+	    return XLNXNY;
+	return XLCXNY;
+    }
+    if (cp->pos.x < op->pos.x)
+	return XLPXCY;
+    if (cp->pos.x > op->pos.x)
+	return XLNXCY;
 
-    return i;
+    return -1;
 
 }
 
@@ -281,15 +267,14 @@ recordointrsx(object_t * op, object_t * cp, Rect_t * rp,
 	i = 5;
     if (intrsx[i] != NULL) {
 	double sa, maxa = 0.0;
-	Rect_t srect;
 	/* keep maximally overlapping object */
-	objp2rect(intrsx[i], &srect);
+	Rect_t srect = objp2rect(intrsx[i]);
 	sa = aabbaabb(rp, &srect);
 	if (sa > a)
 	    maxa = sa;
 	/*keep maximally overlapping label */
 	if (intrsx[i]->lbl) {
-	    objplp2rect(intrsx[i], &srect);
+	    srect = objplp2rect(intrsx[i]);
 	    sa = aabbaabb(rp, &srect);
 	    if (sa > a)
 		maxa = fmax(sa, maxa);
@@ -314,15 +299,14 @@ recordlintrsx(object_t * op, object_t * cp, Rect_t * rp,
 	i = 5;
     if (intrsx[i] != NULL) {
 	double sa, maxa = 0.0;
-	Rect_t srect;
 	/* keep maximally overlapping object */
-	objp2rect(intrsx[i], &srect);
+	Rect_t srect = objp2rect(intrsx[i]);
 	sa = aabbaabb(rp, &srect);
 	if (sa > a)
 	    maxa = sa;
 	/*keep maximally overlapping label */
 	if (intrsx[i]->lbl) {
-	    objplp2rect(intrsx[i], &srect);
+	    srect = objplp2rect(intrsx[i]);
 	    sa = aabbaabb(rp, &srect);
 	    if (sa > a)
 		maxa = fmax(sa, maxa);
@@ -341,7 +325,6 @@ recordlintrsx(object_t * op, object_t * cp, Rect_t * rp,
 static BestPos_t
 xlintersections(XLabels_t * xlp, object_t * objp, object_t * intrsx[XLNBR])
 {
-    Rect_t rect, srect;
     BestPos_t bp;
 
     assert(objp->lbl);
@@ -358,7 +341,7 @@ xlintersections(XLabels_t * xlp, object_t * objp, object_t * intrsx[XLNBR])
       }
     }
 
-    objplp2rect(objp, &rect);
+    Rect_t rect = objplp2rect(objp);
 
     LeafList_t *llp = RTreeSearch(xlp->spdx, xlp->spdx->root, &rect);
     if (!llp)
@@ -372,7 +355,7 @@ xlintersections(XLabels_t * xlp, object_t * objp, object_t * intrsx[XLNBR])
 	    continue;
 
 	/*label-object intersect */
-	objp2rect(cp, &srect);
+	Rect_t srect = objp2rect(cp);
 	a = aabbaabb(&rect, &srect);
 	if (a > 0.0) {
 	  ra = recordointrsx(objp, cp, &rect, a, intrsx);
@@ -382,7 +365,7 @@ xlintersections(XLabels_t * xlp, object_t * objp, object_t * intrsx[XLNBR])
 	/*label-label intersect */
 	if (!cp->lbl || !cp->lbl->set)
 	    continue;
-	objplp2rect(cp, &srect);
+	srect = objplp2rect(cp);
 	a = aabbaabb(&rect, &srect);
 	if (a > 0.0) {
 	  ra = recordlintrsx(objp, cp, &rect, a, intrsx);
@@ -402,8 +385,8 @@ xlintersections(XLabels_t * xlp, object_t * objp, object_t * intrsx[XLNBR])
 static BestPos_t xladjust(XLabels_t * xlp, object_t * objp)
 {
     xlabel_t *lp = objp->lbl;
-    double xincr = ((2 * lp->sz.x) + objp->sz.x) / XLXDENOM;
-    double yincr = ((2 * lp->sz.y) + objp->sz.y) / XLYDENOM;
+    double xincr = (2 * lp->sz.x + objp->sz.x) / XLXDENOM;
+    double yincr = (2 * lp->sz.y + objp->sz.y) / XLYDENOM;
     object_t *intrsx[XLNBR] = {0};
     BestPos_t bp, nbp;
 
@@ -558,7 +541,7 @@ static int xlhdxload(XLabels_t * xlp)
 
 	hp->key = hd_hil_s_from_xy(pi, order);
 
-	if (!(dtinsert(xlp->hdx, hp)))
+	if (!dtinsert(xlp->hdx, hp))
 	    return -1;
     }
     return 0;
@@ -580,13 +563,11 @@ static void xlhdxunload(XLabels_t * xlp)
   (void)size;
 }
 
-static int xlspdxload(XLabels_t * xlp)
-{
+static void xlspdxload(XLabels_t *xlp) {
     for (HDict_t *op = dtfirst(xlp->hdx); op; op = dtnext(xlp->hdx, op)) {
 	/*          tree       rectangle    data        node             lvl */
 	RTreeInsert(xlp->spdx, &op->d.rect, op->d.data, &xlp->spdx->root, 0);
     }
-    return 0;
 }
 
 static int xlinitialize(XLabels_t * xlp)
@@ -594,8 +575,7 @@ static int xlinitialize(XLabels_t * xlp)
     int r=0;
     if ((r = xlhdxload(xlp)) < 0)
 	return r;
-    if ((r = xlspdxload(xlp)) < 0)
-	return r;
+    xlspdxload(xlp);
     xlhdxunload(xlp);
     return dtclose(xlp->hdx);
 }
