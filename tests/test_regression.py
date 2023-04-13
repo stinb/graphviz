@@ -2678,7 +2678,6 @@ def test_2371():
     platform.system() == "Windows",
     reason="gvplugin_list symbol is not exposed on Windows",
 )
-@pytest.mark.xfail(strict=True)
 def test_2375():
     """
     `gvplugin_list` should return full plugin names
