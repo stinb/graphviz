@@ -8,6 +8,7 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
+#include <QStringList>
 #include <QtWidgets>
 #include <qframe.h>
 #include "mainwindow.h"
@@ -33,8 +34,7 @@ static void freeList(char **lp, int count)
 }
 
 static int LoadPlugins(QComboBox &cb, GVC_t *gvc, const char *kind,
-		       const char *more[], const char *prefer)
-{
+                       const QStringList &more, const char *prefer) {
     int count;
     char **lp = gvPluginList(gvc, kind, &count, nullptr);
     int idx = -1;
@@ -48,13 +48,7 @@ static int LoadPlugins(QComboBox &cb, GVC_t *gvc, const char *kind,
     freeList(lp, count);
 
     /* Add additional items if supplied */
-    if (more) {
-	int i = 0;
-	const char *s;
-	while ((s = more[i++])) {
-	    cb.addItem(QString(s));
-	}
-    }
+    cb.addItems(more);
 
     if (idx > 0)
 	cb.setCurrentIndex(idx);
@@ -109,10 +103,7 @@ void CMainWindow::createConsole()
 
 }
 
-static const char *xtra[] = {
-    "NONE",
-    nullptr
-};
+static const QStringList xtra = {"NONE"};
 
 CMainWindow::CMainWindow(char*** Files)
 {
@@ -157,7 +148,7 @@ CMainWindow::CMainWindow(char*** Files)
     setUnifiedTitleAndToolBarOnMac(true);
     QComboBox *cb =
 	(QComboBox *) frmSettings->findChild < QComboBox * >("cbLayout");
-    dfltLayoutIdx = LoadPlugins(*cb, frmSettings->gvc, "layout", nullptr, "dot");
+    dfltLayoutIdx = LoadPlugins(*cb, frmSettings->gvc, "layout", {}, "dot");
     cb = (QComboBox *) frmSettings->findChild <
 	QComboBox * >("cbExtension");
     dfltRenderIdx = LoadPlugins(*cb, frmSettings->gvc, "device", xtra, "png");
