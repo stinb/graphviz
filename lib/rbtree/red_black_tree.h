@@ -39,7 +39,6 @@ typedef struct rb_red_blk_tree {
   int (*Compare)(const void* a, const void* b); 
   void (*DestroyKey)(void* a);
   void (*DestroyInfo)(void* a);
-  void (*PrintKey)(const void* a);
   void (*PrintInfo)(void* a);
   /*  A sentinel is used for root and for nil.  These sentinels are */
   /*  created when RBTreeCreate is caled.  root->left should always */
@@ -54,7 +53,6 @@ typedef struct rb_red_blk_tree {
 rb_red_blk_tree* RBTreeCreate(int  (*CompFunc)(const void*, const void*),
 			     void (*DestFunc)(void*), 
 			     void (*InfoDestFunc)(void*), 
-			     void (*PrintFunc)(const void*),
 			     void (*PrintInfo)(void*));
 rb_red_blk_node * RBTreeInsert(rb_red_blk_tree*, void* key, void* info);
 void RBDelete(rb_red_blk_tree* , rb_red_blk_node* );

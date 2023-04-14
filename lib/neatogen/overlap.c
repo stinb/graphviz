@@ -112,11 +112,6 @@ static int NodeComp(const void* a,const void* b) {
 
 }
 
-static void NodePrint(const void* a) {
-  const scan_point *aa = a;
-  fprintf(stderr, "node {%d, %f, %d}\n", aa->node, aa->x, aa->status);
-}
-
 static void InfoPrint(void* a) {
   (void)a;
 }
@@ -156,8 +151,7 @@ static SparseMatrix get_overlap_graph(int dim, int n, double *x, double *width, 
     scanpointsy[i+n].status = INTV_CLOSE;
   }
 
-
-  treey = RBTreeCreate(NodeComp,NodeDest,InfoDest,NodePrint,InfoPrint);
+  treey = RBTreeCreate(NodeComp, NodeDest, InfoDest, InfoPrint);
 
   for (i = 0; i < 2*n; i++){
 #ifdef DEBUG_RBTREE
