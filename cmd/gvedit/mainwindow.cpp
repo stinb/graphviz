@@ -577,7 +577,6 @@ void CMainWindow::menus()
     mGraph->addAction(settingsAct);
     mGraph->addAction(layoutAct);
     mGraph->addSeparator();
-    loadPlugins();
 
     updateWindowMenu();
     connect(mWindow, SIGNAL(aboutToShow()), this,
@@ -664,9 +663,4 @@ void CMainWindow::activateChild(QWidget * window)
     if (!window)
 	return;
     mdiArea->setActiveSubWindow(qobject_cast < QMdiSubWindow * >(window));
-}
-
-void CMainWindow::loadPlugins()
-{
-
 }

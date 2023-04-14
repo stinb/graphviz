@@ -72,7 +72,6 @@ private:
     void toolBars();
     void readSettings();
     void writeSettings();
-    void loadPlugins();
     MdiChild *activeMdiChild();
     MdiChild* prevChild;
     QMdiSubWindow *findMdiChild(const QString &fileName);
