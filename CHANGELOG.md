@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`image="http…"`) is now available. This enables graphs to reference images
   from intranet or internet locations. #1664
 
+### Fixed
+
+- makeCompoundEdge: Assertion `bez->sflag` failed. #1879
+
 ## [8.0.2] – 2023-04-10
 
 ### Changed

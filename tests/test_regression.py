@@ -1194,7 +1194,6 @@ def test_1869(variant: int):
     assert "penwidth=2" in output, "penwidth=2 not found in DOT output"
 
 
-@pytest.mark.xfail()  # FIXME
 def test_1879():
     """https://gitlab.com/graphviz/graphviz/-/issues/1879"""
 
@@ -1211,8 +1210,21 @@ def test_1879():
     )
 
     # check we did not trigger an assertion failure
-    print(stdout)
     assert re.search(r"\bAssertion\b.*\bfailed\b", stdout) is None
+
+
+def test_1879_2():
+    """
+    another variant of lhead/ltail + compound
+    https://gitlab.com/graphviz/graphviz/-/issues/1879
+    """
+
+    # locate our associated test case in this directory
+    input = Path(__file__).parent / "1879-2.dot"
+    assert input.exists(), "unexpectedly missing test case"
+
+    # process it with DOT
+    subprocess.check_call(["dot", "-Gmargin=0", "-Tpng", "-o", os.devnull, input])
 
 
 def test_1893():
@@ -1397,6 +1409,21 @@ def test_1931():
     assert "line 1\nline 2\n" in xdot
     assert "line 3\nline 4" in xdot
     assert "line 5\nline 6" in xdot
+
+
+@pytest.mark.xfail()  # FIXME
+def test_1949():
+    """
+    rankdir=LR + compound=true should not lead to an assertion failure
+    https://gitlab.com/graphviz/graphviz/-/issues/1949
+    """
+
+    # locate our associated test case in this directory
+    input = Path(__file__).parent / "1949.dot"
+    assert input.exists(), "unexpectedly missing test case"
+
+    # run it through Graphviz
+    dot("png", input)
 
 
 @pytest.mark.skipif(which("edgepaint") is None, reason="edgepaint not available")
