@@ -3,7 +3,6 @@ add_library(rbtree STATIC
   red_black_tree.h
 
   # Source files
-  misc.c
   red_black_tree.c
 )
 

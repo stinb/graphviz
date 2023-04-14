@@ -500,7 +500,6 @@ EXCLUDE = (
     "lib/pathplan/vis.h",
     "lib/pathplan/visibility.c",
     "lib/pathplan/vispath.h",
-    "lib/rbtree/misc.c",
     "lib/rbtree/red_black_tree.c",
     "lib/rbtree/red_black_tree.h",
     "lib/rbtree/test_red_black_tree.c",

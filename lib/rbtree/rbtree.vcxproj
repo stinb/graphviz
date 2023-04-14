@@ -78,7 +78,6 @@
     <ClInclude Include="red_black_tree.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="misc.c" />
     <ClCompile Include="red_black_tree.c" />
     <ClCompile Include="test_red_black_tree.c" />
   </ItemGroup>

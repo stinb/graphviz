@@ -21,7 +21,7 @@
 /*  PrintFunc receives a pointer to the key of a node and prints it. */
 /*  PrintInfo receives a pointer to the info of a node and prints it. */
 /*  If RBTreePrint is never called the print functions don't have to be */
-/*  defined and NullFunction can be used.  */
+/*  defined.  */
 /**/
 /*  OUTPUT:  This function returns a pointer to the newly created */
 /*  red-black tree. */
