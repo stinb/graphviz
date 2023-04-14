@@ -57,7 +57,6 @@ rb_red_blk_tree* RBTreeCreate(int  (*CompFunc)(const void*, const void*),
 			     void (*PrintFunc)(const void*),
 			     void (*PrintInfo)(void*));
 rb_red_blk_node * RBTreeInsert(rb_red_blk_tree*, void* key, void* info);
-void RBTreePrint(rb_red_blk_tree*);
 void RBDelete(rb_red_blk_tree* , rb_red_blk_node* );
 void RBTreeDestroy(rb_red_blk_tree*);
 rb_red_blk_node* TreePredecessor(rb_red_blk_tree*,rb_red_blk_node*);

@@ -362,42 +362,6 @@ rb_red_blk_node* TreePredecessor(rb_red_blk_tree* tree, rb_red_blk_node* x) {
 }
 
 /***********************************************************************/
-/*  FUNCTION:  InorderTreePrint */
-/**/
-/*    INPUTS:  tree is the tree to print and x is the current inorder node */
-/**/
-/*    OUTPUT:  none  */
-/**/
-/*    EFFECTS:  This function recursively prints the nodes of the tree */
-/*              inorder using the PrintKey and PrintInfo functions. */
-/**/
-/*    Modifies Input: none */
-/**/
-/*    Note:    This function should only be called from RBTreePrint */
-/***********************************************************************/
-
-static void InorderTreePrint(rb_red_blk_tree* tree, rb_red_blk_node* x) {
-  rb_red_blk_node* nil=tree->nil;
-  rb_red_blk_node* root=tree->root;
-  if (x != tree->nil) {
-    InorderTreePrint(tree,x->left);
-    printf("info=");
-    tree->PrintInfo(x->info);
-    printf("  key="); 
-    tree->PrintKey(x->key);
-    printf("  l->key=");
-    if( x->left == nil) printf("NULL"); else tree->PrintKey(x->left->key);
-    printf("  r->key=");
-    if( x->right == nil) printf("NULL"); else tree->PrintKey(x->right->key);
-    printf("  p->key=");
-    if( x->parent == root) printf("NULL"); else tree->PrintKey(x->parent->key);
-    printf("  red=%i\n",x->red);
-    InorderTreePrint(tree,x->right);
-  }
-}
-
-
-/***********************************************************************/
 /*  FUNCTION:  TreeDestHelper */
 /**/
 /*    INPUTS:  tree is the tree to destroy and x is the current node */
@@ -443,26 +407,6 @@ void RBTreeDestroy(rb_red_blk_tree* tree) {
   free(tree->nil);
   free(tree);
 }
-
-
-/***********************************************************************/
-/*  FUNCTION:  RBTreePrint */
-/**/
-/*    INPUTS:  tree is the tree to print */
-/**/
-/*    OUTPUT:  none */
-/**/
-/*    EFFECT:  This function recursively prints the nodes of the tree */
-/*             inorder using the PrintKey and PrintInfo functions. */
-/**/
-/*    Modifies Input: none */
-/**/
-/***********************************************************************/
-
-void RBTreePrint(rb_red_blk_tree* tree) {
-  InorderTreePrint(tree,tree->root->left);
-}
-
 
 /***********************************************************************/
 /*  FUNCTION:  RBExactQuery */
