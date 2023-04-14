@@ -379,7 +379,7 @@ int IMDS_given_dim(vtx_data* graph, int n, double* given_coords,
 		}
 	}
 	
-	for (i=0; i<n; i++) {
+	for (i = 0; !(fabs(uniLength) < DBL_EPSILON) && i < n; i++) {
 		x[i] /= uniLength;
 		y[i] /= uniLength;
 	}
