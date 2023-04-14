@@ -76,12 +76,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="red_black_tree.h" />
-    <ClInclude Include="stack.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="misc.c" />
     <ClCompile Include="red_black_tree.c" />
-    <ClCompile Include="stack.c" />
     <ClCompile Include="test_red_black_tree.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

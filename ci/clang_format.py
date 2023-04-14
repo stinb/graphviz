@@ -503,8 +503,6 @@ EXCLUDE = (
     "lib/rbtree/misc.c",
     "lib/rbtree/red_black_tree.c",
     "lib/rbtree/red_black_tree.h",
-    "lib/rbtree/stack.c",
-    "lib/rbtree/stack.h",
     "lib/rbtree/test_red_black_tree.c",
     "lib/sfdpgen/Multilevel.c",
     "lib/sfdpgen/Multilevel.h",
