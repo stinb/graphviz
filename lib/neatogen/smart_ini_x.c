@@ -8,6 +8,7 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
+#include <math.h>
 #include <neatogen/digcola.h>
 #ifdef DIGCOLA
 #include <neatogen/kkutils.h>
@@ -290,7 +291,7 @@ int IMDS_given_dim(vtx_data* graph, int n, double* given_coords,
 				sum2+=1.0/(Dij[i][j]*Dij[i][j])*fabs(x[i]-x[j])*fabs(x[i]-x[j]);
 			}
 		}
-		uniLength=sum1/sum2;
+		uniLength = isinf(sum2) ? 0 : sum1 / sum2;
 		for (i=0; i<n; i++)
 			x[i]*=uniLength;
 	}
