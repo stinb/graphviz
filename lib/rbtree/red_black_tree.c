@@ -18,7 +18,6 @@
 /*  destroys it in the appropriate manner when the node containing that */
 /*  key is deleted.  InfoDestFunc is similar to DestFunc except it */
 /*  receives a pointer to the info of a node and destroys it. */
-/*  PrintInfo receives a pointer to the info of a node and prints it. */
 /*  If RBTreePrint is never called the print functions don't have to be */
 /*  defined.  */
 /**/
@@ -30,8 +29,7 @@
 
 rb_red_blk_tree* RBTreeCreate( int (*CompFunc) (const void*,const void*),
 			      void (*DestFunc) (void*),
-			      void (*InfoDestFunc) (void*),
-			      void (*PrintInfo)(void*)) {
+			      void (*InfoDestFunc) (void*)) {
   rb_red_blk_tree* newTree = NULL;
   rb_red_blk_node* temp;
 
@@ -42,7 +40,6 @@ rb_red_blk_tree* RBTreeCreate( int (*CompFunc) (const void*,const void*),
   newTree->nil = newTree->root = NULL;
   newTree->Compare=  CompFunc;
   newTree->DestroyKey= DestFunc;
-  newTree->PrintInfo= PrintInfo;
   newTree->DestroyInfo= InfoDestFunc;
 
   /*  see the comment in the rb_red_blk_tree structure in red_black_tree.h */

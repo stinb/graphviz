@@ -23,10 +23,6 @@ int IntComp(const void* a,const void* b) {
   return(0);
 }
 
-static void InfoPrint(void* a) {
-  ;
-}
-
 static void InfoDest(void *a){
   ;
 }
@@ -38,7 +34,7 @@ int main() {
   rb_red_blk_node* newNode;
   rb_red_blk_tree* tree;
 
-  tree=RBTreeCreate(IntComp, IntDest, InfoDest, InfoPrint);
+  tree=RBTreeCreate(IntComp, IntDest, InfoDest);
   while (option != 6) {
     printf("choose one of the following:\n");
     printf("(1) add to tree\n(2) delete from tree\n(3) query\n");
