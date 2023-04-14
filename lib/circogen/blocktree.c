@@ -54,7 +54,7 @@ DEFINE_LIST(estack, Agedge_t*)
  *  - turn on user-supplied blocks.
  *  - Post-process to move articulation point to largest block
  */
-static void dfs(Agraph_t *g, Agnode_t *u, circ_state *state, int isRoot,
+static void dfs(Agraph_t *g, Agnode_t *u, circ_state *state, bool isRoot,
                 estack_t *stk) {
     Agedge_t *e;
     Agnode_t *v;
@@ -73,7 +73,7 @@ static void dfs(Agraph_t *g, Agnode_t *u, circ_state *state, int isRoot,
         if (VAL(v) == 0) {   /* Since VAL(root) == 0, it gets treated as artificial cut point */
 	    PARENT(v) = u;
             estack_push(stk, e);
-            dfs(g, v, state, 0, stk);
+            dfs(g, v, state, false, stk);
             LOWVAL(u) = MIN(LOWVAL(u), LOWVAL(v));
             if (LOWVAL(v) >= VAL(u)) {       /* u is an articulation point */
 		block_t *block = NULL;
@@ -138,7 +138,7 @@ static void find_blocks(Agraph_t * g, circ_state * state)
     if (Verbose)
 	fprintf (stderr, "root = %s\n", agnameof(root));
     estack_t stk = {0};
-    dfs(g, root, state, 1, &stk);
+    dfs(g, root, state, true, &stk);
     estack_free(&stk);
 }
 
