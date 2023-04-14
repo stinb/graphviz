@@ -36,7 +36,6 @@ static void InfoDest(void *a){
 }
 
 int main() {
-  stk_stack* enumResult;
   int option=0;
   int newKey,newKey2;
   int* newInt;
@@ -44,11 +43,11 @@ int main() {
   rb_red_blk_tree* tree;
 
   tree=RBTreeCreate(IntComp,IntDest,InfoDest,IntPrint,InfoPrint);
-  while(option!=8) {
+  while (option != 7) {
     printf("choose one of the following:\n");
     printf("(1) add to tree\n(2) delete from tree\n(3) query\n");
-    printf("(4) find predecessor\n(5) find successor\n(6) enumerate\n");
-    printf("(7) print tree\n(8) quit\n");
+    printf("(4) find predecessor\n(5) find successor\n");
+    printf("(6) print tree\n(7) quit\n");
     do option=fgetc(stdin); while(-1 != option && isspace(option));
     option-='0';
     switch(option)
@@ -117,22 +116,10 @@ int main() {
 	break;
       case 6:
 	{
-	  printf("type low and high keys to see all keys between them\n");
-	  scanf("%i %i",&newKey,&newKey2);
-	  enumResult=RBEnumerate(tree,&newKey,&newKey2);	  
-	  while ( (newNode = StackPop(enumResult)) ) {
-	    tree->PrintKey(newNode->key);
-	    printf("\n");
-	  }
-	  free(enumResult);
-	}
-	break;
-      case 7:
-	{
 	  RBTreePrint(tree);
 	}
 	break;
-      case 8:
+      case 7:
 	{
 	  RBTreeDestroy(tree);
 	  return 0;
@@ -144,7 +131,3 @@ int main() {
   }
   return 0;
 }
-
-
-
-
