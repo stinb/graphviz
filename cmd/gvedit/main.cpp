@@ -36,8 +36,6 @@
 
 #endif
 
-static char *cmd;
-
 QTextStream errout(stderr, QIODevice::WriteOnly);
 
 static char useString[] = "Usage: gvedit [-v?] <files>\n\
@@ -55,7 +53,7 @@ static char **parseArgs(int argc, char *argv[])
 {
     int c;
 
-    cmd = argv[0];
+    const char *cmd = argv[0];
     while ((c = getopt(argc, argv, ":sv?")) != -1) {
 	switch (c) {
 	case 's':
