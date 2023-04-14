@@ -8,6 +8,7 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
+#include <float.h>
 #include <math.h>
 #include <neatogen/digcola.h>
 #ifdef DIGCOLA
@@ -31,6 +32,12 @@ standardize(double* orthog, int nvtxs)
 	
 	/* normalize: */
 	len = norm(orthog, 0, nvtxs-1);
+
+	// if we have a degenerate length, do not attempt to scale by it
+	if (fabs(len) < DBL_EPSILON) {
+		return;
+	}
+
 	vecscale(orthog, 0, nvtxs-1, 1.0 / len, orthog);
 }
 
