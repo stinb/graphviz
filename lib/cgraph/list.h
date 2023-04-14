@@ -183,6 +183,25 @@
     list->size = 0;                                                            \
   }                                                                            \
                                                                                \
+  /** ensure the list can fit a given number of items without reallocation     \
+   *                                                                           \
+   * \param list List to operate on                                            \
+   * \param capacity Number of items the list should be able to contain        \
+   */                                                                          \
+  static inline LIST_UNUSED void name##_reserve(name##_t *list,                \
+                                                size_t capacity) {             \
+    assert(list != NULL);                                                      \
+                                                                               \
+    /* if we can already fit enough items, nothing to do */                    \
+    if (list->capacity >= capacity) {                                          \
+      return;                                                                  \
+    }                                                                          \
+                                                                               \
+    list->data = (type *)gv_recalloc(list->data, list->capacity, capacity,     \
+                                     sizeof(type));                            \
+    list->capacity = capacity;                                                 \
+  }                                                                            \
+                                                                               \
   /** shrink or grow the list to the given size                                \
    *                                                                           \
    * \param list List to operate on                                            \
