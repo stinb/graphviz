@@ -38,35 +38,7 @@ static block_t *makeBlock(Agraph_t * g, circ_state * state)
     return bp;
 }
 
-typedef struct {
-    Agedge_t *top;
-    int sz;
-} estack;
-
-static void
-push (estack* s, Agedge_t* e)
-{
-    ENEXT(e) = s->top;
-    s->top = e;
-    s->sz += 1;
-}
-
-static Agedge_t*
-pop (estack* s)
-{
-    Agedge_t *top = s->top;
-
-    if (top) {
-	assert(s->sz > 0);
-	s->top = ENEXT(top);
-	s->sz -= 1;
-    } else {
-	assert(0);
-    }
-
-    return top;
-}
-
+DEFINE_LIST(estack, Agedge_t*)
 
 /* dfs:
  *
@@ -82,8 +54,8 @@ pop (estack* s)
  *  - turn on user-supplied blocks.
  *  - Post-process to move articulation point to largest block
  */
-static void dfs(Agraph_t * g, Agnode_t * u, circ_state * state, int isRoot, estack* stk)
-{
+static void dfs(Agraph_t *g, Agnode_t *u, circ_state *state, int isRoot,
+                estack_t *stk) {
     Agedge_t *e;
     Agnode_t *v;
 
@@ -100,7 +72,7 @@ static void dfs(Agraph_t * g, Agnode_t * u, circ_state * state, int isRoot, esta
 
         if (VAL(v) == 0) {   /* Since VAL(root) == 0, it gets treated as artificial cut point */
 	    PARENT(v) = u;
-            push(stk, e);
+            estack_push(stk, e);
             dfs(g, v, state, 0, stk);
             LOWVAL(u) = MIN(LOWVAL(u), LOWVAL(v));
             if (LOWVAL(v) >= VAL(u)) {       /* u is an articulation point */
@@ -108,7 +80,7 @@ static void dfs(Agraph_t * g, Agnode_t * u, circ_state * state, int isRoot, esta
 		Agnode_t *np;
 		Agedge_t *ep;
                 do {
-                    ep = pop(stk);
+                    ep = estack_pop(stk);
 		    if (EDGEORDER(ep) == 1)
 			np = aghead (ep);
 		    else
@@ -146,7 +118,6 @@ static void find_blocks(Agraph_t * g, circ_state * state)
 {
     Agnode_t *n;
     Agnode_t *root = NULL;
-    estack stk;
 
     /*      check to see if there is a node which is set to be the root
      */
@@ -166,10 +137,9 @@ static void find_blocks(Agraph_t * g, circ_state * state)
 	root = agfstnode(g);
     if (Verbose)
 	fprintf (stderr, "root = %s\n", agnameof(root));
-    stk.sz = 0;
-    stk.top = NULL;
+    estack_t stk = {0};
     dfs(g, root, state, 1, &stk);
-
+    estack_free(&stk);
 }
 
 /* create_block_tree:

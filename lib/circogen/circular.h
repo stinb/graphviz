@@ -67,14 +67,12 @@ typedef struct {
 
 typedef struct {
     int order;
-    Agedge_t* next;
 } edata;
 
 #define NDATA(n) ((ndata*)(ND_alg(n)))
 #define DNODE(n)	(NDATA(n)->dnode)
 
 #define EDGEDATA(e)  ((edata*)(ED_alg(e)))
-#define ENEXT(e)     (EDGEDATA(e)->next)
 #define EDGEORDER(e) (EDGEDATA(e)->order)
 
 #define DATA(n) ((cdata*)(ND_alg(n)))
