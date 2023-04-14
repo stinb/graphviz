@@ -31,7 +31,7 @@
 typedef struct {
     Agrec_t h;
     int mark;
-    int onstack;
+    bool onstack: 1;
 } Agnodeinfo_t;
 
 #define ND_mark(n) (((Agnodeinfo_t*)((n)->base.data))->mark)
