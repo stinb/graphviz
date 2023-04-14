@@ -725,6 +725,26 @@ def test_1449():
     assert stderr.strip() == "", "SVG color scheme use caused warnings"
 
 
+@pytest.mark.xfail(strict=True)  # FIXME
+def test_1554():
+    """
+    small distances between nodes should not cause a crash in majorization
+    https://gitlab.com/graphviz/graphviz/-/issues/1554
+    """
+
+    # locate our associated test case in this directory
+    input = Path(__file__).parent / "1554.dot"
+    assert input.exists(), "unexpectedly missing test case"
+
+    # run it through Graphviz
+    output = dot("svg", input)
+
+    # the output should not have NaN values, indicating out of bounds computation
+    assert (
+        re.search(r"\bnan\b", output, flags=re.IGNORECASE) is None
+    ), "computation exceeded bounds"
+
+
 @pytest.mark.skipif(which("gvpr") is None, reason="GVPR not available")
 def test_1594():
     """
