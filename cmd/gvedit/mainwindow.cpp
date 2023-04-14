@@ -32,16 +32,16 @@ static void freeList(char **lp, int count)
     free(lp);
 }
 
-static int LoadPlugins(QComboBox * cb, GVC_t * gvc, const char *kind,
+static int LoadPlugins(QComboBox &cb, GVC_t *gvc, const char *kind,
 		       const char *more[], const char *prefer)
 {
     int count;
     char **lp = gvPluginList(gvc, kind, &count, nullptr);
     int idx = -1;
 
-    cb->clear();
+    cb.clear();
     for (int id = 0; id < count; id++) {
-	cb->addItem(QString(lp[id]));
+	cb.addItem(QString(lp[id]));
 	if (prefer && idx < 0 && !strcmp(prefer, lp[id]))
 	    idx = id;
     };
@@ -52,12 +52,12 @@ static int LoadPlugins(QComboBox * cb, GVC_t * gvc, const char *kind,
 	int i = 0;
 	const char *s;
 	while ((s = more[i++])) {
-	    cb->addItem(QString(s));
+	    cb.addItem(QString(s));
 	}
     }
 
     if (idx > 0)
-	cb->setCurrentIndex(idx);
+	cb.setCurrentIndex(idx);
     else
 	idx = 0;
 
@@ -157,11 +157,10 @@ CMainWindow::CMainWindow(char*** Files)
     setUnifiedTitleAndToolBarOnMac(true);
     QComboBox *cb =
 	(QComboBox *) frmSettings->findChild < QComboBox * >("cbLayout");
-    dfltLayoutIdx = LoadPlugins(cb, frmSettings->gvc, "layout", nullptr, "dot");
+    dfltLayoutIdx = LoadPlugins(*cb, frmSettings->gvc, "layout", nullptr, "dot");
     cb = (QComboBox *) frmSettings->findChild <
 	QComboBox * >("cbExtension");
-    dfltRenderIdx =
-	LoadPlugins(cb, frmSettings->gvc, "device", xtra, "png");
+    dfltRenderIdx = LoadPlugins(*cb, frmSettings->gvc, "device", xtra, "png");
     statusBar()->showMessage(tr("Ready"));
     setWindowIcon(QIcon(":/images/icon.png"));
     //load files specified in command line , one time task
