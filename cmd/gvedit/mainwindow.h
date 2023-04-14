@@ -37,7 +37,7 @@ class CMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    CMainWindow(char*** Files = nullptr);
+    CMainWindow(char **files = nullptr);
     QMdiArea *mdiArea;
     void addFile (QString fileName);
 private slots:

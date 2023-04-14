@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 
     char **files = parseArgs(argc, argv);
     QApplication app(argc, argv);
-    CMainWindow mainWin(&files);
+    CMainWindow mainWin(files);
     mainWin.show();
     ret = app.exec();
     graphviz_exit(ret);
