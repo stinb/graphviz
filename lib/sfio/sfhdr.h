@@ -258,7 +258,6 @@ extern "C" {
 	 (sz == 64 && sz == sizeof(type)*CHAR_BIT) )
 
 /* format flags&types, must coexist with those in sfio.h */
-#define SFFMT_FORBIDDEN 00077777777	/* for sfio.h only      */
 #define SFFMT_EFORMAT	01000000000	/* sfcvt converting %e  */
 #define SFFMT_MINUS	02000000000	/* minus sign           */
 
