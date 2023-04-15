@@ -62,13 +62,13 @@ static void _sfbuf(Sfio_t * f, int *rs)
     if (f->next >= f->endb) {
 	if (*rs > 0) {		/* try peeking for a share stream if possible */
 	    f->mode |= SF_RV;
-	    if (SFFILBUF(f, -1) > 0) {
+	    if (SFFILBUF(f) > 0) {
 		f->mode |= SF_PEEK;
 		return;
 	    }
 	    *rs = -1;		/* can't peek, back to normal reads */
 	}
-	(void) SFFILBUF(f, -1);
+	(void) SFFILBUF(f);
     }
 }
 

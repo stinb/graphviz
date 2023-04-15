@@ -112,7 +112,7 @@ ssize_t sfread(Sfio_t * f, void * buf, size_t n)
 	  do_filbuf:
 	    if (justseek)
 		f->bits |= SF_JUSTSEEK;
-	    if (SFFILBUF(f, -1) <= 0)
+	    if (SFFILBUF(f) <= 0)
 		break;
 	}
     }
