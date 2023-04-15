@@ -95,7 +95,7 @@ libtcldot_builtin_la_LIBADD += $(top_builddir)/plugin/gd/libgvplugin_gd_C.la
 libtcldot_builtin_la_LIBADD += $(GDLIB_LIBS)
 endif
 
-libtcldot_builtin_la_LIBADD += $(EXPAT_LIBS) $(SOCKET_LIBS) $(IPSEPCOLA_LIBS) $(MATH_LIBS)
+libtcldot_builtin_la_LIBADD += $(EXPAT_LIBS) $(IPSEPCOLA_LIBS) $(MATH_LIBS)
 
 # add a non-existent C++ source to force the C++ compiler to be used for
 # linking, so the C++ standard library is included for our C++ dependencies

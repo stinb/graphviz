@@ -159,7 +159,7 @@ gvpack_static_LDADD = \
 	$(top_builddir)/lib/pathplan/libpathplan_C.la \
 	$(top_builddir)/lib/cgraph/libcgraph_C.la \
 	$(top_builddir)/lib/cdt/libcdt_C.la \
-	$(EXPAT_LIBS) $(Z_LIBS) $(GTS_LIBS) $(SOCKET_LIBS) $(IPSEPCOLA_LIBS) $(MATH_LIBS)
+	$(EXPAT_LIBS) $(Z_LIBS) $(GTS_LIBS) $(IPSEPCOLA_LIBS) $(MATH_LIBS)
 endif
 
 
