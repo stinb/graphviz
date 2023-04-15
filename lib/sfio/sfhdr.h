@@ -432,7 +432,6 @@ extern "C" {
 
 /* floating point to ascii conversion */
 #define SF_MAXEXP10	6
-#define SF_MAXPOW10	(1 << SF_MAXEXP10)
 #define SF_FDIGITS	256	/* max allowed fractional digits */
 #define SF_IDIGITS	1024	/* max number of digits in int part */
 #define SF_MAXDIGITS	(((SF_FDIGITS+SF_IDIGITS)/sizeof(int) + 1)*sizeof(int))
