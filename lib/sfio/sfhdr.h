@@ -512,11 +512,9 @@ extern "C" {
 	  } \
 	}
 
-/* handy functions */
+// handy function
 #undef min
-#undef max
 #define min(x,y)	((x) < (y) ? (x) : (y))
-#define max(x,y)	((x) > (y) ? (x) : (y))
 
 /* fast functions for memory copy and memory clear */
 #define memclear(s,n)	memset((s),'\0',(n))
