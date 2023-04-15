@@ -1,6 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-HOSTCC ?= $(CC)
 GVPR_VERSION = "2:0:0"
 
 if WITH_MINGW
