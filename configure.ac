@@ -1340,7 +1340,6 @@ fi
 if test "$tk_checkBoth" = 1; then
   tk_oldLibs=$LIBS
   LIBS="$LIBS -lsocket -lnsl"
-  AC_CHECK_FUNC(accept, tk_checkNsl=0, [LIBS=$tk_oldLibs])
 fi
 SOCKET_LIBS=$LIBS
 AC_SUBST([SOCKET_LIBS])
