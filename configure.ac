@@ -1342,7 +1342,6 @@ if test "$tk_checkBoth" = 1; then
   LIBS="$LIBS -lsocket -lnsl"
   AC_CHECK_FUNC(accept, tk_checkNsl=0, [LIBS=$tk_oldLibs])
 fi
-AC_CHECK_FUNC(gethostbyname, , [AC_CHECK_LIB(nsl, main, [LIBS="$LIBS -lnsl"])])
 SOCKET_LIBS=$LIBS
 AC_SUBST([SOCKET_LIBS])
 LIBS=$save_LIBS
