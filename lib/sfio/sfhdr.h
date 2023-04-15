@@ -114,8 +114,6 @@ extern "C" {
 #define ushort		unsigned short
 #endif
 
-#define SECOND		1000	/* millisecond units */
-
 /* macros do determine stream types from Stat_t data */
 #ifndef S_IFMT
 #define S_IFMT	0
