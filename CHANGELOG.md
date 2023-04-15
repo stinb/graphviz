@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`image="http…"`) is now available. This enables graphs to reference images
   from intranet or internet locations. #1664
 
+### Changed
+
+- The accuracy of box overlapping checks during routing has been improved.
+
 ### Fixed
 
 - makeCompoundEdge: Assertion `bez->sflag` failed. #1879
