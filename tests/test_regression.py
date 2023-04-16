@@ -2674,6 +2674,24 @@ def test_2371():
     subprocess.check_call(["dot", "-Tsvg", "-Knop2", "-o", os.devnull, input])
 
 
+@pytest.mark.skipif(
+    platform.system() == "Windows",
+    reason="gvplugin_list symbol is not exposed on Windows",
+)
+def test_2375():
+    """
+    `gvplugin_list` should return full plugin names
+    https://gitlab.com/graphviz/graphviz/-/issues/2375
+    """
+
+    # find co-located test source
+    c_src = (Path(__file__).parent / "2375.c").resolve()
+    assert c_src.exists(), "missing test case"
+
+    # run the test
+    run_c(c_src, link=["gvc"])
+
+
 def test_changelog_dates():
     """
     Check the dates of releases in the changelog are correctly formatted

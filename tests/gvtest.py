@@ -196,22 +196,30 @@ def run_c(
         argv = [exe] + args
         print(f'+ {" ".join(shlex.quote(str(x)) for x in argv)}')
 
+        input_bytes = None
+        if input is not None:
+            input_bytes = input.encode("utf-8")
+
         # run it
         p = subprocess.run(
             argv,
-            input=input,
+            input=input_bytes,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            universal_newlines=True,
         )
+
+        # decode output manually rather than using `universal_newlines=True`
+        # above to avoid exceptions from non-UTF-8 bytes in the output
+        stdout = p.stdout.decode("utf-8", "replace")
+        stderr = p.stderr.decode("utf-8", "replace")
 
         # check it succeeded
         if p.returncode != 0:
-            sys.stdout.write(p.stdout)
-            sys.stderr.write(p.stderr)
+            sys.stdout.write(stdout)
+            sys.stderr.write(stderr)
         p.check_returncode()
 
-        return p.stdout, p.stderr
+        return stdout, stderr
 
 
 def which(cmd: str) -> Optional[Path]:

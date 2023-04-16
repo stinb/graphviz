@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - makeCompoundEdge: Assertion `bez->sflag` failed. #1879
+- Graphviz.app’s export functionality has been restored. This was a regression
+  in Graphviz 5.0.0. #2375
 
 ## [8.0.2] – 2023-04-10
 
