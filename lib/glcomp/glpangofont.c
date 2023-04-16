@@ -9,16 +9,7 @@
  *************************************************************************/
 
 #include <glcomp/glpangofont.h>
-#include <unistd.h>
-
-#define DEFAULT_FONT_FAMILY "Arial"
-#define DEFAULT_FONT_SIZE 32
-#define ANTIALIAS
-
-static int file_exists(const char *filename)
-{
-  return access(filename, R_OK) == 0;
-}
+#include <stddef.h>
 
 static PangoLayout *get_pango_layout(char *markup_text,
 				     char *fontdescription, int fontsize,
@@ -42,13 +33,9 @@ static PangoLayout *get_pango_layout(char *markup_text,
     cairo_font_options_set_hint_metrics(options, CAIRO_HINT_METRICS_ON);
     cairo_font_options_set_subpixel_order(options,
 					  CAIRO_SUBPIXEL_ORDER_BGR);
-//      pango_cairo_context_set_font_options(context, options);
 
     desc = pango_font_description_from_string(fontdescription);
-//      pango_font_description_set_family(desc, "CENTAUR.TTF");
     pango_font_description_set_size(desc, (gint) (fontsize * PANGO_SCALE));
-
-//      pango_font_description_set_style    (desc,PANGO_STYLE_ITALIC);
 
     if (!pango_parse_markup
 	(markup_text, -1, '\0', &attr_list, &text, NULL, NULL))
@@ -60,121 +47,33 @@ static PangoLayout *get_pango_layout(char *markup_text,
     pango_font_description_free(desc);
     pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
 
-    if (width || height)
-	pango_layout_get_size(layout, &pango_width, &pango_height);
+    pango_layout_get_size(layout, &pango_width, &pango_height);
 
-    if (width)
-	*width = (double) pango_width / PANGO_SCALE;
-
-    if (height)
-	*height = (double) pango_height / PANGO_SCALE;
+    *width = (double) pango_width / PANGO_SCALE;
+    *height = (double) pango_height / PANGO_SCALE;
 
     return layout;
 }
-
-static cairo_status_t
-writer(void *closure, const unsigned char *data, unsigned int length)
-{
-    if (length == fwrite(data, 1, length, closure)) {
-	return CAIRO_STATUS_SUCCESS;
-    }
-
-    return CAIRO_STATUS_WRITE_ERROR;
-}
-
-int glCompCreateFontFile(char *fontdescription, int fs, char *fontfile,
-		     float gw, float gh)
-{
-
-    char buf[] = " ";
-    int ncolumns = 16;
-    int counter = 0;
-    int X = 0;
-    int Y = 0;
-    cairo_t *cr;
-    cairo_surface_t *surface;
-    PangoLayout *layout;
-    double width, height;
-    FILE *output_file;
-    int c;
-    int return_value = -1;
-
-    if (file_exists(fontfile))	//checking if font file has already been created
-	return 0;
-    //create the right size canvas for character set
-    surface =
-	cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
-				   (int) ((float) ncolumns * gw),
-				   (int) (gh * (float) ncolumns));
-    cr = cairo_create(surface);
-    //draw a rectangle with same size of canvas
-    cairo_rectangle(cr, 0, 0, (float) ncolumns * gw,
-		    gh * (float) ncolumns);
-    //fill rectangle with black
-    cairo_set_source_rgb(cr, 0, 0, 0);
-    cairo_fill(cr);
-    //set pen color to white
-    cairo_set_source_rgb(cr, 1, 1, 1);
-
-    for (c = 0; c < 256; c++) {
-	counter++;
-	if (c != 38 && c != 60 && c != 128 && c < 129)
-	    buf[0] = (char)c;
-	else
-	    buf[0] = ' ';
-	cairo_move_to(cr, X, Y);
-	layout =
-	    get_pango_layout(buf, fontdescription, fs, &width, &height);
-	pango_cairo_show_layout(cr, layout);
-	X = X + (int) gw;
-	if (counter == ncolumns) {
-	    X = 0;
-	    Y = Y + (int) gh;
-	    counter = 0;
-	}
-    }
-
-    output_file = fopen(fontfile, "wb+");
-    if (output_file) {
-	cairo_surface_write_to_png_stream(surface, writer, output_file);
-	return_value = 0;
-    }
-    fclose(output_file);
-    g_object_unref(layout);
-    cairo_destroy(cr);
-    cairo_surface_destroy(surface);
-    return return_value;
-}
-
 
 unsigned char *glCompCreatePangoTexture(char *fontdescription, int fontsize,
 				    char *txt, cairo_surface_t * surface,
 				    int *w, int *h)
 {
-
-//    char buf[] = " ";
-//    int ncolumns = 16;
-//    int counter = 0;
-//    int X = 0;
-//    int Y = 0;
     cairo_t *cr;
     PangoLayout *layout;
     double width, height;
 
     layout =
 	get_pango_layout(txt, fontdescription, fontsize, &width, &height);
+    if (layout == NULL) {
+        return NULL;
+    }
     //create the right size canvas for character set
     surface =
 	cairo_image_surface_create(CAIRO_FORMAT_ARGB32, (int) width,
 				   (int) height);
-//      surface =cairo_image_surface_create(CAIRO_FORMAT_A8,(int)width,(int)height);
 
     cr = cairo_create(surface);
-    //draw a rectangle with same size of canvas
-//    cairo_rectangle(cr, 5, 5, width*1.8,height*1.8);
-    //fill rectangle with black
-//    cairo_set_source_rgba(cr, 0.5, 0.5, 0.5,0.3);
-//    cairo_fill(cr);
     //set pen color to white
     cairo_set_source_rgba(cr, 1, 1, 1, 1);
     //draw the text

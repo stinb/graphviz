@@ -16,8 +16,7 @@
 extern "C" {
 #endif
 
-    extern glCompImage *glCompImageNewFile(glCompObj * par, GLfloat x,
-				       GLfloat y, char* imgfile, int is2D);
+    extern glCompImage *glCompImageNewFile(GLfloat x, GLfloat y, char *imgfile);
     extern glCompImage *glCompImageNew(glCompObj * par, GLfloat x,
 				       GLfloat y);
     extern void glCompImageDelete(glCompImage * p);
