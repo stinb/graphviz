@@ -75,8 +75,6 @@ make_barriers(Ppoly_t ** poly, int npoly, int pp, int qp,
     *n_barriers = n;
 }
 
-/* genPt:
- */
 static Ppoint_t genPt(double x, double y, pointf c)
 {
     Ppoint_t p;
@@ -86,9 +84,6 @@ static Ppoint_t genPt(double x, double y, pointf c)
     return p;
 }
 
-
-/* recPt:
- */
 static Ppoint_t recPt(double x, double y, pointf c, expand_t* m)
 {
     Ppoint_t p;
@@ -464,8 +459,6 @@ Ppolyline_t getPath(edge_t *e, vconfig_t *vconfig, bool chkPts) {
     return line;
 }
 
-/* makePolyline:
- */
 static void makePolyline(edge_t * e) {
     Ppolyline_t spl, line = ED_path(e);
 
@@ -761,8 +754,6 @@ void spline_edges0(graph_t *g, bool set_aspect) {
     spline_edges1(g, et);
 }
 
-/* shiftClusters:
- */
 static void
 shiftClusters (graph_t * g, pointf offset)
 {
@@ -926,8 +917,6 @@ static void translateE(edge_t * e, pointf offset)
     }
 }
 
-/* translateG:
- */
 static void translateG(Agraph_t * g, pointf offset)
 {
     int i;
@@ -946,8 +935,6 @@ static void translateG(Agraph_t * g, pointf offset)
 	translateG(GD_clust(g)[i], offset);
 }
 
-/* neato_translate:
- */
 void neato_translate(Agraph_t * g)
 {
     node_t *n;
