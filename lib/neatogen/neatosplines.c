@@ -446,7 +446,7 @@ Ppoly_t *makeObstacle(node_t * n, expand_t* pmargin, bool isOrtho)
  * Assumes this info is set in ND_lim, usually from _spline_edges.
  * Returns the shortest path.
  */
-Ppolyline_t getPath(edge_t *e, vconfig_t *vconfig, int chkPts) {
+Ppolyline_t getPath(edge_t *e, vconfig_t *vconfig, bool chkPts) {
     Ppolyline_t line;
     int pp, qp;
     Ppoint_t p, q;
@@ -590,7 +590,7 @@ static int _spline_edges(graph_t * g, expand_t* pmargin, int edgetype)
 	/* path-finding pass */
 	for (n = agfstnode(g); n; n = agnxtnode(g, n)) {
 	    for (e = agfstout(g, n); e; e = agnxtout(g, e)) {
-		ED_path(e) = getPath(e, vconfig, TRUE);
+		ED_path(e) = getPath(e, vconfig, true);
 	    }
 	}
     }
