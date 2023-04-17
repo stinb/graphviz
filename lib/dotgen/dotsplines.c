@@ -677,8 +677,6 @@ static int edgecmp(edge_t** ptr0, edge_t** ptr1)
     return 0;
 }
 
-/* cloneGraph:
- */
 typedef struct {
     attrsym_t* E_constr;
     attrsym_t* E_samehead;
