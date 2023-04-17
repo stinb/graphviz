@@ -22,6 +22,7 @@
 #include <limits.h>
 #include <math.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -141,52 +142,43 @@ int portcmp(port p0, port p1)
 
 /* swap_bezier:
  */
-static void swap_bezier(bezier * old, bezier * new)
-{
-    pointf *list;
-    pointf *lp;
-    pointf *olp;
-    int i, sz;
+static void swap_bezier(bezier *b) {
+  int sz = b->size;
+  for (int i = 0; i < sz / 2; ++i) { // reverse list of points
+    pointf tmp = b->list[i];
+    b->list[i] = b->list[sz - 1 - i];
+    b->list[sz - 1 - i] = tmp;
+  }
 
-    sz = old->size;
-    list = gv_calloc(sz, sizeof(pointf));
-    lp = list;
-    olp = old->list + (sz - 1);
-    for (i = 0; i < sz; i++) {	/* reverse list of points */
-	*lp++ = *olp--;
-    }
-
-    new->list = list;
-    new->size = sz;
-    new->sflag = old->eflag;
-    new->eflag = old->sflag;
-    new->sp = old->ep;
-    new->ep = old->sp;
+  {
+    uint32_t tmp = b->sflag;
+    b->sflag = b->eflag;
+    b->eflag = tmp;
+  }
+  {
+    pointf tmp = b->sp;
+    b->sp = b->ep;
+    b->ep = tmp;
+  }
 }
 
 /* swap_spline:
  */
 static void swap_spline(splines * s)
 {
-    bezier *list;
-    bezier *lp;
-    bezier *olp;
-    int i, sz;
+  int sz = s->size;
 
-    sz = s->size;
-    list = gv_calloc(sz, sizeof(bezier));
-    lp = list;
-    olp = s->list + (sz - 1);
-    for (i = 0; i < sz; i++) {	/* reverse and swap list of beziers */
-	swap_bezier(olp--, lp++);
-    }
+  // reverse list
+  for (int i = 0; i < sz / 2; ++i) {
+    bezier tmp = s->list[i];
+    s->list[i] = s->list[sz - 1 - i];
+    s->list[sz - 1 - i] = tmp;
+  }
 
-    /* free old structures */
-    for (i = 0; i < sz; i++)
-	free(s->list[i].list);
-    free(s->list);
-
-    s->list = list;
+  // swap beziers
+  for (int i = 0; i < sz; ++i) {
+    swap_bezier(&s->list[i]);
+  }
 }
 
 /* edge_normalize:
