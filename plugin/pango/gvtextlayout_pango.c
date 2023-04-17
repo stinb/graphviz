@@ -255,15 +255,7 @@ static bool pango_textlayout(textspan_t * span, char **fontpath)
     span->size.y = logical_rect.height * textlayout_scale;
 
     /* The y offset from baseline to 0,0 of the bitmap representation */
-#if !defined(_WIN32) && defined PANGO_VERSION_MAJOR && (PANGO_VERSION_MAJOR >= 1)
     span->yoffset_layout = pango_layout_get_baseline (layout) * textlayout_scale;
-#else
-    {
-	/* do it the hard way on rhel5/centos5 */
-	PangoLayoutIter *iter = pango_layout_get_iter (layout);
-	span->yoffset_layout = pango_layout_iter_get_baseline (iter) * textlayout_scale;
-    }
-#endif
 
     /* The distance below midline for y centering of text strings */
     span->yoffset_centerline = 0.05 * span->font->size;

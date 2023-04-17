@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [8.0.4 (Unreleased)]
 
+### Changed
+
+- Support for versions of Pango prior to 1.22.0 has been removed.
+- On Windows, the Pango plugin now uses the newer `pango_layout_get_baseline`
+  API.
+
 ### Fixed
 
 - A minor inaccuracy for some cases of clipping an edge to a polygon node

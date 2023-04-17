@@ -1559,8 +1559,7 @@ AC_ARG_WITH(pangocairo,
 if test "x$with_pangocairo" != "xyes"; then
   use_pangocairo="No (disabled)"
 else
-  # require at least the version available on centos5 (fc6 has 1.14.10)
-  PKG_CHECK_MODULES(PANGOCAIRO, [pangocairo >= 1.14.9],[
+  PKG_CHECK_MODULES(PANGOCAIRO, [pangocairo >= 1.22.0],[
     use_pangocairo="Yes"
     AC_DEFINE_UNQUOTED(HAVE_PANGOCAIRO,1,
       [Define if you have the pangocairo library])
