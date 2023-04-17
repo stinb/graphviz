@@ -140,8 +140,6 @@ int portcmp(port p0, port p1)
     return 0;
 }
 
-/* swap_bezier:
- */
 static void swap_bezier(bezier *b) {
   int sz = b->size;
   for (int i = 0; i < sz / 2; ++i) { // reverse list of points
@@ -162,8 +160,6 @@ static void swap_bezier(bezier *b) {
   }
 }
 
-/* swap_spline:
- */
 static void swap_spline(splines * s)
 {
   int sz = s->size;
@@ -857,8 +853,6 @@ cloneGraph (graph_t* g, attr_state_t* attr_state)
     return auxg;
 }
 
-/* cleanupCloneGraph:
- */
 static void
 cleanupCloneGraph (graph_t* g, attr_state_t* attr_state)
 {
@@ -925,8 +919,6 @@ static node_t *cloneNode(graph_t *g, node_t *orign) {
     return n;
 }
 
-/* cloneEdge:
- */
 static edge_t*
 cloneEdge (graph_t* g, node_t* tn, node_t* hn, edge_t* orig)
 {
@@ -1147,8 +1139,6 @@ makeSimpleFlatLabels (node_t* tn, node_t* hn, edge_t** edges, int ind, int cnt, 
     free (earray);
 }
 
-/* makeSimpleFlat:
- */
 static void
 makeSimpleFlat (node_t* tn, node_t* hn, edge_t** edges, int ind, int cnt, int et)
 {
@@ -1349,8 +1339,6 @@ make_flat_adj_edges(graph_t* g, edge_t** edges, int ind, int cnt, edge_t* e0,
     cleanupCloneGraph(auxg, &attrs);
 }
 
-/* makeFlatEnd;
- */
 static void
 makeFlatEnd (graph_t* g, spline_info_t* sp, path* P, node_t* n, edge_t* e, pathend_t* endp,
              bool isBegin)
@@ -1367,8 +1355,7 @@ makeFlatEnd (graph_t* g, spline_info_t* sp, path* P, node_t* n, edge_t* e, pathe
     if (b.LL.x < b.UR.x && b.LL.y < b.UR.y)
 	endp->boxes[endp->boxn++] = b;
 }
-/* makeBottomFlatEnd;
- */
+
 static void
 makeBottomFlatEnd (graph_t* g, spline_info_t* sp, path* P, node_t* n, edge_t* e, 
 	pathend_t* endp, bool isBegin)
@@ -1386,9 +1373,6 @@ makeBottomFlatEnd (graph_t* g, spline_info_t* sp, path* P, node_t* n, edge_t* e,
 	endp->boxes[endp->boxn++] = b;
 }
 
-
-/* make_flat_labeled_edge:
- */
 static void
 make_flat_labeled_edge(graph_t* g, spline_info_t* sp, path* P, edge_t* e, int et)
 {
@@ -1463,8 +1447,6 @@ make_flat_labeled_edge(graph_t* g, spline_info_t* sp, path* P, edge_t* e, int et
 	free(ps);
 }
 
-/* make_flat_bottom_edges:
- */
 static void
 make_flat_bottom_edges(graph_t* g, spline_info_t* sp, path * P, edge_t ** edges, int 
 	ind, int cnt, edge_t* e, bool use_splines)
