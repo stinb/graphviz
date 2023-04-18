@@ -17,7 +17,6 @@
 #include <limits.h>
 #include <math.h>
 #include <pathplan/pathplan.h>
-#include <setjmp.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
