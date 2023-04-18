@@ -376,8 +376,6 @@ static int
 bundle (Agraph_t* g, opts_t* opts)
 {
 	double *x = nullptr;
-	double *label_sizes = nullptr;
-	int n_edge_label_nodes;
 	int dim = 2;
 	SparseMatrix A;
 	SparseMatrix B;
@@ -393,8 +391,7 @@ bundle (Agraph_t* g, opts_t* opts)
 		return 1;
 	}
     initDotIO(g);
-	A = SparseMatrix_import_dot(g, dim, &label_sizes, &x, &n_edge_label_nodes,
-	                            nullptr, FORMAT_CSR);
+	A = SparseMatrix_import_dot(g, dim, &x, FORMAT_CSR);
 	if (!A){
 		agerr (AGERR, "Error: could not convert graph %s (%s) into matrix\n", agnameof(g), fname);
 		return 1;

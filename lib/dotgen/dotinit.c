@@ -9,6 +9,7 @@
  *************************************************************************/
 
 #include <assert.h>
+#include <cgraph/alloc.h>
 #include <time.h>
 #include <dotgen/dot.h>
 #include <pack/pack.h>
@@ -326,7 +327,7 @@ static void
 initSubg (Agraph_t* sg, Agraph_t* g)
 {
     agbindrec(sg, "Agraphinfo_t", sizeof(Agraphinfo_t), true);
-    GD_drawing(sg) = NEW(layout_t);
+    GD_drawing(sg) = gv_alloc(sizeof(layout_t));
     GD_drawing(sg)->quantum = GD_drawing(g)->quantum; 
     GD_drawing(sg)->dpi = GD_drawing(g)->dpi;
     GD_gvc(sg) = GD_gvc (g);

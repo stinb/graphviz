@@ -174,10 +174,10 @@ edge_t *make_aux_edge(node_t * u, node_t * v, double len, int wt)
 {
     edge_t *e;
 
-    Agedgepair_t* e2 = NEW(Agedgepair_t);
+    Agedgepair_t* e2 = gv_alloc(sizeof(Agedgepair_t));
     AGTYPE(&(e2->in)) = AGINEDGE;
     AGTYPE(&(e2->out)) = AGOUTEDGE;
-    e2->out.base.data = (Agrec_t*)NEW(Agedgeinfo_t);
+    e2->out.base.data = gv_alloc(sizeof(Agedgeinfo_t));
     e = &(e2->out);
 
     agtail(e) = u;

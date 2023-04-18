@@ -171,7 +171,7 @@ static Dtdisc_t fspanDisc = {
 static void
 appendFItemList (agxbuf *ag)
 {
-    fitem *fi = NEW(fitem);
+    fitem *fi = gv_alloc(sizeof(fitem));
 
     fi->ti.str = agxbdisown(ag);
     fi->ti.font = HTMLstate.fontstack->cfont;
@@ -183,7 +183,7 @@ appendFItemList (agxbuf *ag)
 static void 
 appendFLineList (int v)
 {
-    fspan *ln = NEW(fspan);
+    fspan *ln = gv_alloc(sizeof(fspan));
     fitem *fi;
     Dt_t *ilist = HTMLstate.fitemList;
 
@@ -204,7 +204,7 @@ appendFLineList (int v)
 	}
     }
     else {
-	ln->lp.items = NEW(textspan_t);
+	ln->lp.items = gv_alloc(sizeof(textspan_t));
 	ln->lp.nitems = 1;
 	ln->lp.items[0].str = gv_strdup("");
 	ln->lp.items[0].font = HTMLstate.fontstack->cfont;
@@ -220,7 +220,7 @@ mkText(void)
 {
     Dt_t * ispan = HTMLstate.fspanList;
     fspan *fl ;
-    htmltxt_t *hft = NEW(htmltxt_t);
+    htmltxt_t *hft = gv_alloc(sizeof(htmltxt_t));
     
     if (dtsize (HTMLstate.fitemList)) 
 	appendFLineList (UNSET_ALIGN);
@@ -256,7 +256,7 @@ static pitem* addRow (void)
 {
   Dt_t*      dp = dtopen(&cellDisc, Dtqueue);
   htmltbl_t* tbl = HTMLstate.tblstack;
-  pitem*     sp = NEW(pitem);
+  pitem*     sp = gv_alloc(sizeof(pitem));
   sp->u.rp = dp;
   if (tbl->hrule)
     sp->ruled = 1;
@@ -268,7 +268,7 @@ static pitem* addRow (void)
  * Set cell body and type and attach to row
  */
 static void setCell(htmlcell_t *cp, void *obj, char kind) {
-  pitem*     sp = NEW(pitem);
+  pitem*     sp = gv_alloc(sizeof(pitem));
   htmltbl_t* tbl = HTMLstate.tblstack;
   pitem*     rp = dtlast (tbl->u.p.rows);
   Dt_t*      row = rp->u.rp;
@@ -290,7 +290,7 @@ static void setCell(htmlcell_t *cp, void *obj, char kind) {
  * Create label, given body and type.
  */
 static htmllabel_t *mkLabel(void *obj, char kind) {
-  htmllabel_t* lp = NEW(htmllabel_t);
+  htmllabel_t* lp = gv_alloc(sizeof(htmllabel_t));
 
   lp->kind = kind;
   if (kind == HTML_TEXT)
@@ -368,7 +368,7 @@ static int nonSpace (char* s)
 static void
 pushFont (textfont_t *fp)
 {
-    sfont_t *ft = NEW(sfont_t);
+    sfont_t *ft = gv_alloc(sizeof(sfont_t));
     textfont_t* curfont = HTMLstate.fontstack->cfont;
     textfont_t  f = *fp;
 

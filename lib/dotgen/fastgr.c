@@ -8,6 +8,7 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
+#include <cgraph/alloc.h>
 #include <cgraph/unused.h>
 #include <dotgen/dot.h>
 #include <stdbool.h>
@@ -131,10 +132,10 @@ edge_t *new_virtual_edge(node_t * u, node_t * v, edge_t * orig)
 {
     edge_t *e;
 
-    Agedgepair_t* e2 = NEW(Agedgepair_t);
+    Agedgepair_t* e2 = gv_alloc(sizeof(Agedgepair_t));
     AGTYPE(&(e2->in)) = AGINEDGE;
     AGTYPE(&(e2->out)) = AGOUTEDGE;
-    e2->out.base.data = (Agrec_t*)NEW(Agedgeinfo_t);
+    e2->out.base.data = gv_alloc(sizeof(Agedgeinfo_t));
     e = &(e2->out);
     agtail(e) = u;
     aghead(e) = v;
@@ -200,11 +201,9 @@ void delete_fast_node(graph_t * g, node_t * n)
 
 static node_t *named_virtual_node(graph_t * g, char *s)
 {
-    node_t *n;
-
-    n = NEW(node_t);
+    node_t *n = gv_alloc(sizeof(node_t));
     AGTYPE(n) = AGNODE;
-    n->base.data = (Agrec_t*)NEW(Agnodeinfo_t);
+    n->base.data = gv_alloc(sizeof(Agnodeinfo_t));
     n->root = agroot(g);
     ND_node_type(n) = VIRTUAL;
     ND_lw(n) = ND_rw(n) = 1;
