@@ -23,6 +23,7 @@
  *  watch out for interactions between leaves and clusters.
  */
 
+#include	<cgraph/alloc.h>
 #include	<dotgen/dot.h>
 #include	<limits.h>
 #include	<stdbool.h>
@@ -159,7 +160,8 @@ make_new_cluster(graph_t * g, graph_t * subg)
 {
     int cno;
     cno = ++(GD_n_cluster(g));
-    GD_clust(g) = ZALLOC(cno + 1, GD_clust(g), graph_t *, GD_n_cluster(g));
+    GD_clust(g) = gv_recalloc(GD_clust(g), GD_n_cluster(g), cno + 1,
+                              sizeof(graph_t*));
     GD_clust(g)[cno] = subg;
     do_graph_label(subg);
     return cno;

@@ -25,7 +25,8 @@ static void storeline(GVC_t *gvc, textlabel_t *lp, char *line,
     static textfont_t tf;
     size_t oldsz = lp->u.txt.nspans + 1;
 
-    lp->u.txt.span = ZALLOC(oldsz + 1, lp->u.txt.span, textspan_t, oldsz);
+    lp->u.txt.span = gv_recalloc(lp->u.txt.span, oldsz, oldsz + 1,
+                                 sizeof(textspan_t));
     span = &lp->u.txt.span[lp->u.txt.nspans];
     span->str = line;
     span->just = terminator;

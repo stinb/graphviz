@@ -14,7 +14,6 @@
 #include <cgraph/likely.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <common/memory.h>
 
 void *zmalloc(size_t nbytes)
@@ -22,18 +21,6 @@ void *zmalloc(size_t nbytes)
     if (nbytes == 0)
 	return 0;
     return gcalloc(1, nbytes);
-}
-
-void *zrealloc(void *ptr, size_t size, size_t elt, size_t osize)
-{
-    void *p = realloc(ptr, size * elt);
-    if (UNLIKELY(p == NULL && size)) {
-	fprintf(stderr, "out of memory\n");
-	graphviz_exit(EXIT_FAILURE);
-    }
-    if (osize < size)
-	memset((char *) p + (osize * elt), '\0', (size - osize) * elt);
-    return p;
 }
 
 void *gcalloc(size_t nmemb, size_t size)
