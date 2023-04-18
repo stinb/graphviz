@@ -1457,9 +1457,6 @@ def test_1971():
         assert p.returncode != 0, "edgepaint incorrectly accepted '-rabbit'"
 
 
-@pytest.mark.xfail(
-    platform.system() == "Windows", reason="#56", strict=not is_ndebug_defined()
-)  # FIXME
 def test_1990():
     """
     using ortho and circo in combination should not cause an assertion failure

@@ -29,6 +29,7 @@ if(GDK_FOUND AND GDK_PIXBUF_FOUND AND PANGOCAIRO_FOUND)
   )
 
   target_link_libraries(gvplugin_gdk
+    gvc
     ${GDK_LINK_LIBRARIES}
     ${GDK_PIXBUF_LINK_LIBRARIES}
     ${PANGOCAIRO_LINK_LIBRARIES}

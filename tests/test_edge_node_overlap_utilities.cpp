@@ -27,7 +27,6 @@ union_(const std::unordered_set<std::string_view> &a,
 static const std::unordered_set<std::string_view>
     shapes_not_meeting_edge_vertically = {
         "plaintext",       //
-        "plain",           //
         "none",            //
         "promoter",        //
         "cds",             //
@@ -405,17 +404,18 @@ static std::string generate_dot(const graph_options &graph_options) {
                                      graph_options.primitive_arrowhead_shape);
   const auto arrowtail = fmt::format("{}{}", graph_options.arrowtail_modifier,
                                      graph_options.primitive_arrowtail_shape);
-  return fmt::format("digraph g1 {{"
-                     "  graph [rankdir={}]"
-                     "  node [penwidth={} shape={} color={} fontname=Courier]"
-                     "  edge [penwidth={} color={} dir={} arrowhead={} "
-                     "arrowtail={} arrowsize={}]"
-                     "  a -> b"
-                     "}}",
-                     graph_options.rankdir, graph_options.node_penwidth,
-                     graph_options.node_shape, color,
-                     graph_options.edge_penwidth, color, graph_options.dir,
-                     arrowhead, arrowtail, graph_options.edge_arrowsize);
+  return fmt::format(
+      "digraph g1 {{"
+      "  graph [rankdir={}]"
+      "  node [penwidth={} shape={} color={} fontname=Courier fontsize={}]"
+      "  edge [penwidth={} color={} dir={} arrowhead={} "
+      "arrowtail={} arrowsize={}]"
+      "  a -> b"
+      "}}",
+      graph_options.rankdir, graph_options.node_penwidth,
+      graph_options.node_shape, color, graph_options.node_fontsize,
+      graph_options.edge_penwidth, color, graph_options.dir, arrowhead,
+      arrowtail, graph_options.edge_arrowsize);
 }
 
 void test_edge_node_overlap(const graph_options &graph_options,
@@ -483,6 +483,15 @@ void test_edge_node_overlap(const graph_options &graph_options,
           ? graph_options.node_penwidth / 2 * (std::sqrt(2) - 1)
           : 0;
 
+  const auto extra_node_edge_overlap_margin =
+      graph_options.node_shape == "plain"
+          // The plain shape has no visible borders and its bounding box is
+          // solely determined by the invisible bounding box of the text and it
+          // may vary between text renderers. We therefore can, and need to,
+          // allow more margin when checking for overlap.
+          ? 0.7
+          : 0;
+
   const check_options check_options = {
       .check_max_edge_node_overlap =
           tc_check_options.check_max_edge_node_overlap,
@@ -492,9 +501,10 @@ void test_edge_node_overlap(const graph_options &graph_options,
           tc_check_options.check_max_edge_stem_arrow_overlap,
       .check_min_edge_stem_arrow_overlap =
           tc_check_options.check_min_edge_stem_arrow_overlap,
-      .max_node_edge_overlap =
-          graphviz_bezier_clip_margin + extra_max_node_edge_overlap,
-      .min_node_edge_overlap = 0,
+      .max_node_edge_overlap = graphviz_bezier_clip_margin +
+                               extra_max_node_edge_overlap +
+                               extra_node_edge_overlap_margin,
+      .min_node_edge_overlap = 0 - extra_node_edge_overlap_margin,
       .max_edge_stem_arrow_overlap = max_edge_stem_arrow_overlap,
       .min_edge_stem_arrow_overlap = 0,
       .svg_rounding_error = graphviz_max_svg_rounding_error,

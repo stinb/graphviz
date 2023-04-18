@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [8.0.4 (Unreleased)]
 
+### Fixed
+
+- A minor inaccuracy for some cases of clipping an edge to a polygon node
+  boundary has been fixed.
+- A minor inaccuracy in node width and height for some cases of rendering
+  polygon nodes has been fixed.
+- A minor inaccuracy for some cases of calculating text height from `fontsize`
+  in the GD plugin has been fixed.
+- A minor vertical misalignment of text in the GD plugin has been fixed.
+- Instead of using the actual font height as given by the font metrics, an
+  approximation based on font size was used in the Pango plugin.
+- A minor inaccuracy for some cases of calculating text width and height in the
+  Pango plugin has been fixed.
+- A minor vertical misalignment of text in the Pango plugin has been fixed.
+- Ensure `HAVE_PANGOCAIRO` is set when using CMake and the library is available.
+- A minor inaccuracy in node width and height for some cases of defining
+  polygon-based nodes has been fixed.
+- A minor inaccuracy for some cases of calculating margin for record-based nodes
+  has been fixed.
+- A minor inaccuracy in node width and height for some cases of defining
+  record-based nodes has been fixed.
+
 ## [8.0.3] – 2023-04-16
 
 ### Added

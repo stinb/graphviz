@@ -1817,7 +1817,7 @@ static double userSize(node_t * n)
     double w, h;
     w = late_double(n, N_width, 0.0, MIN_NODEWIDTH);
     h = late_double(n, N_height, 0.0, MIN_NODEHEIGHT);
-    return POINTS(MAX(w, h));
+    return INCH2PS(MAX(w, h));
 }
 
 shape_kind shapeOf(node_t * n)
@@ -1887,11 +1887,11 @@ static void poly_init(node_t * n)
 	else {
 	    width = ND_width(n);
 	    height = ND_height(n);
-	    width = height = POINTS(MIN(width, height));
+	    width = height = INCH2PS(MIN(width, height));
 	}
     } else {
-	width = POINTS(ND_width(n));
-	height = POINTS(ND_height(n));
+	width = INCH2PS(ND_width(n));
+	height = INCH2PS(ND_height(n));
     }
 
     peripheries = late_int(n, N_peripheries, peripheries, 0);
@@ -1915,11 +1915,11 @@ static void poly_init(node_t * n)
 		marginx = fmax(marginx, 0);
 		marginy = fmax(marginy, 0);
 		if (i > 0) {
-		    dimen.x += 2 * POINTS(marginx);
+		    dimen.x += 2 * INCH2PS(marginx);
 		    if (i > 1)
-			dimen.y += 2 * POINTS(marginy);
+			dimen.y += 2 * INCH2PS(marginy);
 		    else
-			dimen.y += 2 * POINTS(marginx);
+			dimen.y += 2 * INCH2PS(marginx);
 		} else
 		    PAD(dimen);
 	    } else
@@ -1930,7 +1930,7 @@ static void poly_init(node_t * n)
 
     /* quantization */
     if ((temp = GD_drawing(agraphof(n))->quantum) > 0.0) {
-	temp = POINTS(temp);
+	temp = INCH2PS(temp);
 	dimen.x = quant(dimen.x, temp);
 	dimen.y = quant(dimen.y, temp);
     }
@@ -2384,8 +2384,8 @@ static bool poly_inside(inside_t * inside_context, pointf p)
 		xsize = ND_lw(n) + ND_rw(n);
 		ysize = ND_ht(n);
 	    }
-	    n_width = POINTS(ND_width(n));
-	    n_height = POINTS(ND_height(n));
+	    n_width = INCH2PS(ND_width(n));
+	    n_height = INCH2PS(ND_height(n));
 	    n_outline_width = INCH2PS(ND_outline_width(n));
 	    n_outline_height = INCH2PS(ND_outline_height(n));
 	}
@@ -2868,8 +2868,8 @@ static void poly_gencode(GVJ_t * job, node_t * n)
     /* nominal label position in the center of the node */
     ND_label(n)->pos = ND_coord(n);
 
-    xsize = (ND_lw(n) + ND_rw(n)) / POINTS(ND_width(n));
-    ysize = ND_ht(n) / POINTS(ND_height(n));
+    xsize = (ND_lw(n) + ND_rw(n)) / INCH2PS(ND_width(n));
+    ysize = ND_ht(n) / INCH2PS(ND_height(n));
 
     style = stylenode(job, n);
     clrs[0] = NULL;
@@ -3473,11 +3473,11 @@ static pointf size_reclbl(node_t * n, field_t * f)
 	    if ((p = agget(n, "margin"))) {
 		i = sscanf(p, "%lf,%lf", &marginx, &marginy);
 		if (i > 0) {
-		    dimen.x += 2 * POINTS(marginx);
+		    dimen.x += 2 * INCH2PS(marginx);
 		    if (i > 1)
-			dimen.y += 2 * POINTS(marginy);
+			dimen.y += 2 * INCH2PS(marginy);
 		    else
-			dimen.y += 2 * POINTS(marginx);
+			dimen.y += 2 * INCH2PS(marginx);
 		} else
 		    PAD(dimen);
 	    } else
@@ -3644,8 +3644,8 @@ static void record_init(node_t * n)
     }
     free(textbuf);
     size_reclbl(n, info);
-    sz.x = POINTS(ND_width(n));
-    sz.y = POINTS(ND_height(n));
+    sz.x = INCH2PS(ND_width(n));
+    sz.y = INCH2PS(ND_height(n));
     if (mapbool(late_string(n, N_fixed, "false"))) {
 	if (sz.x < info->size.x || sz.y < info->size.y) {
 /* should check that the record really won't fit, e.g., there may be no text.
