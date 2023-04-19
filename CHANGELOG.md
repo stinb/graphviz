@@ -1703,7 +1703,7 @@ January 31, 2003
 		to graphviz sources.
 	    - new xdot output format providing detailed drawing instructions
 	    - new -y command line flag, inverts y coordinates
-	    - support multple -T when -o given, as in:
+	    - support multiple -T when -o given, as in:
 			cat xxx.dot | dot -Tpng -Tcmap -o xxx
 		which produces xxx.png and xxx.cmap from a single
 		layout computation.   Intended for use in CGI programs.
