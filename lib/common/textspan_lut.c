@@ -712,7 +712,8 @@ static const struct FontFamilyMetrics all_font_metrics[] = {
 static const size_t all_font_metrics_len =
     sizeof(all_font_metrics) / sizeof(all_font_metrics[0]);
 
-/// Compares two font names for equality, ignoring case and special characters.
+/// Compares two font names for equality, ignoring case and all characters
+/// except ASCII letters
 ///
 /// E.g. "timesroman", "Times-Roman", "times ROMAN", "times_roman" and
 /// "tim8esroman" are all considered equal to each other, but not equal to
