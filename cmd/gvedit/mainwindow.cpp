@@ -8,6 +8,7 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
+#include <QStringList>
 #include <QtWidgets>
 #include <qframe.h>
 #include "mainwindow.h"
@@ -32,32 +33,25 @@ static void freeList(char **lp, int count)
     free(lp);
 }
 
-static int LoadPlugins(QComboBox * cb, GVC_t * gvc, const char *kind,
-		       const char *more[], const char *prefer)
-{
+static int LoadPlugins(QComboBox &cb, GVC_t *gvc, const char *kind,
+                       const QStringList &more, const char *prefer) {
     int count;
     char **lp = gvPluginList(gvc, kind, &count, nullptr);
     int idx = -1;
 
-    cb->clear();
+    cb.clear();
     for (int id = 0; id < count; id++) {
-	cb->addItem(QString(lp[id]));
+	cb.addItem(QString(lp[id]));
 	if (prefer && idx < 0 && !strcmp(prefer, lp[id]))
 	    idx = id;
     };
     freeList(lp, count);
 
     /* Add additional items if supplied */
-    if (more) {
-	int i = 0;
-	const char *s;
-	while ((s = more[i++])) {
-	    cb->addItem(QString(s));
-	}
-    }
+    cb.addItems(more);
 
     if (idx > 0)
-	cb->setCurrentIndex(idx);
+	cb.setCurrentIndex(idx);
     else
 	idx = 0;
 
@@ -109,13 +103,9 @@ void CMainWindow::createConsole()
 
 }
 
-static const char *xtra[] = {
-    "NONE",
-    nullptr
-};
+static const QStringList xtra = {"NONE"};
 
-CMainWindow::CMainWindow(char*** Files)
-{
+CMainWindow::CMainWindow(char **files) {
 
     QWidget *centralwidget = new QWidget(this);
     centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
@@ -157,15 +147,13 @@ CMainWindow::CMainWindow(char*** Files)
     setUnifiedTitleAndToolBarOnMac(true);
     QComboBox *cb =
 	(QComboBox *) frmSettings->findChild < QComboBox * >("cbLayout");
-    dfltLayoutIdx = LoadPlugins(cb, frmSettings->gvc, "layout", nullptr, "dot");
+    dfltLayoutIdx = LoadPlugins(*cb, frmSettings->gvc, "layout", {}, "dot");
     cb = (QComboBox *) frmSettings->findChild <
 	QComboBox * >("cbExtension");
-    dfltRenderIdx =
-	LoadPlugins(cb, frmSettings->gvc, "device", xtra, "png");
+    dfltRenderIdx = LoadPlugins(*cb, frmSettings->gvc, "device", xtra, "png");
     statusBar()->showMessage(tr("Ready"));
     setWindowIcon(QIcon(":/images/icon.png"));
     //load files specified in command line , one time task
-    char** files=*Files;
     if (files)
 	while (*files) {
 	    addFile(QString(*files));
@@ -577,7 +565,6 @@ void CMainWindow::menus()
     mGraph->addAction(settingsAct);
     mGraph->addAction(layoutAct);
     mGraph->addSeparator();
-    loadPlugins();
 
     updateWindowMenu();
     connect(mWindow, SIGNAL(aboutToShow()), this,
@@ -664,9 +651,4 @@ void CMainWindow::activateChild(QWidget * window)
     if (!window)
 	return;
     mdiArea->setActiveSubWindow(qobject_cast < QMdiSubWindow * >(window));
-}
-
-void CMainWindow::loadPlugins()
-{
-
 }

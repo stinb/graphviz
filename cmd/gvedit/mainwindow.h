@@ -37,7 +37,7 @@ class CMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    CMainWindow(char*** Files = nullptr);
+    CMainWindow(char **files = nullptr);
     QMdiArea *mdiArea;
     void addFile (QString fileName);
 private slots:
@@ -72,7 +72,6 @@ private:
     void toolBars();
     void readSettings();
     void writeSettings();
-    void loadPlugins();
     MdiChild *activeMdiChild();
     MdiChild* prevChild;
     QMdiSubWindow *findMdiChild(const QString &fileName);
