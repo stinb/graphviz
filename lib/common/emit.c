@@ -89,11 +89,9 @@ static char *defaultlinestyle[3] = { "solid\0", "setlinewidth\0001\0", 0 };
 /* push empty graphic state for current object */
 obj_state_t* push_obj_state(GVJ_t *job)
 {
-    obj_state_t *obj, *parent;
+    obj_state_t *obj = gv_alloc(sizeof(obj_state_t));
 
-    obj = zmalloc(sizeof(obj_state_t));
-
-    parent = obj->parent = job->obj;
+    obj_state_t *parent = obj->parent = job->obj;
     job->obj = obj;
     if (parent) {
         obj->pencolor = parent->pencolor;        /* default styles to parent's style */

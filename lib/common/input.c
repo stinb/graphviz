@@ -198,9 +198,7 @@ static void global_def(char *dcl, int kind) {
 
 static int gvg_init(GVC_t *gvc, graph_t *g, char *fn, int gidx)
 {
-    GVG_t *gvg;
-
-    gvg = zmalloc(sizeof(GVG_t));
+    GVG_t *gvg = gv_alloc(sizeof(GVG_t));
     if (!gvc->gvgs) 
 	gvc->gvgs = gvg;
     else

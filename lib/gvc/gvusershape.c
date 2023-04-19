@@ -26,8 +26,8 @@
 #endif
 
 #include <common/types.h>
-#include <common/memory.h>
 #include <cgraph/agxbuf.h>
+#include <cgraph/alloc.h>
 #include <cgraph/strview.h>
 #include <common/utils.h>
 #include <gvc/gvplugin_loadimage.h>
@@ -680,7 +680,7 @@ static usershape_t *gvusershape_open (const char *name)
         ImageDict = dtopen(&ImageDictDisc, Dttree);
 
     if (! (us = gvusershape_find(name))) {
-        us = zmalloc(sizeof(usershape_t));
+        us = gv_alloc(sizeof(usershape_t));
 
 	us->name = agstrdup(0, name);
 	if (!gvusershape_file_access(us)) {

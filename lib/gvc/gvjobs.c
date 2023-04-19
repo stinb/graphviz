@@ -10,6 +10,7 @@
 
 #include "config.h"
 
+#include	<cgraph/alloc.h>
 #include	<common/memory.h>
 #include	<common/types.h>
 #include        <gvc/gvplugin.h>
@@ -43,13 +44,13 @@ static GVJ_t *output_langname_job;
 void gvjobs_output_filename(GVC_t * gvc, const char *name)
 {
     if (!gvc->jobs) {
-	output_filename_job = gvc->job = gvc->jobs = zmalloc(sizeof(GVJ_t));
+	output_filename_job = gvc->job = gvc->jobs = gv_alloc(sizeof(GVJ_t));
     } else {
 	if (!output_filename_job) {
 	    output_filename_job = gvc->jobs;
 	} else {
 	    if (!output_filename_job->next) {
-		output_filename_job->next = zmalloc(sizeof(GVJ_t));
+		output_filename_job->next = gv_alloc(sizeof(GVJ_t));
 	    }
 	    output_filename_job = output_filename_job->next;
 	}
@@ -62,13 +63,13 @@ void gvjobs_output_filename(GVC_t * gvc, const char *name)
 bool gvjobs_output_langname(GVC_t * gvc, const char *name)
 {
     if (!gvc->jobs) {
-	output_langname_job = gvc->job = gvc->jobs = zmalloc(sizeof(GVJ_t));
+	output_langname_job = gvc->job = gvc->jobs = gv_alloc(sizeof(GVJ_t));
     } else {
 	if (!output_langname_job) {
 	    output_langname_job = gvc->jobs;
 	} else {
 	    if (!output_langname_job->next) {
-		output_langname_job->next = zmalloc(sizeof(GVJ_t));
+		output_langname_job->next = gv_alloc(sizeof(GVJ_t));
 	    }
 	    output_langname_job = output_langname_job->next;
 	}

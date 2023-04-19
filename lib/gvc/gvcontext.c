@@ -21,6 +21,7 @@
 #include <stdlib.h>
 
 #include "builddate.h"
+#include <cgraph/alloc.h>
 #include <common/render.h>
 #include <common/types.h>
 #include <gvc/gvplugin.h>
@@ -28,9 +29,6 @@
 #include <gvc/gvcint.h>
 #include <gvc/gvcproc.h>
 #include <gvc/gvc.h>
-
-/* from common/utils.c */
-extern void *zmalloc(size_t);
 
 /* from common/textspan.c */
 extern void textfont_dict_close(GVC_t *gvc);
@@ -46,7 +44,7 @@ static char *LibInfo[] = {
 
 GVC_t *gvNEWcontext(const lt_symlist_t *builtins, int demand_loading)
 {
-    GVC_t *gvc = zmalloc(sizeof(GVC_t));
+    GVC_t *gvc = gv_alloc(sizeof(GVC_t));
 
     gvc->common.info = LibInfo;
     gvc->common.errorfn = agerrorf;
@@ -105,7 +103,7 @@ int gvFreeContext(GVC_t * gvc)
 
 GVC_t* gvCloneGVC (GVC_t * gvc0)
 {
-    GVC_t *gvc = zmalloc(sizeof(GVC_t));
+    GVC_t *gvc = gv_alloc(sizeof(GVC_t));
 
     gvc->common = gvc0->common;
     memcpy (&gvc->apis, &gvc0->apis, sizeof(gvc->apis));
