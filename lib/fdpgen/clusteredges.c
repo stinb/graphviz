@@ -254,7 +254,7 @@ int compoundEdges(graph_t * g, expand_t* pm, int edgetype)
 		 * with change in direction, different arrowheads, labels, etc.
 		 */
 		for (e0 = e; e0; e0 = ED_to_virt(e0)) {
-		    ED_path(e0) = getPath(e0, vconfig, 0);
+		    ED_path(e0) = getPath(e0, vconfig, false);
 		    assert(objlist_size(&objl) <= INT_MAX);
 		    makeSpline(e0, objlist_at(&objl, 0), (int)objlist_size(&objl), false);
 		}
