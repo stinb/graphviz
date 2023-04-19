@@ -188,7 +188,7 @@ extern "C" {
     extern ssize_t sfrd(Sfio_t *, void *, size_t, Sfdisc_t *);
     extern ssize_t sfwr(Sfio_t *, const void *, size_t, Sfdisc_t *);
     extern Sfoff_t sfsk(Sfio_t *, Sfoff_t, int, Sfdisc_t *);
-    extern ssize_t sfpkrd(int, void *, size_t, int, long, int);
+    extern ssize_t sfpkrd(int, void *, size_t, int, int);
 
     extern int sfputc(Sfio_t *, int);
 

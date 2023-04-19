@@ -33,19 +33,16 @@
  * @param argbuf buffer to read data
  * @param n buffer size
  * @param rc record character
- * @param tm time-out
  * @param action >0: peeking, if rc>=0, get action records,
  *               <0: no peeking, if rc>=0, get -action records,
  *               =0: no peeking, if rc>=0, must get a single record
  */
-ssize_t sfpkrd(int fd, void * argbuf, size_t n, int rc, long tm,
-	       int action)
-{
+ssize_t sfpkrd(int fd, void * argbuf, size_t n, int rc, int action) {
     ssize_t r;
     int ntry, t;
     char *buf = argbuf, *endbuf;
 
-    if (rc < 0 && tm < 0 && action <= 0)
+    if (rc < 0 && action <= 0)
 	return read(fd, buf, n);
 
     t = (action > 0 || rc >= 0) ? (STREAM_PEEK | SOCKET_PEEK) : 0;
@@ -59,7 +56,7 @@ ssize_t sfpkrd(int fd, void * argbuf, size_t n, int rc, long tm,
     for (ntry = 0; ntry < 2; ++ntry) {
 	r = -1;
 #ifdef I_PEEK
-	if ((t & STREAM_PEEK) && (ntry == 1 || tm < 0)) {
+	if (t & STREAM_PEEK) {
 	    struct strpeek pbuf;
 	    pbuf.flags = 0;
 	    pbuf.ctlbuf.maxlen = -1;
@@ -92,7 +89,7 @@ ssize_t sfpkrd(int fd, void * argbuf, size_t n, int rc, long tm,
 	    break;
 
 	/* poll or select to see if data is present.  */
-	while (tm >= 0 || action > 0 ||
+	while (action > 0 ||
 	       /* block until there is data before peeking again */
 	       ((t & STREAM_PEEK) && rc >= 0) ||
 	       /* let select be interrupted instead of recv which autoresumes */
@@ -101,17 +98,9 @@ ssize_t sfpkrd(int fd, void * argbuf, size_t n, int rc, long tm,
 #ifdef HAVE_SELECT
 	    if (r == -2) {
 		fd_set rd;
-		struct timeval tmb, *tmp;
 		FD_ZERO(&rd);
 		FD_SET(fd, &rd);
-		if (tm < 0)
-		    tmp = NULL;
-		else {
-		    tmp = &tmb;
-		    tmb.tv_sec = tm / SECOND;
-		    tmb.tv_usec = (tm % SECOND) * SECOND;
-		}
-		r = select(fd + 1, &rd, NULL, NULL, tmp);
+		r = select(fd + 1, &rd, NULL, NULL, NULL);
 		if (r < 0) {
 		    if (errno == EINTR)
 			return -1;
@@ -124,40 +113,13 @@ ssize_t sfpkrd(int fd, void * argbuf, size_t n, int rc, long tm,
 		    r = FD_ISSET(fd, &rd) ? 1 : -1;
 	    }
 #endif /*HAVE_SELECT*/
-	    if (r == -2) {
-#if !defined(HAVE_SELECT)	/* select can't be used */
-#ifdef FIONREAD			/* quick and dirty check for availability */
-		long nsec = tm < 0 ? 0 : (tm + 999) / 1000;
-		while (nsec > 0 && r < 0) {
-		    long avail = -1;
-		    if ((r = ioctl(fd, FIONREAD, &avail)) < 0) {
-			if (errno == EINTR)
-			    return -1;
-			else if (errno == EAGAIN) {
-			    errno = 0;
-			    continue;
-			} else {	/* ioctl failed completely */
-			    r = -2;
-			    break;
-			}
-		    } else
-			r = avail <= 0 ? -1 : (ssize_t) avail;
-
-		    if (r < 0 && nsec-- > 0)
-			sleep(1);
-		}
-#endif
-#endif
-	    }
 
 	    if (r > 0) {	/* there is data now */
 		if (action <= 0 && rc < 0)
 		    return read(fd, buf, n);
 		else
 		    r = -1;
-	    } else if (tm >= 0)	/* timeout exceeded */
-		return -1;
-	    else
+	    } else
 		r = -1;
 	    break;
 	}
@@ -189,9 +151,9 @@ ssize_t sfpkrd(int fd, void * argbuf, size_t n, int rc, long tm,
     }
 
     if (r < 0) {
-	if (tm >= 0 || action > 0)
+	if (action > 0)
 	    return -1;
-	else {			/* get here means: tm < 0 && action <= 0 && rc >= 0 */
+	else { // get here means: action <= 0 && rc >= 0
 	    /* number of records read at a time */
 	    if ((action = action ? -action : 1) > (int) n)
 		action = n;

@@ -114,8 +114,6 @@ extern "C" {
 #define ushort		unsigned short
 #endif
 
-#define SECOND		1000	/* millisecond units */
-
 /* macros do determine stream types from Stat_t data */
 #ifndef S_IFMT
 #define S_IFMT	0
@@ -260,7 +258,6 @@ extern "C" {
 	 (sz == 64 && sz == sizeof(type)*CHAR_BIT) )
 
 /* format flags&types, must coexist with those in sfio.h */
-#define SFFMT_FORBIDDEN 00077777777	/* for sfio.h only      */
 #define SFFMT_EFORMAT	01000000000	/* sfcvt converting %e  */
 #define SFFMT_MINUS	02000000000	/* minus sign           */
 
@@ -335,7 +332,7 @@ extern "C" {
 #define SFSYNC(f)	(SETLOCAL(f),sfsync(f))
 #define SFCLOSE(f)	(SETLOCAL(f),sfclose(f))
 #define SFFLSBUF(f,n)	(SETLOCAL(f),_sfflsbuf(f,n))
-#define SFFILBUF(f,n)	(SETLOCAL(f),_sffilbuf(f,n))
+#define SFFILBUF(f)	(SETLOCAL(f), _sffilbuf(f ,-1))
 #define SFSETBUF(f,s,n)	(SETLOCAL(f),sfsetbuf(f,s,n))
 #define SFWRITE(f,s,n)	(SETLOCAL(f),sfwrite(f,s,n))
 #define SFREAD(f,s,n)	(SETLOCAL(f),sfread(f,s,n))
@@ -386,7 +383,7 @@ extern "C" {
 /* fast peek of a stream */
 #define _SFAVAIL(f,s,n)	((n) = (f)->endb - ((s) = (f)->next) )
 #define SFRPEEK(f,s,n)	(_SFAVAIL(f,s,n) > 0 ? (n) : \
-				((n) = SFFILBUF(f,-1), (s) = (f)->next, (n)) )
+				((n) = SFFILBUF(f), (s) = (f)->next, (n)) )
 #define SFWPEEK(f,s,n)	(_SFAVAIL(f,s,n) > 0 ? (n) : \
 				((n) = SFFLSBUF(f,-1), (s) = (f)->next, (n)) )
 
@@ -434,7 +431,6 @@ extern "C" {
 
 /* floating point to ascii conversion */
 #define SF_MAXEXP10	6
-#define SF_MAXPOW10	(1 << SF_MAXEXP10)
 #define SF_FDIGITS	256	/* max allowed fractional digits */
 #define SF_IDIGITS	1024	/* max number of digits in int part */
 #define SF_MAXDIGITS	(((SF_FDIGITS+SF_IDIGITS)/sizeof(int) + 1)*sizeof(int))
@@ -514,11 +510,9 @@ extern "C" {
 	  } \
 	}
 
-/* handy functions */
+// handy function
 #undef min
-#undef max
 #define min(x,y)	((x) < (y) ? (x) : (y))
-#define max(x,y)	((x) > (y) ? (x) : (y))
 
 /* fast functions for memory copy and memory clear */
 #define memclear(s,n)	memset((s),'\0',(n))

@@ -1328,26 +1328,6 @@ AC_ARG_WITH(extralibdir,
   [LDFLAGS="$LDFLAGS -L$withval"])
 
 dnl -----------------------------------
-dnl ...borrow test for -lsocket -lnsl from tk8.3.3/unix/configure.in
-
-save_LIBS=$LIBS
-LIBS=
-tk_checkBoth=0
-AC_CHECK_FUNC(connect, tk_checkSocket=0, tk_checkSocket=1)
-if test "$tk_checkSocket" = 1; then
-  AC_CHECK_LIB(socket, main, LIBS="$LIBS -lsocket", tk_checkBoth=1)
-fi
-if test "$tk_checkBoth" = 1; then
-  tk_oldLibs=$LIBS
-  LIBS="$LIBS -lsocket -lnsl"
-  AC_CHECK_FUNC(accept, tk_checkNsl=0, [LIBS=$tk_oldLibs])
-fi
-AC_CHECK_FUNC(gethostbyname, , [AC_CHECK_LIB(nsl, main, [LIBS="$LIBS -lnsl"])])
-SOCKET_LIBS=$LIBS
-AC_SUBST([SOCKET_LIBS])
-LIBS=$save_LIBS
-
-dnl -----------------------------------
 dnl INCLUDES and LIBS for EXPAT
 
 AC_ARG_WITH(expat,

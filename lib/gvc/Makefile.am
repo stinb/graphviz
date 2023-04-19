@@ -14,7 +14,7 @@ if WITH_WIN32
 AM_CFLAGS = -DGVC_EXPORTS=1
 endif
 
-LIBS = $(SOCKET_LIBS) $(Z_LIBS) $(MATH_LIBS)
+LIBS = $(Z_LIBS) $(MATH_LIBS)
 
 pkginclude_HEADERS = gvc.h gvcext.h gvplugin.h gvcjob.h \
 	gvcommon.h gvplugin_render.h gvplugin_layout.h gvconfig.h \
