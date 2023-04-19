@@ -16,13 +16,6 @@
 #include <stdlib.h>
 #include <common/memory.h>
 
-void *zmalloc(size_t nbytes)
-{
-    if (nbytes == 0)
-	return 0;
-    return gcalloc(1, nbytes);
-}
-
 void *gcalloc(size_t nmemb, size_t size)
 {
     char *rv = calloc(nmemb, size);
