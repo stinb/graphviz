@@ -82,6 +82,7 @@ follows:
 env PATH=${PREFIX}/bin:${PATH} C_INCLUDE_PATH=${PREFIX}/include \
   LD_LIBRARY_PATH=${PREFIX}/lib LIBRARY_PATH=${PREFIX}/lib \
   PYTHONPATH=${PREFIX}/lib/graphviz/python3 \
+  TCLLIBPATH=${PREFIX}/lib/graphviz/tcl \
   python3 -m pytest tests --verbose
 ```
 
@@ -94,6 +95,7 @@ To run a single test, you use its name qualified by the file it lives in. E.g.
 env PATH=${PREFIX}/bin:${PATH} C_INCLUDE_PATH=${PREFIX}/include \
   LD_LIBRARY_PATH=${PREFIX}/lib LIBRARY_PATH=${PREFIX}/lib \
   PYTHONPATH=${PREFIX}/lib/graphviz/python3 \
+  TCLLIBPATH=${PREFIX}/lib/graphviz/tcl \
   python3 -m pytest tests/test_regression::test_2225 --verbose
 ```
 

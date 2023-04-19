@@ -2657,6 +2657,27 @@ def test_2368():
     dot("svg", input)
 
 
+@pytest.mark.skipif(shutil.which("tclsh") is None, reason="tclsh not available")
+@pytest.mark.xfail()  # FIXME
+def test_2370():
+    """
+    tcldot should have a version number TCL accepts
+    https://gitlab.com/graphviz/graphviz/-/issues/2370
+    """
+
+    # ask TCL to import the Graphviz package
+    response = subprocess.check_output(
+        ["tclsh"],
+        stderr=subprocess.STDOUT,
+        input="package require tcldot;",
+        universal_newlines=True,
+    )
+
+    assert (
+        "error reading package index file" not in response
+    ), "tcldot cannot be loaded by TCL"
+
+
 def test_2371():
     """
     Large graphs should not cause rectangle area calculation overflows
