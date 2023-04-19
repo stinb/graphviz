@@ -495,9 +495,6 @@ static void pov_end_edge(GVJ_t * job)
 
 static void pov_textspan(GVJ_t * job, pointf c, textspan_t * span)
 {
-	double x, y;
-	char *p;
-
 	gvprintf(job, "//*** textspan: %s, fontsize = %.3f, fontname = %s\n",
 		 span->str, span->font->size, span->font->name);
 	z = layerz - 9;
@@ -520,22 +517,19 @@ static void pov_textspan(GVJ_t * job, pointf c, textspan_t * span)
 		break;
 	}
 
-	x = (c.x + job->translation.x) * job->scale.x;
-	y = (c.y + job->translation.y) * job->scale.y;
+	double x = (c.x + job->translation.x) * job->scale.x;
+	double y = (c.y + job->translation.y) * job->scale.y;
 
-	agxbuf s = {0};
-	agxbprint(&s, POV_SCALE1, span->font->size * job->scale.x);
-	agxbuf r = {0};
-	agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-	agxbuf t = {0};
-	agxbprint(&t, POV_TRANSLATE, x, y, z);
-	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
+	char *p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
 	//pov bundled fonts: timrom.ttf, cyrvetic.ttf
 	agxbuf pov = {0};
-	agxbprint(&pov, POV_TEXT "    %s    %s    %s    %s    %s" END,
-		span->font->name, span->str, 0.25, 0.0, // font, text, depth (0.5 ... 2.0), offset
-		"    no_shadow\n", agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
+	agxbprint(&pov, POV_TEXT "        no_shadow\n",
+		span->font->name, span->str, 0.25, 0.0); // font, text, depth (0.5 ... 2.0), offset
+	agxbprint(&pov, "    " POV_SCALE1, span->font->size * job->scale.x);
+	agxbprint(&pov, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
+	agxbprint(&pov, "    " POV_TRANSLATE, x, y, z);
+	agxbprint(&pov, "    %s" END, p);
 
 #ifdef DEBUG
 	GV_OBJ_EXT("Text", agxbuse(&pov), span->str);
@@ -546,39 +540,30 @@ static void pov_textspan(GVJ_t * job, pointf c, textspan_t * span)
 #endif
 
 	agxbfree(&pov);
-	agxbfree(&r);
 	free(p);
-	agxbfree(&t);
-	agxbfree(&s);
 }
 
 static void pov_ellipse(GVJ_t * job, pointf * A, int filled)
 {
-	char *p;
-	float cx, cy, rx, ry, w;
-
 	gvputs(job, "//*** ellipse\n");
 	z = layerz - 6;
 
 	// A[0] center, A[1] corner of ellipse
-	cx = (A[0].x + job->translation.x) * job->scale.x;
-	cy = (A[0].y + job->translation.y) * job->scale.y;
-	rx = (A[1].x - A[0].x) * job->scale.x;
-	ry = (A[1].y - A[0].y) * job->scale.y;
-	w = job->obj->penwidth / (rx + ry) / 2.0 * 5;
+	float cx = (A[0].x + job->translation.x) * job->scale.x;
+	float cy = (A[0].y + job->translation.y) * job->scale.y;
+	float rx = (A[1].x - A[0].x) * job->scale.x;
+	float ry = (A[1].y - A[0].y) * job->scale.y;
+	float w = job->obj->penwidth / (rx + ry) / 2.0 * 5;
 
 	//draw rim (torus)
-	agxbuf s = {0};
-	agxbprint(&s, POV_SCALE3, rx, (rx + ry) / 4.0, ry);
-	agxbuf r = {0};
-	agxbprint(&r, POV_ROTATE, 90.0, 0.0, (float)job->rotation);
-	agxbuf t = {0};
-	agxbprint(&t, POV_TRANSLATE, cx, cy, z);
-	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
+	char *p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
 	agxbuf pov = {0};
-	agxbprint(&pov, POV_TORUS "    %s    %s    %s    %s" END, 1.0, w, // radius, size of ring
-	          agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
+	agxbprint(&pov, POV_TORUS, 1.0, w); // radius, size of ring
+	agxbprint(&pov, "    " POV_SCALE3, rx, (rx + ry) / 4.0, ry);
+	agxbprint(&pov, "    " POV_ROTATE, 90.0, 0.0, (float)job->rotation);
+	agxbprint(&pov, "    " POV_TRANSLATE, cx, cy, z);
+	agxbprint(&pov, "    %s" END, p);
 
 #ifdef DEBUG
 	GV_OBJ_EXT("Torus", agxbuse(&pov), "");
@@ -592,43 +577,31 @@ static void pov_ellipse(GVJ_t * job, pointf * A, int filled)
 
 	//backgroud of ellipse if filled
 	if (filled) {
-		agxbprint(&s, POV_SCALE3, rx, ry, 1.0);
-		agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-		agxbprint(&t, POV_TRANSLATE, cx, cy, z);
 		p = pov_color_as_str(job, job->obj->fillcolor, 0.0);
 
-		gvprintf(job, POV_SPHERE "    %s    %s    %s    %s" END,
-			 0.0, 0.0, 0.0, agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
+		gvprintf(job, POV_SPHERE, 0.0, 0.0, 0.0);
+		gvprintf(job, "    " POV_SCALE3, rx, ry, 1.0);
+		gvprintf(job, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
+		gvprintf(job, "    " POV_TRANSLATE, cx, cy, z);
+		gvprintf(job, "    %s" END, p);
 
 		free(p);
 	}
-	agxbfree(&s);
-	agxbfree(&r);
-	agxbfree(&t);
 	agxbfree(&pov);
 }
 
 static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
 	(void)filled;
 
-	int i;
-	char *p;
-
 	gvputs(job, "//*** bezier\n");
 	z = layerz - 4;
 
-	agxbuf s = {0};
-	agxbprint(&s, POV_SCALE3, job->scale.x, job->scale.y, 1.0);
-	agxbuf r = {0};
-	agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-	agxbuf t = {0};
-	agxbprint(&t, POV_TRANSLATE, 0.0, 0.0, z - 2);
-	p = pov_color_as_str(job, job->obj->fillcolor, 0.0);
+	char *p = pov_color_as_str(job, job->obj->fillcolor, 0.0);
 
 	agxbuf pov = {0};
 	agxbprint(&pov, POV_SPHERE_SWEEP, "b_spline", n + 2);
 
-	for (i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++) {
 		agxbprint(&pov, "    " POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
 		          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
 
@@ -645,107 +618,86 @@ static void pov_bezier(GVJ_t *job, pointf *A, int n, int filled) {
 			 (A[i].y + job->translation.y) * job->scale.y, z - 2);
 #endif
 	}
-	gvprintf(job, "%s        tolerance 0.01\n    %s    %s    %s    %s" END,
-	         agxbuse(&pov), agxbuse(&s), agxbuse(&r), agxbuse(&t), p); // catenate pov & end str
+	// catenate pov & end str
+	gvprintf(job, "%s        tolerance 0.01\n", agxbuse(&pov));
+	gvprintf(job, "    " POV_SCALE3, job->scale.x, job->scale.y, 1.0);
+	gvprintf(job, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
+	gvprintf(job, "    " POV_TRANSLATE, 0.0, 0.0, z - 2);
+	gvprintf(job, "    %s" END, p);
 
-	agxbfree(&s);
-	agxbfree(&r);
-	agxbfree(&t);
 	free(p);
 	agxbfree(&pov);
 }
 
 static void pov_polygon(GVJ_t * job, pointf * A, int n, int filled)
 {
-	char *p;
-	int i;
-
 	gvputs(job, "//*** polygon\n");
 	z = layerz - 2;
 
-	agxbuf s = {0};
-	agxbprint(&s, POV_SCALE3, job->scale.x, job->scale.y, 1.0);
-	agxbuf r = {0};
-	agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-	agxbuf t = {0};
-	agxbprint(&t, POV_TRANSLATE, 0.0, 0.0, z - 2);
-	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
+	char *p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
-	agxbuf pov = {0};
-	agxbprint(&pov, POV_SPHERE_SWEEP, "linear_spline", n + 1);
+	gvprintf(job, POV_SPHERE_SWEEP, "linear_spline", n + 1);
 
-	for (i = 0; i < n; i++) {
-		agxbprint(&pov, "    " POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
+	for (int i = 0; i < n; i++) {
+		gvprintf(job, "    " POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
 		          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
 	}
 
 	//close polygon, add starting point as final point^
-	agxbprint(&pov, "    " POV_VECTOR3 ", %.3f\n", A[0].x + job->translation.x,
+	gvprintf(job, "    " POV_VECTOR3 ", %.3f\n", A[0].x + job->translation.x,
 	          A[0].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
 
-	gvprintf(job, "%s    tolerance 0.1\n    %s    %s    %s    %s" END,
-	         agxbuse(&pov), agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
+	gvputs(job, "    tolerance 0.1\n");
+	gvprintf(job, "    " POV_SCALE3, job->scale.x, job->scale.y, 1.0);
+	gvprintf(job, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
+	gvprintf(job, "    " POV_TRANSLATE, 0.0, 0.0, z - 2);
+	gvprintf(job, "    %s" END, p);
 
 	free(p);
 
 	//create fill background
 	if (filled) {
-		agxbprint(&s, POV_SCALE3, job->scale.x, job->scale.y, 1.0);
-		agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-		agxbprint(&t, POV_TRANSLATE, 0.0, 0.0, z - 2);
 		p = pov_color_as_str(job, job->obj->fillcolor, 0.25);
 
-		agxbprint(&pov, POV_POLYGON, n);
+		gvprintf(job, POV_POLYGON, n);
 
-		for (i = 0; i < n; i++) {
+		for (int i = 0; i < n; i++) {
 			//create on z = 0 plane, then translate to real z pos
-			agxbprint(&pov, "\n    " POV_VECTOR3,
+			gvprintf(job, "\n    " POV_VECTOR3,
 			       A[i].x + job->translation.x,
 			       A[i].y + job->translation.y, 0.0);
 		}
-		gvprintf(job, "%s\n    %s    %s    %s    %s" END, agxbuse(&pov),
-		         agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
+		gvputs(job, "\n    ");
+		gvprintf(job, "    " POV_SCALE3, job->scale.x, job->scale.y, 1.0);
+		gvprintf(job, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
+		gvprintf(job, "    " POV_TRANSLATE, 0.0, 0.0, z - 2);
+		gvprintf(job, "    %s" END, p);
 
 		free(p);
 	}
-	agxbfree(&s);
-	agxbfree(&r);
-	agxbfree(&t);
-	agxbfree(&pov);
 }
 
 static void pov_polyline(GVJ_t * job, pointf * A, int n)
 {
-	char *p;
-	int i;
-
 	gvputs(job, "//*** polyline\n");
 	z = layerz - 6;
 
-	agxbuf s = {0};
-	agxbprint(&s, POV_SCALE3, job->scale.x, job->scale.y, 1.0);
-	agxbuf r = {0};
-	agxbprint(&r, POV_ROTATE, 0.0, 0.0, (float)job->rotation);
-	agxbuf t = {0};
-	agxbprint(&t, POV_TRANSLATE, 0.0, 0.0, z);
-	p = pov_color_as_str(job, job->obj->pencolor, 0.0);
+	char *p = pov_color_as_str(job, job->obj->pencolor, 0.0);
 
-	agxbuf pov = {0};
-	agxbprint(&pov, POV_SPHERE_SWEEP, "linear_spline", n);
+	gvprintf(job, POV_SPHERE_SWEEP, "linear_spline", n);
 
-	for (i = 0; i < n; i++) {
-		agxbprint(&pov, "    " POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
+	for (int i = 0; i < n; i++) {
+		gvprintf(job, "    " POV_VECTOR3 ", %.3f\n", A[i].x + job->translation.x,
 		          A[i].y + job->translation.y, 0.0, job->obj->penwidth); // z coordinate, thickness
 	}
 
-	gvprintf(job, "%s    tolerance 0.01\n    %s    %s    %s    %s" END,
-	         agxbuse(&pov), agxbuse(&s), agxbuse(&r), agxbuse(&t), p);
+	gvputs(job, "    tolerance 0.01\n");
+	gvprintf(job, "    " POV_SCALE3, job->scale.x, job->scale.y, 1.0);
+	gvprintf(job, "    " POV_ROTATE, 0.0, 0.0, (float)job->rotation);
+	gvprintf(job, "    " POV_TRANSLATE, 0.0, 0.0, z);
+	gvprintf(job, "    %s" END, p);
 
-	agxbfree(&s);
-	agxbfree(&r);
-	agxbfree(&t);
 	free(p);
-	agxbfree(&pov);
 }
 
 gvrender_engine_t pov_engine = {
