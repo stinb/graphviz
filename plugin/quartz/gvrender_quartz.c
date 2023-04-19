@@ -216,11 +216,15 @@ static void quartzgen_begin_page(GVJ_t * job)
 			fclose(temp_file);
 		    }
 		}
-		if (!buffer)
+		if (buffer == NULL) {
 		    buffer = mmap(NULL,
 				  buffer_size,
 				  PROT_READ | PROT_WRITE,
 				  MAP_ANON | MAP_SHARED, -1, 0);
+		    if (buffer == MAP_FAILED) {
+			buffer = NULL;
+		    }
+		}
 #endif
 #endif
 
