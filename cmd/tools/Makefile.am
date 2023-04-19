@@ -38,9 +38,9 @@ endif
 if ENABLE_MAN_PDFS
 	(cd $(DESTDIR)$(pdfdir); rm -f gxl2dot.1.pdf; $(LN_S) gxl2gv.1.pdf gxl2dot.1.pdf;)
 endif
-	(cd $(DESTDIR)$(man1dir); rm -f dot2gxl.1; $(LN_S) gv2gxl.1 dot2gxl.1;)
+	(cd $(DESTDIR)$(man1dir); rm -f dot2gxl.1; $(LN_S) gxl2gv.1 dot2gxl.1;)
 if ENABLE_MAN_PDFS
-	(cd $(DESTDIR)$(pdfdir); rm -f dot2gxl.1.pdf; $(LN_S) gv2gxl.1.pdf dot2gxl.1.pdf;)
+	(cd $(DESTDIR)$(pdfdir); rm -f dot2gxl.1.pdf; $(LN_S) gxl2gv.1.pdf dot2gxl.1.pdf;)
 endif
 	(cd $(DESTDIR)$(man1dir); rm -f gv2gml.1; $(LN_S) gml2gv.1 gv2gml.1;)
 if ENABLE_MAN_PDFS
