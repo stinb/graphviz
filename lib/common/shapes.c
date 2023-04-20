@@ -3315,11 +3315,12 @@ static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
     field_t *fp, *rv = gv_alloc(sizeof(field_t));
     char *tsp, *psp=NULL, *hstsp, *hspsp=NULL, *sp;
     char *tmpport = NULL;
-    int maxf, cnt, mode, fi;
+    int cnt, mode, fi;
     textlabel_t *lbl = ND_label(n);
     unsigned char uc;
 
     fp = NULL;
+    size_t maxf;
     for (maxf = 1, cnt = 0, sp = reclblp; *sp; sp++) {
 	if (*sp == '\\') {
 	    sp++;
