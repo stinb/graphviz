@@ -35,6 +35,7 @@
 #include <neatogen/sgd.h>
 #include <cgraph/alloc.h>
 #include <cgraph/bitarray.h>
+#include <cgraph/startswith.h>
 #include <cgraph/strcasecmp.h>
 #include <stdbool.h>
 
@@ -859,7 +860,7 @@ static vtx_data *makeGraphData(graph_t * g, int nv, int *nedges, int mode, int m
 #ifdef DIGCOLA
                 if (haveDir) {
                     char *s = agget(ep,"dir");
-                    if(s&&!strncmp(s,"none",4)) {
+                    if(s && startswith(s, "none")) {
                         *edists++ = 0;
                     } else {
                         *edists++ = np == aghead(ep) ? 1.0 : -1.0;
