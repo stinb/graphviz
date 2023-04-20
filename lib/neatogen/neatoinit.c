@@ -784,7 +784,6 @@ static vtx_data *makeGraphData(graph_t * g, int nv, int *nedges, int mode, int m
     float *edists = NULL;
 #endif
     attrsym_t *haveLen;
-    int haveDir;
     PointMap *ps = newPM();
     int i, i_nedges, idx;
 
@@ -797,10 +796,7 @@ static vtx_data *makeGraphData(graph_t * g, int nv, int *nedges, int mode, int m
 	haveLen = agattr(g, AGEDGE, "len", 0) ;
 	haveWt = E_weight != 0;
     }
-    if (mode == MODE_HIER || mode == MODE_IPSEP)
-	haveDir = TRUE;
-    else
-	haveDir = FALSE;
+    bool haveDir = mode == MODE_HIER || mode == MODE_IPSEP;
 
     vtx_data *graph = gv_calloc(nv, sizeof(vtx_data));
     node_t** nodes = gv_calloc(nv, sizeof(node_t*));
