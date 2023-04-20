@@ -3389,8 +3389,10 @@ static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
 		fp->id = tmpport;
 		tmpport = NULL;
 	    }
-	    if (!(mode & (HASTEXT | HASTABLE)))
-		mode |= HASTEXT, *tsp++ = ' ';
+	    if (!(mode & (HASTEXT | HASTABLE))) {
+		mode |= HASTEXT;
+		*tsp++ = ' ';
+	    }
 	    if (mode & HASTEXT) {
 		if (tsp > text + 1 && tsp - 1 != hstsp && *(tsp - 1) == ' ')
 		    tsp--;
@@ -3415,15 +3417,15 @@ static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
 	    break;
 	case '\\':
 	    if (*(reclblp + 1)) {
-		if (ISCTRL(*(reclblp + 1)))
-		    reclblp++;
-		else if (*(reclblp + 1) == ' ' && !lbl->html)
-		    ishardspace = true, reclblp++;
+		if (ISCTRL(*(reclblp + 1))) {
+		    // nothing
+		} else if (*(reclblp + 1) == ' ' && !lbl->html)
+		    ishardspace = true;
 		else {
 		    *tsp++ = '\\';
 		    mode |= (INTEXT | HASTEXT);
-		    reclblp++;
 		}
+		reclblp++;
 	    }
 	    /* fall through */
 	default:
