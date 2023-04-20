@@ -3399,7 +3399,7 @@ static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
 		*tsp = '\000';
 		fp->lp =
 		    make_label(n, text,
-			       (lbl->html ? LT_HTML : LT_NONE),
+			       lbl->html ? LT_HTML : LT_NONE,
 			       lbl->fontsize, lbl->fontname, lbl->fontcolor);
 		fp->LR = true;
 		hstsp = tsp = text;
@@ -3423,7 +3423,7 @@ static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
 		    ishardspace = true;
 		else {
 		    *tsp++ = '\\';
-		    mode |= (INTEXT | HASTEXT);
+		    mode |= INTEXT | HASTEXT;
 		}
 		reclblp++;
 	    }
@@ -3433,7 +3433,7 @@ static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
 	    if ((mode & HASTABLE) && *reclblp != ' ')
 		return parse_error(rv, tmpport);
 	    if (!(mode & (INTEXT | INPORT)) && *reclblp != ' ')
-		mode |= (INTEXT | HASTEXT);
+		mode |= INTEXT | HASTEXT;
 	    if (mode & INTEXT) {
 		if (!(*reclblp == ' ' && !ishardspace && *(tsp - 1) == ' '
 		     && !lbl->html))
