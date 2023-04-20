@@ -3366,7 +3366,7 @@ static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
 	    if (psp > text + 1 && psp - 1 != hspsp && *(psp - 1) == ' ')
 		psp--;
 	    *psp = '\000';
-	    tmpport = strdup(text);
+	    tmpport = gv_strdup(text);
 	    mode &= ~INPORT;
 	    reclblp++;
 	    break;
