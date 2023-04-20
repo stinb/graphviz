@@ -3888,13 +3888,12 @@ static void record_gencode(GVJ_t * job, node_t * n)
 }
 
 static shape_desc **UserShape;
-static int N_UserShape;
+static size_t N_UserShape;
 
 shape_desc *find_user_shape(const char *name)
 {
-    int i;
     if (UserShape) {
-	for (i = 0; i < N_UserShape; i++) {
+	for (size_t i = 0; i < N_UserShape; i++) {
 	    if (streq(UserShape[i]->name, name))
 		return UserShape[i];
 	}
@@ -3904,12 +3903,11 @@ shape_desc *find_user_shape(const char *name)
 
 static shape_desc *user_shape(char *name)
 {
-    int i;
     shape_desc *p;
 
     if ((p = find_user_shape(name)))
 	return p;
-    i = N_UserShape++;
+    size_t i = N_UserShape++;
     UserShape = ALLOC(N_UserShape, UserShape, shape_desc *);
     p = UserShape[i] = gv_alloc(sizeof(shape_desc));
     *p = Shapes[0];
