@@ -787,12 +787,9 @@ static vtx_data *makeGraphData(graph_t * g, int nv, int *nedges, int mode, int m
     int i, i_nedges, idx;
 
     /* lengths and weights unused in reweight model */
-    bool haveLen;
-    bool haveWt;
-    if (model == MODEL_SUBSET) {
-	haveLen = false;
-	haveWt = false;
-    } else {
+    bool haveLen = false;
+    bool haveWt = false;
+    if (model != MODEL_SUBSET) {
 	haveLen = agattr(g, AGEDGE, "len", 0) != NULL;
 	haveWt = E_weight != 0;
     }
