@@ -784,15 +784,15 @@ static vtx_data *makeGraphData(graph_t * g, int nv, int *nedges, int mode, int m
     float *edists = NULL;
 #endif
     attrsym_t *haveLen;
-    int haveWt;
     int haveDir;
     PointMap *ps = newPM();
     int i, i_nedges, idx;
 
     /* lengths and weights unused in reweight model */
+    bool haveWt;
     if (model == MODEL_SUBSET) {
 	haveLen = FALSE;
-	haveWt = FALSE;
+	haveWt = false;
     } else {
 	haveLen = agattr(g, AGEDGE, "len", 0) ;
 	haveWt = E_weight != 0;
