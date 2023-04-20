@@ -3399,7 +3399,7 @@ static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
 		    make_label(n, text,
 			       (lbl->html ? LT_HTML : LT_NONE),
 			       lbl->fontsize, lbl->fontname, lbl->fontcolor);
-		fp->LR = TRUE;
+		fp->LR = true;
 		hstsp = tsp = text;
 	    }
 	    if (*reclblp) {
