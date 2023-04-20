@@ -3315,7 +3315,7 @@ static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
     field_t *fp, *rv = gv_alloc(sizeof(field_t));
     char *tsp, *psp=NULL, *hstsp, *hspsp=NULL, *sp;
     char *tmpport = NULL;
-    int maxf, cnt, mode, ishardspace, fi;
+    int maxf, cnt, mode, fi;
     textlabel_t *lbl = ND_label(n);
     unsigned char uc;
 
@@ -3341,7 +3341,7 @@ static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
     fi = 0;
     hstsp = tsp = text;
     bool wflag = true;
-    ishardspace = FALSE;
+    bool ishardspace = false;
     while (wflag) {
 	if ((uc = *(unsigned char*)reclblp) && uc < ' ') {    /* Ignore non-0 control characters */
 	    reclblp++;
@@ -3417,7 +3417,7 @@ static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
 		if (ISCTRL(*(reclblp + 1)))
 		    reclblp++;
 		else if (*(reclblp + 1) == ' ' && !lbl->html)
-		    ishardspace = TRUE, reclblp++;
+		    ishardspace = true, reclblp++;
 		else {
 		    *tsp++ = '\\';
 		    mode |= (INTEXT | HASTEXT);
