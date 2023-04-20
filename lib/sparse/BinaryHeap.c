@@ -10,6 +10,7 @@
 
 #include <assert.h>
 #include <cgraph/alloc.h>
+#include <cgraph/bitarray.h>
 #include <cgraph/prisize_t.h>
 #include <limits.h>
 #include <sparse/BinaryHeap.h>
@@ -231,7 +232,6 @@ void BinaryHeap_sanity_check(BinaryHeap h){
   int *pos_to_id = h->pos_to_id;
   size_t *id_to_pos = h->id_to_pos;
   void **heap = h->heap;
-  int *mask;
 
   /* check that this is a binary heap: children is smaller than parent */
   for (size_t i = 1; i < h->len; i++){
@@ -241,13 +241,13 @@ void BinaryHeap_sanity_check(BinaryHeap h){
     (void)parentPos;
   }
 
-  mask = CALLOC(h->len + int_stack_size(&h->id_stack), sizeof(mask[0]));
+  bitarray_t mask = bitarray_new(h->len + int_stack_size(&h->id_stack));
 
   /* check that spare keys has negative id_to_pos mapping */
   for (size_t i = 0; i < int_stack_size(&h->id_stack); i++) {
     int key_spare = int_stack_get(&h->id_stack, i);
     assert(h->id_to_pos[key_spare] == SIZE_MAX);
-    mask[key_spare] = 1;/* mask spare ID */
+    bitarray_set(&mask, key_spare, true); // mask spare ID
   }
 
   /* check that  
@@ -255,17 +255,17 @@ void BinaryHeap_sanity_check(BinaryHeap h){
      id_to_pos[pos_to_id[i]] = i, 0 <= i < len
   */
   for (size_t i = 1; i < h->len; i++){
-    assert(mask[pos_to_id[i]] == 0);/* that id is in use so can't be spare */
-    mask[pos_to_id[i]] = 1;
+    assert(!bitarray_get(mask, pos_to_id[i])); // that id is in use so can't be spare
+    bitarray_set(&mask, pos_to_id[i], true);
     assert(id_to_pos[pos_to_id[i]] == i);
     (void)id_to_pos;
   }
 
   /* all IDs, spare or in use, are accounted for and give a contiguous set */
   for (size_t i = 0; i < h->len + int_stack_size(&h->id_stack); i++)
-    assert(mask[i] != 0);
+    assert(bitarray_get(mask, i));
 
-  free(mask);
+  bitarray_reset(&mask);
 }
 void BinaryHeap_print(BinaryHeap h, void (*pnt)(void*)){
   size_t k = 2;
