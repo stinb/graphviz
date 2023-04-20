@@ -36,7 +36,6 @@ extern "C" {
 #define clear_flag(a, flag) ((a) &=(~(flag)))
 
 #ifdef STANDALONE
-#define CALLOC calloc
 #define MALLOC malloc
 #define REALLOC realloc
 
@@ -65,7 +64,6 @@ extern unsigned char Verbose;
 #endif
 
 #else  /* STANDALONE */
-#define CALLOC gcalloc
 #define MALLOC gmalloc
 #define REALLOC grealloc
 #endif    /* STANDALONE */
