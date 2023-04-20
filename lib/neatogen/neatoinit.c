@@ -783,17 +783,17 @@ static vtx_data *makeGraphData(graph_t * g, int nv, int *nedges, int mode, int m
 #ifdef DIGCOLA
     float *edists = NULL;
 #endif
-    attrsym_t *haveLen;
     PointMap *ps = newPM();
     int i, i_nedges, idx;
 
     /* lengths and weights unused in reweight model */
+    bool haveLen;
     bool haveWt;
     if (model == MODEL_SUBSET) {
-	haveLen = FALSE;
+	haveLen = false;
 	haveWt = false;
     } else {
-	haveLen = agattr(g, AGEDGE, "len", 0) ;
+	haveLen = agattr(g, AGEDGE, "len", 0) != NULL;
 	haveWt = E_weight != 0;
     }
     bool haveDir = mode == MODE_HIER || mode == MODE_IPSEP;
