@@ -7,6 +7,8 @@
  *
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
+
+#include <cgraph/alloc.h>
 #include <sparse/general.h>
 #include <sparse/QuadTree.h>
 #include <edgepaint/lab.h>
@@ -211,19 +213,16 @@ static void lab_interpolate(color_lab lab1, color_lab lab2, double t, double *co
   colors[2] = lab1.b + t*(lab2.b - lab1.b);
 }
 
-void color_blend_rgb2lab(char *color_list, const int maxpoints, double **colors0){
+double *color_blend_rgb2lab(char *color_list, const int maxpoints) {
   /* give a color list of the form "#ff0000,#00ff00,...", get a list of around maxpoints
      colors in an array colors0 of size [maxpoints*3] of the form {{l,a,b},...}.
-     If *colors0 is NULL, it will be allocated.
      color_list: either "#ff0000,#00ff00,...", or "pastel"
   */
 
   int nc = 1, r, g, b, i, ii, jj, cdim = 3;
   char *cl;
-  color_lab *lab;
   color_rgb rgb;
-  double *dists, step, dist_current;
-  double *colors = NULL;
+  double step, dist_current;
   char *cp;
 
   cp = color_palettes_get(color_list);
@@ -231,13 +230,13 @@ void color_blend_rgb2lab(char *color_list, const int maxpoints, double **colors0
     color_list = cp;
   }
 
-  if (maxpoints <= 0) return;
+  if (maxpoints <= 0) return NULL;
 
   cl = color_list;
   while ((cl=strchr(cl, ',')) != NULL){
     cl++; nc++;
   }
-  lab = malloc(sizeof(color_lab)*MAX(nc,1));
+  color_lab *lab = gv_calloc(MAX(nc, 1), sizeof(color_lab));
 
   cl = color_list - 1;
   nc = 0;
@@ -248,7 +247,7 @@ void color_blend_rgb2lab(char *color_list, const int maxpoints, double **colors0
     lab[nc++] = RGB2LAB(rgb);
   } while ((cl=strchr(cl, ',')) != NULL);
 
-  dists = malloc(sizeof(double)*MAX(1, nc));
+  double *dists = gv_calloc(MAX(1, nc), sizeof(double));
   dists[0] = 0;
   for (i = 0; i < nc - 1; i++){
     dists[i+1] = lab_dist(lab[i], lab[i+1]);
@@ -260,10 +259,7 @@ void color_blend_rgb2lab(char *color_list, const int maxpoints, double **colors0
   if (Verbose)
     fprintf(stderr,"sum = %f\n", dists[nc-1]);
 
-  if (!(*colors0)){
-    *colors0 = malloc(sizeof(double)*maxpoints*cdim);
-  }
-  colors = *colors0; 
+  double *colors = gv_calloc(maxpoints * cdim, sizeof(double));
   if (maxpoints == 1){
     colors[0] = lab[0].l;
     colors[1] = lab[0].a;
@@ -283,4 +279,5 @@ void color_blend_rgb2lab(char *color_list, const int maxpoints, double **colors0
   }
   free(dists);
   free(lab);
+  return colors;
 }
