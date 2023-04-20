@@ -3311,7 +3311,7 @@ static field_t *parse_error(field_t *rv, char *portname) {
     return NULL;
 }
 
-static field_t *parse_reclbl(node_t *n, bool LR, int flag, char *text) {
+static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
     field_t *fp, *rv = gv_alloc(sizeof(field_t));
     char *tsp, *psp=NULL, *hstsp, *hspsp=NULL, *sp;
     char *tmpport = NULL;
@@ -3374,7 +3374,7 @@ static field_t *parse_reclbl(node_t *n, bool LR, int flag, char *text) {
 	    if (mode != 0 || !*reclblp)
 		return parse_error(rv, tmpport);
 	    mode = HASTABLE;
-	    if (!(rv->fld[fi++] = parse_reclbl(n, !LR, FALSE, text)))
+	    if (!(rv->fld[fi++] = parse_reclbl(n, !LR, false, text)))
 		return parse_error(rv, tmpport);
 	    break;
 	case '}':
