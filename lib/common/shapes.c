@@ -340,11 +340,7 @@ static void unrecognized(node_t * n, char *p)
 
 static double quant(double val, double q)
 {
-    int i;
-    i = val / q;
-    if (i * q + .00001 < val)
-	i++;
-    return i * q;
+  return ceil(val / q) * q;
 }
 
 /* test if both p0 and p1 are on the same side of the line L0,L1 */
