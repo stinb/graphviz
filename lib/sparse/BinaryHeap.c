@@ -9,23 +9,24 @@
  *************************************************************************/
 
 #include <assert.h>
+#include <cgraph/alloc.h>
+#include <cgraph/bitarray.h>
 #include <cgraph/prisize_t.h>
 #include <limits.h>
 #include <sparse/BinaryHeap.h>
 #include <stdlib.h>
 
 BinaryHeap BinaryHeap_new(int (*cmp)(void*item1, void*item2)){
-  BinaryHeap h;
   size_t max_len = 1<<8;
 
-  h = MALLOC(sizeof(struct BinaryHeap_struct));
+  BinaryHeap h = gv_alloc(sizeof(struct BinaryHeap_struct));
   h->max_len = max_len;
   h->len = 0;
-  h->heap = CALLOC(max_len, sizeof(h->heap[0]));
-  h->id_to_pos = CALLOC(max_len, sizeof(h->id_to_pos[0]));
+  h->heap = gv_calloc(max_len, sizeof(h->heap[0]));
+  h->id_to_pos = gv_calloc(max_len, sizeof(h->id_to_pos[0]));
   for (size_t i = 0; i < max_len; i++) h->id_to_pos[i] = SIZE_MAX;
 
-  h->pos_to_id = CALLOC(max_len, sizeof(h->pos_to_id[0]));
+  h->pos_to_id = gv_calloc(max_len, sizeof(h->pos_to_id[0]));
   h->id_stack = (int_stack_t){0};
   h->cmp = cmp;
   return h;
@@ -42,23 +43,16 @@ void BinaryHeap_delete(BinaryHeap h, void (*del)(void* item)){
   free(h);
 }
 
-static BinaryHeap BinaryHeap_realloc(BinaryHeap h){
+static void BinaryHeap_realloc(BinaryHeap h) {
   size_t max_len0 = h->max_len, max_len = h->max_len, i;
   max_len = max_len + MAX(max_len / 5, 10);
   h->max_len = max_len;
 
-  h->heap = REALLOC(h->heap, sizeof(h->heap[0]) * max_len);
-  if (!(h->heap)) return NULL;
-
-  h->id_to_pos = REALLOC(h->id_to_pos, sizeof(h->id_to_pos[0]) * max_len);
-  if (!(h->id_to_pos)) return NULL;
-
-  h->pos_to_id = REALLOC(h->pos_to_id, sizeof(h->pos_to_id[0]) * max_len);
-  if (!(h->pos_to_id)) return NULL;
+  h->heap = gv_recalloc(h->heap, max_len0, max_len, sizeof(h->heap[0]));
+  h->id_to_pos = gv_recalloc(h->id_to_pos, max_len0, max_len, sizeof(h->id_to_pos[0]));
+  h->pos_to_id = gv_recalloc(h->pos_to_id, max_len0, max_len, sizeof(h->pos_to_id[0]));
 
   for (i = max_len0; i < max_len; i++) h->id_to_pos[i] = SIZE_MAX;
-  return h;
-
 }
 
 #define ParentPos(pos) (pos - 1)/2
@@ -141,7 +135,7 @@ int BinaryHeap_insert(BinaryHeap h, void *item){
 
   /* insert an item, and return its ID. This ID can be used later to extract the item */
   if (len > h->max_len - 1) {
-    if (BinaryHeap_realloc(h) == NULL) return BinaryHeap_error_malloc;
+    BinaryHeap_realloc(h);
   }
   
   // check if we have IDs in the stack to reuse
@@ -238,7 +232,6 @@ void BinaryHeap_sanity_check(BinaryHeap h){
   int *pos_to_id = h->pos_to_id;
   size_t *id_to_pos = h->id_to_pos;
   void **heap = h->heap;
-  int *mask;
 
   /* check that this is a binary heap: children is smaller than parent */
   for (size_t i = 1; i < h->len; i++){
@@ -248,13 +241,13 @@ void BinaryHeap_sanity_check(BinaryHeap h){
     (void)parentPos;
   }
 
-  mask = CALLOC(h->len + int_stack_size(&h->id_stack), sizeof(mask[0]));
+  bitarray_t mask = bitarray_new(h->len + int_stack_size(&h->id_stack));
 
   /* check that spare keys has negative id_to_pos mapping */
   for (size_t i = 0; i < int_stack_size(&h->id_stack); i++) {
     int key_spare = int_stack_get(&h->id_stack, i);
     assert(h->id_to_pos[key_spare] == SIZE_MAX);
-    mask[key_spare] = 1;/* mask spare ID */
+    bitarray_set(&mask, key_spare, true); // mask spare ID
   }
 
   /* check that  
@@ -262,17 +255,17 @@ void BinaryHeap_sanity_check(BinaryHeap h){
      id_to_pos[pos_to_id[i]] = i, 0 <= i < len
   */
   for (size_t i = 1; i < h->len; i++){
-    assert(mask[pos_to_id[i]] == 0);/* that id is in use so can't be spare */
-    mask[pos_to_id[i]] = 1;
+    assert(!bitarray_get(mask, pos_to_id[i])); // that id is in use so can't be spare
+    bitarray_set(&mask, pos_to_id[i], true);
     assert(id_to_pos[pos_to_id[i]] == i);
     (void)id_to_pos;
   }
 
   /* all IDs, spare or in use, are accounted for and give a contiguous set */
   for (size_t i = 0; i < h->len + int_stack_size(&h->id_stack); i++)
-    assert(mask[i] != 0);
+    assert(bitarray_get(mask, i));
 
-  free(mask);
+  bitarray_reset(&mask);
 }
 void BinaryHeap_print(BinaryHeap h, void (*pnt)(void*)){
   size_t k = 2;

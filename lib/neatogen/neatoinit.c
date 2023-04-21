@@ -35,6 +35,7 @@
 #include <neatogen/sgd.h>
 #include <cgraph/alloc.h>
 #include <cgraph/bitarray.h>
+#include <cgraph/startswith.h>
 #include <cgraph/strcasecmp.h>
 #include <stdbool.h>
 
@@ -775,10 +776,7 @@ acyclic (vtx_data* graph, int nv, int mode, node_t* nodes[])
  */
 static vtx_data *makeGraphData(graph_t * g, int nv, int *nedges, int mode, int model, node_t*** nodedata)
 {
-    vtx_data *graph;
-    node_t** nodes;
     int ne = agnedges(g);	/* upper bound */
-    int *edges;
     float *ewgts = NULL;
     node_t *np;
     edge_t *ep;
@@ -786,35 +784,29 @@ static vtx_data *makeGraphData(graph_t * g, int nv, int *nedges, int mode, int m
 #ifdef DIGCOLA
     float *edists = NULL;
 #endif
-    attrsym_t *haveLen;
-    int haveWt;
-    int haveDir;
     PointMap *ps = newPM();
     int i, i_nedges, idx;
 
     /* lengths and weights unused in reweight model */
-    if (model == MODEL_SUBSET) {
-	haveLen = FALSE;
-	haveWt = FALSE;
-    } else {
-	haveLen = agattr(g, AGEDGE, "len", 0) ;
+    bool haveLen = false;
+    bool haveWt = false;
+    if (model != MODEL_SUBSET) {
+	haveLen = agattr(g, AGEDGE, "len", 0) != NULL;
 	haveWt = E_weight != 0;
     }
-    if (mode == MODE_HIER || mode == MODE_IPSEP)
-	haveDir = TRUE;
-    else
-	haveDir = FALSE;
+    bool haveDir = mode == MODE_HIER || mode == MODE_IPSEP;
 
-    graph = N_GNEW(nv, vtx_data);
-    nodes = N_GNEW(nv, node_t*);
-    edges = N_GNEW(2 * ne + nv, int);	/* reserve space for self loops */
+    vtx_data *graph = gv_calloc(nv, sizeof(vtx_data));
+    node_t** nodes = gv_calloc(nv, sizeof(node_t*));
+    const size_t edges_size = (size_t)(2 * ne + nv);
+    int *edges = gv_calloc(edges_size, sizeof(int)); // reserve space for self loops
     if (haveLen || haveDir)
-	ewgts = N_GNEW(2 * ne + nv, float);
+	ewgts = gv_calloc(edges_size, sizeof(float));
     if (haveWt)
-	eweights = N_GNEW(2 * ne + nv, float);
+	eweights = gv_calloc(edges_size, sizeof(float));
 #ifdef DIGCOLA
     if (haveDir)
-	edists = N_GNEW(2*ne+nv,float);
+	edists = gv_calloc(edges_size, sizeof(float));
 #endif
 
     i = 0;
@@ -868,7 +860,7 @@ static vtx_data *makeGraphData(graph_t * g, int nv, int *nedges, int mode, int m
 #ifdef DIGCOLA
                 if (haveDir) {
                     char *s = agget(ep,"dir");
-                    if(s&&!strncmp(s,"none",4)) {
+                    if(s && startswith(s, "none")) {
                         *edists++ = 0;
                     } else {
                         *edists++ = np == aghead(ep) ? 1.0 : -1.0;
@@ -894,11 +886,11 @@ static vtx_data *makeGraphData(graph_t * g, int nv, int *nedges, int mode, int m
 
     /* If necessary, release extra memory. */
     if (ne != agnedges(g)) {
-	edges = RALLOC(2 * ne + nv, graph[0].edges, int);
+	edges = gv_recalloc(graph[0].edges, edges_size, 2 * ne + nv, sizeof(int));
 	if (haveLen)
-	    ewgts = RALLOC(2 * ne + nv, graph[0].ewgts, float);
+	    ewgts = gv_recalloc(graph[0].ewgts, edges_size, 2 * ne + nv, sizeof(float));
 	if (haveWt)
-	    eweights = RALLOC(2 * ne + nv, graph[0].eweights, float);
+	    eweights = gv_recalloc(graph[0].eweights, edges_size, 2 * ne + nv, sizeof(float));
 
 	for (i = 0; i < nv; i++) {
 	    int sz = graph[i].nedges;
