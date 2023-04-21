@@ -18,10 +18,8 @@
 /*  destroys it in the appropriate manner when the node containing that */
 /*  key is deleted.  InfoDestFunc is similar to DestFunc except it */
 /*  receives a pointer to the info of a node and destroys it. */
-/*  PrintFunc receives a pointer to the key of a node and prints it. */
-/*  PrintInfo receives a pointer to the info of a node and prints it. */
 /*  If RBTreePrint is never called the print functions don't have to be */
-/*  defined and NullFunction can be used.  */
+/*  defined.  */
 /**/
 /*  OUTPUT:  This function returns a pointer to the newly created */
 /*  red-black tree. */
@@ -31,9 +29,7 @@
 
 rb_red_blk_tree* RBTreeCreate( int (*CompFunc) (const void*,const void*),
 			      void (*DestFunc) (void*),
-			      void (*InfoDestFunc) (void*),
-			      void (*PrintFunc) (const void*),
-			      void (*PrintInfo)(void*)) {
+			      void (*InfoDestFunc) (void*)) {
   rb_red_blk_tree* newTree = NULL;
   rb_red_blk_node* temp;
 
@@ -44,8 +40,6 @@ rb_red_blk_tree* RBTreeCreate( int (*CompFunc) (const void*,const void*),
   newTree->nil = newTree->root = NULL;
   newTree->Compare=  CompFunc;
   newTree->DestroyKey= DestFunc;
-  newTree->PrintKey= PrintFunc;
-  newTree->PrintInfo= PrintInfo;
   newTree->DestroyInfo= InfoDestFunc;
 
   /*  see the comment in the rb_red_blk_tree structure in red_black_tree.h */
@@ -362,42 +356,6 @@ rb_red_blk_node* TreePredecessor(rb_red_blk_tree* tree, rb_red_blk_node* x) {
 }
 
 /***********************************************************************/
-/*  FUNCTION:  InorderTreePrint */
-/**/
-/*    INPUTS:  tree is the tree to print and x is the current inorder node */
-/**/
-/*    OUTPUT:  none  */
-/**/
-/*    EFFECTS:  This function recursively prints the nodes of the tree */
-/*              inorder using the PrintKey and PrintInfo functions. */
-/**/
-/*    Modifies Input: none */
-/**/
-/*    Note:    This function should only be called from RBTreePrint */
-/***********************************************************************/
-
-static void InorderTreePrint(rb_red_blk_tree* tree, rb_red_blk_node* x) {
-  rb_red_blk_node* nil=tree->nil;
-  rb_red_blk_node* root=tree->root;
-  if (x != tree->nil) {
-    InorderTreePrint(tree,x->left);
-    printf("info=");
-    tree->PrintInfo(x->info);
-    printf("  key="); 
-    tree->PrintKey(x->key);
-    printf("  l->key=");
-    if( x->left == nil) printf("NULL"); else tree->PrintKey(x->left->key);
-    printf("  r->key=");
-    if( x->right == nil) printf("NULL"); else tree->PrintKey(x->right->key);
-    printf("  p->key=");
-    if( x->parent == root) printf("NULL"); else tree->PrintKey(x->parent->key);
-    printf("  red=%i\n",x->red);
-    InorderTreePrint(tree,x->right);
-  }
-}
-
-
-/***********************************************************************/
 /*  FUNCTION:  TreeDestHelper */
 /**/
 /*    INPUTS:  tree is the tree to destroy and x is the current node */
@@ -443,26 +401,6 @@ void RBTreeDestroy(rb_red_blk_tree* tree) {
   free(tree->nil);
   free(tree);
 }
-
-
-/***********************************************************************/
-/*  FUNCTION:  RBTreePrint */
-/**/
-/*    INPUTS:  tree is the tree to print */
-/**/
-/*    OUTPUT:  none */
-/**/
-/*    EFFECT:  This function recursively prints the nodes of the tree */
-/*             inorder using the PrintKey and PrintInfo functions. */
-/**/
-/*    Modifies Input: none */
-/**/
-/***********************************************************************/
-
-void RBTreePrint(rb_red_blk_tree* tree) {
-  InorderTreePrint(tree,tree->root->left);
-}
-
 
 /***********************************************************************/
 /*  FUNCTION:  RBExactQuery */
@@ -636,50 +574,3 @@ void RBDelete(rb_red_blk_tree* tree, rb_red_blk_node* z){
   
   assert(!tree->nil->red && "nil not black in RBDelete");
 }
-
-
-/***********************************************************************/
-/*  FUNCTION:  RBEnumerate */
-/**/
-/*    INPUTS:  tree is the tree to look for keys >= low */
-/*             and <= high with respect to the Compare function */
-/**/
-/*    OUTPUT:  stack containing pointers to the nodes between [low,high] */
-/**/
-/*    Modifies Input: none */
-/***********************************************************************/
-
-stk_stack* RBEnumerate(rb_red_blk_tree* tree, void* low, void* high) {
-  stk_stack* enumResultStack;
-  rb_red_blk_node* nil=tree->nil;
-  rb_red_blk_node* x=tree->root->left;
-  rb_red_blk_node* lastBest=nil;
-
-  enumResultStack=StackCreate();
-  if (enumResultStack == NULL) {
-    return NULL;
-  }
-  while(nil != x) {
-    if ( 1 == (tree->Compare(x->key,high)) ) { /* x->key > high */
-      x=x->left;
-    } else {
-      lastBest=x;
-      x=x->right;
-    }
-  }
-  while ( (lastBest != nil) && (1 != tree->Compare(low,lastBest->key))) {
-    if (StackPush(enumResultStack,lastBest) != 0) {
-      StackDestroy(enumResultStack, NullFunction);
-      return NULL;
-    }
-    lastBest=TreePredecessor(tree,lastBest);
-  }
-  return(enumResultStack);
-}
-      
-    
-  
-  
-
-
-

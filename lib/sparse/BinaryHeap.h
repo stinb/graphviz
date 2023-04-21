@@ -73,8 +73,6 @@ size_t BinaryHeap_reset(BinaryHeap h, int id, void *item);/* reset value of an i
 
 void BinaryHeap_print(BinaryHeap h, void (*pnt)(void*));
 
-void BinaryHeap_sanity_check(BinaryHeap h);
-
 #ifdef __cplusplus
 }
 #endif

@@ -30,10 +30,11 @@
 #include <common/arith.h>
 #include <common/types.h>
 #include <common/utils.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 typedef struct {
-    unsigned char on_stack;
+    bool on_stack: 1;
     unsigned char dist;
 } nodeinfo_t;
 
@@ -53,7 +54,7 @@ static int PrintRemovedEdges;
 static void push(gv_stack_t *sp, Agedge_t *ep, nodeinfo_t *ninfo) {
 
   // mark this edge on the stack
-  ON_STACK(ninfo, aghead(ep)) = 1;
+  ON_STACK(ninfo, aghead(ep)) = true;
 
   // insert the new edge
   stack_push(sp, ep);
@@ -69,7 +70,7 @@ static Agedge_t *pop(gv_stack_t *sp, nodeinfo_t *ninfo) {
   Agedge_t *e = stack_pop(sp);
 
   // mark it as no longer on the stack
-  ON_STACK(ninfo, aghead(e)) = 0;
+  ON_STACK(ninfo, aghead(e)) = false;
 
   return e;
 }
