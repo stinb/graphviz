@@ -340,11 +340,7 @@ static void unrecognized(node_t * n, char *p)
 
 static double quant(double val, double q)
 {
-    int i;
-    i = val / q;
-    if (i * q + .00001 < val)
-	i++;
-    return i * q;
+  return ceil(val / q) * q;
 }
 
 /* test if both p0 and p1 are on the same side of the line L0,L1 */
@@ -3311,15 +3307,16 @@ static field_t *parse_error(field_t *rv, char *portname) {
     return NULL;
 }
 
-static field_t *parse_reclbl(node_t *n, bool LR, int flag, char *text) {
+static field_t *parse_reclbl(node_t *n, bool LR, bool flag, char *text) {
     field_t *fp, *rv = gv_alloc(sizeof(field_t));
     char *tsp, *psp=NULL, *hstsp, *hspsp=NULL, *sp;
     char *tmpport = NULL;
-    int maxf, cnt, mode, wflag, ishardspace, fi;
+    int cnt, mode, fi;
     textlabel_t *lbl = ND_label(n);
     unsigned char uc;
 
     fp = NULL;
+    size_t maxf;
     for (maxf = 1, cnt = 0, sp = reclblp; *sp; sp++) {
 	if (*sp == '\\') {
 	    sp++;
@@ -3335,13 +3332,13 @@ static field_t *parse_reclbl(node_t *n, bool LR, int flag, char *text) {
 	if (cnt < 0)
 	    break;
     }
-    rv->fld = N_NEW(maxf, field_t *);
+    rv->fld = gv_calloc(maxf, sizeof(field_t*));
     rv->LR = LR;
     mode = 0;
     fi = 0;
     hstsp = tsp = text;
-    wflag = TRUE;
-    ishardspace = FALSE;
+    bool wflag = true;
+    bool ishardspace = false;
     while (wflag) {
 	if ((uc = *(unsigned char*)reclblp) && uc < ' ') {    /* Ignore non-0 control characters */
 	    reclblp++;
@@ -3365,7 +3362,7 @@ static field_t *parse_reclbl(node_t *n, bool LR, int flag, char *text) {
 	    if (psp > text + 1 && psp - 1 != hspsp && *(psp - 1) == ' ')
 		psp--;
 	    *psp = '\000';
-	    tmpport = strdup(text);
+	    tmpport = gv_strdup(text);
 	    mode &= ~INPORT;
 	    reclblp++;
 	    break;
@@ -3374,7 +3371,7 @@ static field_t *parse_reclbl(node_t *n, bool LR, int flag, char *text) {
 	    if (mode != 0 || !*reclblp)
 		return parse_error(rv, tmpport);
 	    mode = HASTABLE;
-	    if (!(rv->fld[fi++] = parse_reclbl(n, !LR, FALSE, text)))
+	    if (!(rv->fld[fi++] = parse_reclbl(n, !LR, false, text)))
 		return parse_error(rv, tmpport);
 	    break;
 	case '}':
@@ -3388,17 +3385,19 @@ static field_t *parse_reclbl(node_t *n, bool LR, int flag, char *text) {
 		fp->id = tmpport;
 		tmpport = NULL;
 	    }
-	    if (!(mode & (HASTEXT | HASTABLE)))
-		mode |= HASTEXT, *tsp++ = ' ';
+	    if (!(mode & (HASTEXT | HASTABLE))) {
+		mode |= HASTEXT;
+		*tsp++ = ' ';
+	    }
 	    if (mode & HASTEXT) {
 		if (tsp > text + 1 && tsp - 1 != hstsp && *(tsp - 1) == ' ')
 		    tsp--;
 		*tsp = '\000';
 		fp->lp =
 		    make_label(n, text,
-			       (lbl->html ? LT_HTML : LT_NONE),
+			       lbl->html ? LT_HTML : LT_NONE,
 			       lbl->fontsize, lbl->fontname, lbl->fontcolor);
-		fp->LR = TRUE;
+		fp->LR = true;
 		hstsp = tsp = text;
 	    }
 	    if (*reclblp) {
@@ -3410,19 +3409,19 @@ static field_t *parse_reclbl(node_t *n, bool LR, int flag, char *text) {
 		mode = 0;
 		reclblp++;
 	    } else
-		wflag = FALSE;
+		wflag = false;
 	    break;
 	case '\\':
 	    if (*(reclblp + 1)) {
-		if (ISCTRL(*(reclblp + 1)))
-		    reclblp++;
-		else if (*(reclblp + 1) == ' ' && !lbl->html)
-		    ishardspace = TRUE, reclblp++;
+		if (ISCTRL(*(reclblp + 1))) {
+		    // nothing
+		} else if (*(reclblp + 1) == ' ' && !lbl->html)
+		    ishardspace = true;
 		else {
 		    *tsp++ = '\\';
-		    mode |= (INTEXT | HASTEXT);
-		    reclblp++;
+		    mode |= INTEXT | HASTEXT;
 		}
+		reclblp++;
 	    }
 	    /* fall through */
 	default:
@@ -3430,7 +3429,7 @@ static field_t *parse_reclbl(node_t *n, bool LR, int flag, char *text) {
 	    if ((mode & HASTABLE) && *reclblp != ' ')
 		return parse_error(rv, tmpport);
 	    if (!(mode & (INTEXT | INPORT)) && *reclblp != ' ')
-		mode |= (INTEXT | HASTEXT);
+		mode |= INTEXT | HASTEXT;
 	    if (mode & INTEXT) {
 		if (!(*reclblp == ' ' && !ishardspace && *(tsp - 1) == ' '
 		     && !lbl->html))
@@ -3885,13 +3884,12 @@ static void record_gencode(GVJ_t * job, node_t * n)
 }
 
 static shape_desc **UserShape;
-static int N_UserShape;
+static size_t N_UserShape;
 
 shape_desc *find_user_shape(const char *name)
 {
-    int i;
     if (UserShape) {
-	for (i = 0; i < N_UserShape; i++) {
+	for (size_t i = 0; i < N_UserShape; i++) {
 	    if (streq(UserShape[i]->name, name))
 		return UserShape[i];
 	}
@@ -3901,12 +3899,11 @@ shape_desc *find_user_shape(const char *name)
 
 static shape_desc *user_shape(char *name)
 {
-    int i;
     shape_desc *p;
 
     if ((p = find_user_shape(name)))
 	return p;
-    i = N_UserShape++;
+    size_t i = N_UserShape++;
     UserShape = ALLOC(N_UserShape, UserShape, shape_desc *);
     p = UserShape[i] = gv_alloc(sizeof(shape_desc));
     *p = Shapes[0];
