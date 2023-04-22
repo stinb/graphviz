@@ -72,7 +72,6 @@ int stress_majorization_with_hierarchy(vtx_data * graph,	/* Input graph in spars
     double relative_tol = levels_sep_tol;
     int *ordering = NULL, *levels = NULL;
     float constant_term;
-    int count;
     double degree;
     int step;
     float val;
@@ -231,7 +230,6 @@ int stress_majorization_with_hierarchy(vtx_data * graph,	/* Input graph in spars
     }
 
     if (levels_gap > 0) {
-	int length = n + n * (n - 1) / 2;
 	double sum1, sum2, scale_ratio;
 	int count;
 	sum1 = (float) (n * (n - 1) / 2);
@@ -291,7 +289,7 @@ int stress_majorization_with_hierarchy(vtx_data * graph,	/* Input graph in spars
     invert_vec(lap_length, lap2);
 
     /* compute diagonal entries */
-    count = 0;
+    int count = 0;
     degrees = N_GNEW(n, double);
     set_vector_val(n, 0, degrees);
     for (i = 0; i < n - 1; i++) {

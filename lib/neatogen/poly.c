@@ -18,6 +18,7 @@
 #include <neatogen/poly.h>
 #include <common/geom.h>
 #include <neatogen/mem.h>
+#include <stdbool.h>
 
 #define BOX 1
 #define ISBOX(p) ((p)->kind & BOX)
@@ -47,26 +48,22 @@ void breakPoly(Poly * pp)
 
 static void bbox(Point * verts, int cnt, Point * o, Point * c)
 {
-    double xmin, ymin, xmax, ymax;
+    double x_min, y_min, x_max, y_max;
     int i;
 
-    xmin = xmax = verts->x;
-    ymin = ymax = verts->y;
+    x_min = x_max = verts->x;
+    y_min = y_max = verts->y;
     for (i = 1; i < cnt; i++) {
 	verts++;
-	if (verts->x < xmin)
-	    xmin = verts->x;
-	if (verts->y < ymin)
-	    ymin = verts->y;
-	if (verts->x > xmax)
-	    xmax = verts->x;
-	if (verts->y > ymax)
-	    ymax = verts->y;
+	x_min = fmin(x_min, verts->x);
+	y_min = fmin(y_min, verts->y);
+	x_max = fmax(x_max, verts->x);
+	y_max = fmax(y_max, verts->y);
     }
-    o->x = xmin;
-    o->y = ymin;
-    c->x = xmax;
-    c->y = ymax;
+    o->x = x_min;
+    o->y = y_min;
+    c->x = x_max;
+    c->y = y_max;
 }
 
 static void inflatePts(Point * verts, int cnt, float xmargin, float ymargin)
@@ -142,7 +139,6 @@ int makeAddPoly(Poly * pp, Agnode_t * n, float xmargin, float ymargin)
     int sides;
     Point *verts;
     polygon_t *poly;
-    boxf b;
 
     if (ND_clust(n)) {
 	Point b;
@@ -199,16 +195,17 @@ int makeAddPoly(Poly * pp, Agnode_t * n, float xmargin, float ymargin)
 	    } else
 		verts = genRound(n, &sides, xmargin, ymargin);
 	    break;
-	case SH_RECORD:
+	case SH_RECORD: {
 	    sides = 4;
 	    verts = N_GNEW(sides, Point);
-	    b = ((field_t *) ND_shape_info(n))->b;
+	    boxf b = ((field_t*)ND_shape_info(n))->b;
 	    verts[0] = makeScaledTransPoint(b.LL.x, b.LL.y, -xmargin, -ymargin);
 	    verts[1] = makeScaledTransPoint(b.UR.x, b.LL.y, xmargin, -ymargin);
 	    verts[2] = makeScaledTransPoint(b.UR.x, b.UR.y, xmargin, ymargin);
 	    verts[3] = makeScaledTransPoint(b.LL.x, b.UR.y, -xmargin, ymargin);
 	    pp->kind = BOX;
 	    break;
+	}
 	case SH_POINT:
 	    pp->kind = CIRCLE;
 	    verts = genRound(n, &sides, xmargin, ymargin);
@@ -234,7 +231,6 @@ int makePoly(Poly * pp, Agnode_t * n, float xmargin, float ymargin)
     int sides;
     Point *verts;
     polygon_t *poly;
-    boxf b;
 
     if (ND_clust(n)) {
 	Point b;
@@ -272,16 +268,17 @@ int makePoly(Poly * pp, Agnode_t * n, float xmargin, float ymargin)
 		pp->kind = 0;
 
 	    break;
-	case SH_RECORD:
+	case SH_RECORD: {
 	    sides = 4;
 	    verts = N_GNEW(sides, Point);
-	    b = ((field_t *) ND_shape_info(n))->b;
+	    boxf b = ((field_t *) ND_shape_info(n))->b;
 	    verts[0] = makeScaledPoint(b.LL.x, b.LL.y);
 	    verts[1] = makeScaledPoint(b.UR.x, b.LL.y);
 	    verts[2] = makeScaledPoint(b.UR.x, b.UR.y);
 	    verts[3] = makeScaledPoint(b.LL.x, b.UR.y);
 	    pp->kind = BOX;
 	    break;
+	}
 	case SH_POINT:
 	    pp->kind = CIRCLE;
 	    verts = genRound(n, &sides, 0, 0);
@@ -433,11 +430,9 @@ static int inPoly(Point vertex[], int n, Point q)
 	return 0;
 }
 
-static int inBox(Point p, Point origin, Point corner)
-{
-    return ((p.x <= corner.x) &&
-	    (p.x >= origin.x) && (p.y <= corner.y) && (p.y >= origin.y));
-
+static bool inBox(Point p, Point origin_point, Point corner) {
+    return p.x <= corner.x && p.x >= origin_point.x && p.y <= corner.y &&
+           p.y >= origin_point.y;
 }
 
 static void transCopy(Point * inp, int cnt, Point off, Point * outp)

@@ -160,14 +160,14 @@ extern "C" {
 /* function to get the decimal point for local environment */
 #include	<locale.h>
 #define SFSETLOCALE(decimal,thousand) \
-	{ struct lconv*	lv; \
+	{ struct lconv*	lv_; \
 	  if((decimal) == 0) \
 	  { (decimal) = '.'; \
-	    if((lv = localeconv())) \
-	    { if(lv->decimal_point && lv->decimal_point[0]) \
-	    	(decimal) = lv->decimal_point[0]; \
-	      if(lv->thousands_sep && lv->thousands_sep[0]) \
-	    	(thousand) = lv->thousands_sep[0]; \
+	    if((lv_ = localeconv())) \
+	    { if(lv_->decimal_point && lv_->decimal_point[0]) \
+	    	(decimal) = lv_->decimal_point[0]; \
+	      if(lv_->thousands_sep && lv_->thousands_sep[0]) \
+	    	(thousand) = lv_->thousands_sep[0]; \
 	    } \
 	  } \
 	}
@@ -394,9 +394,9 @@ extern "C" {
 #define CLOSE(f)	{ while(close(f) < 0 && errno == EINTR) errno = 0; }
 
 /* string stream extent */
-#define SFSTRSIZE(f)	{ Sfoff_t s = (f)->next - (f)->data; \
-			  if(s > (f)->here) \
-			    { (f)->here = s; if(s > (f)->extent) (f)->extent = s; } \
+#define SFSTRSIZE(f)	{ Sfoff_t s_ = (f)->next - (f)->data; \
+			  if(s_ > (f)->here) \
+			    { (f)->here = s_; if(s_ > (f)->extent) (f)->extent = s_; } \
 			}
 
 /* control flags for open() */
