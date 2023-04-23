@@ -589,6 +589,9 @@ written to \fBstderr\fP.
 .PP
 Errors not written are stored in a log file. The last recorded error
 can be retreived by calling \fBaglasterr\fP.
+Unless the printing of error messages has been completely disabled by a call
+to \fBagseterr(AGMAX)\fP, standard error must not be wide-oriented, even if
+a user-provided error printing function is provided.
 .PP
 The function \fBagerrors\fP returns non-zero if errors have been reported. 
 .SH "EXAMPLE PROGRAM"
