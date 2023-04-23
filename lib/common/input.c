@@ -553,9 +553,8 @@ graph_t *gvNextInputGraph(GVC_t *gvc)
  * so, return the corresponding internal value. If undefined, return
  * CHAR_UTF8
  */
-static int findCharset (graph_t * g)
-{
-    int enc;
+static unsigned char findCharset(graph_t *g) {
+    unsigned char enc;
     char* p;
 
     p = late_nnstring(g,agfindgraphattr(g,"charset"),"utf-8");
