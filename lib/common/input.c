@@ -226,7 +226,7 @@ int dotneato_args_initialize(GVC_t * gvc, int argc, char **argv)
 {
     char c, *rest, *layout;
     const char *val;
-    int i, v, nfiles;
+    int i, v;
     int Kflag = 0;
 
     /* establish if we are running in a CGI environment */
@@ -259,7 +259,7 @@ int dotneato_args_initialize(GVC_t * gvc, int argc, char **argv)
     Verbose = gvc->common.verbose;
     CmdName = gvc->common.cmdname;
 
-    nfiles = 0;
+    size_t nfiles = 0;
     for (i = 1; i < argc; i++)
 	if (argv[i] && argv[i][0] != '-')
 	    nfiles++;
