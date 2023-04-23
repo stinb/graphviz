@@ -554,7 +554,6 @@ graph_t *gvNextInputGraph(GVC_t *gvc)
  * CHAR_UTF8
  */
 static unsigned char findCharset(graph_t *g) {
-    unsigned char enc;
     char* p;
 
     p = late_nnstring(g,agfindgraphattr(g,"charset"),"utf-8");
@@ -565,18 +564,15 @@ static unsigned char findCharset(graph_t *g) {
 	|| !strcasecmp(p,"ISO_8859-1")
 	|| !strcasecmp(p,"ISO8859-1")
 	|| !strcasecmp(p,"ISO-IR-100"))
-		enc = CHAR_LATIN1; 
-    else if (!strcasecmp(p,"big-5")
+      return CHAR_LATIN1;
+    if (!strcasecmp(p,"big-5")
 	|| !strcasecmp(p,"big5")) 
-		enc = CHAR_BIG5; 
-    else if (!strcasecmp(p,"utf-8")
+      return CHAR_BIG5;
+    if (!strcasecmp(p,"utf-8")
 	|| !strcasecmp(p,"utf8"))
-		enc = CHAR_UTF8; 
-    else {
-	agerr(AGWARN, "Unsupported charset \"%s\" - assuming utf-8\n", p);
-	enc = CHAR_UTF8; 
-    }
-    return enc;
+      return CHAR_UTF8;
+    agerr(AGWARN, "Unsupported charset \"%s\" - assuming utf-8\n", p);
+    return CHAR_UTF8;
 }
 
 /* setRatio:
