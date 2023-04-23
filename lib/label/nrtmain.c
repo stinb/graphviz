@@ -43,14 +43,14 @@ static pointf centerPt(xlabel_t * xlp)
     return p;
 }
 
-static int printData(object_t *objs, size_t n_objs, xlabel_t *lbls,
-                     size_t n_lbls, label_params_t *params) {
+static void printData(object_t *objs, size_t n_objs, xlabel_t *lbls,
+                      size_t n_lbls, label_params_t *params) {
     fprintf(stderr,
 	    "%" PRISIZE_T " objs %" PRISIZE_T " xlabels force=%d bb=(%.02f,%.02f) (%.02f,%.02f)\n",
 	    n_objs, n_lbls, params->force, params->bb.LL.x,
 	    params->bb.LL.y, params->bb.UR.x, params->bb.UR.y);
     if (Verbose < 2)
-	return 0;
+	return;
     fprintf(stderr, "objects\n");
     for (size_t i = 0; i < n_objs; i++) {
       if(objs[i].lbl && objs[i].lbl->lbl)
@@ -70,7 +70,6 @@ static int printData(object_t *objs, size_t n_objs, xlabel_t *lbls,
 		lbls[i].sz.x, lbls[i].sz.y,
 		((textlabel_t *)lbls[i].lbl)->text);
     }
-    return 0;
 }
 
 int doxlabel(opts_t * opts)
