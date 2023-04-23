@@ -41,9 +41,8 @@ static int icompare(Dt_t * dt, void * v1, void * v2, Dtdisc_t * disc)
     return 0;
 }
 
-static XLabels_t *xlnew(object_t * objs, int n_objs, xlabel_t * lbls,
-                        int n_lbls, label_params_t * params)
-{
+static XLabels_t *xlnew(object_t *objs, size_t n_objs, xlabel_t *lbls,
+                        size_t n_lbls, label_params_t *params) {
     XLabels_t *xlp = gv_alloc(sizeof(XLabels_t));
 
     /* used to load the rtree in hilbert space filling curve order */
@@ -333,7 +332,7 @@ xlintersections(XLabels_t * xlp, object_t * objp, object_t * intrsx[XLNBR])
     bp.area = 0.0;
     bp.pos = objp->lbl->pos;
 
-    for(int i=0; i<xlp->n_objs; i++) {
+    for (size_t i = 0; i < xlp->n_objs; i++) {
       if(objp == &xlp->objs[i]) continue;
       if(xlp->objs[i].sz.x > 0 && xlp->objs[i].sz.y > 0) continue;
       if(lblenclosing(objp, &xlp->objs[i]) ) {
@@ -525,7 +524,7 @@ static int xlhdxload(XLabels_t * xlp)
 {
     int order = xlhorder(xlp);
 
-    for (int i = 0; i < xlp->n_objs; i++) {
+    for (size_t i = 0; i < xlp->n_objs; i++) {
 	HDict_t *hp;
 	point pi;
 
@@ -580,10 +579,8 @@ static int xlinitialize(XLabels_t * xlp)
     return dtclose(xlp->hdx);
 }
 
-int
-placeLabels(object_t * objs, int n_objs,
-	    xlabel_t * lbls, int n_lbls, label_params_t * params)
-{
+int placeLabels(object_t *objs, size_t n_objs, xlabel_t *lbls, size_t n_lbls,
+                label_params_t *params) {
     int r;
     BestPos_t bp;
     XLabels_t *xlp = xlnew(objs, n_objs, lbls, n_lbls, params);
@@ -606,7 +603,7 @@ placeLabels(object_t * objs, int n_objs,
      * non-zero otherwise.
      */
     r = 0;
-    for (int i = 0; i < n_objs; i++) {
+    for (size_t i = 0; i < n_objs; i++) {
 	if (objs[i].lbl == 0)
 	    continue;
 	bp = xladjust(xlp, &objs[i]);

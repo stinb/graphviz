@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <stddef.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -34,8 +36,8 @@ typedef struct {
     unsigned char force;	/* If true, all labels must be placed */
 } label_params_t;
 
-int placeLabels(object_t * objs, int n_objs,
-		xlabel_t * lbls, int n_lbls, label_params_t * params);
+int placeLabels(object_t *objs, size_t n_objs, xlabel_t *lbls, size_t n_lbls,
+                label_params_t *params);
 
 #ifdef XLABEL_INT
 #include <label/index.h>
@@ -85,9 +87,9 @@ typedef struct obyh {
 
 typedef struct XLabels_s {
     object_t *objs;
-    int n_objs;
+    size_t n_objs;
     xlabel_t *lbls;
-    int n_lbls;
+    size_t n_lbls;
     label_params_t *params;
 
     Dt_t *hdx;			// splay tree keyed with hilbert spatial codes
