@@ -186,7 +186,8 @@ using the graph file language described below. \fBagread\fP
 constructs a new graph while \fBagconcat\fP merges the file
 contents with a pre-existing graph.  Though I/O methods may
 be overridden, the default is that the channel argument is
-a stdio FILE pointer. 
+a stdio FILE pointer. In that case, if any of the streams are
+wide-oriented, the behavior is undefined.
 \fBagmemread\fP attempts to read a graph from the input string.
 \fBagsetfile\fP and \fBagreadline\fP
 are helper functions that simply set the current file name

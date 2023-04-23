@@ -147,7 +147,8 @@ You can also construct a new graph by reading a file:
 
 Here, the graph's name, type and contents including attributes depend
 on the file contents.  (The second argument is the same optional method
-pointer mentioned above for \verb"agopen").
+pointer mentioned above for \verb"agopen"). If the default I/O discipline
+is used and the stream is wide-oriented, the behavior is undefined.
 
 Sometimes it is convenient to have the graph represented concretely as a 
 character string \verb"str".
@@ -169,7 +170,8 @@ on the same file.\footnote{It is the application programmer's job to
 convert between internal attributes to external strings
 when graphs are read and written, if desired.
 This seemed better than inventing a complicated way
-to automate this conversion.}
+to automate this conversion.} If the default I/O discipline is used
+and the stream is wide-oriented, the behavior is undefined.
 
 \verb"agnnodes(g)", \verb"agnedges(g)" and \verb"agnsubg(g)" return the count of nodes,
 edges and (immediate) subgraphs in a graph (or subgraph).
