@@ -326,7 +326,73 @@ SVG::SVGRect SVG::SVGElement::outline_bbox(bool throw_if_bbox_not_defined) {
         }
         break;
       }
-      // FIXME: this throws for the `curve` and `icurve` edge arrows
+      const std::size_t num_points_in_curve_arrow_shape_path = 4;
+      if (path_points.size() == num_points_in_curve_arrow_shape_path) {
+        const auto horizontal_start = path_points[0].x;
+        const auto horizontal_control1 = path_points[1].x;
+        const auto horizontal_control2 = path_points[2].x;
+        const auto horizontal_end = path_points[3].x;
+
+        const auto vertical_start = path_points[0].y;
+        const auto vertical_control1 = path_points[1].y;
+        const auto vertical_control2 = path_points[2].y;
+        const auto vertical_end = path_points[3].y;
+
+        const auto has_horizontally_symmetric_control_points =
+            horizontal_start - horizontal_control1 ==
+            horizontal_control2 - horizontal_end;
+
+        const auto has_vertically_symmetric_control_points =
+            vertical_start - vertical_control1 ==
+            vertical_control2 - vertical_end;
+
+        const auto is_horizontally_mirrored =
+            horizontal_start == horizontal_end &&
+            horizontal_control1 == horizontal_control2 &&
+            has_vertically_symmetric_control_points;
+
+        const auto is_vertically_mirrored =
+            vertical_start == vertical_end &&
+            vertical_control1 == vertical_control2 &&
+            has_horizontally_symmetric_control_points;
+
+        if (is_horizontally_mirrored || is_vertically_mirrored) {
+          // A bezier curve which is either vertically or horizontally mirrored
+          // is flat at the center and has a negligible extension "backwards" at
+          // the start and end points. The Graphviz arrow shape `curve`, which
+          // is a cubic Bezier approximation of a semicircle, is a special case
+          // of this. A vertical edge with a `curve` arrow head is vertically
+          // mirrored and a horizontal edge with a `curve` arrow head is
+          // horizonally mirrored.
+          {
+            const auto horizontal_endpoint_extension =
+                is_vertically_mirrored ? attributes.stroke_width / 2 : 0;
+            const auto vertical_endpoint_extension =
+                is_horizontally_mirrored ? attributes.stroke_width / 2 : 0;
+            const auto num_intermediate_control_points = 2;
+            for (std::size_t i = 0; i < path_points.size();
+                 i += num_intermediate_control_points + 1) {
+              const auto &point = path_points[i];
+              const SVG::SVGRect point_bbox = {
+                  .x = point.x - horizontal_endpoint_extension,
+                  .y = point.y - vertical_endpoint_extension,
+                  .width = horizontal_endpoint_extension * 2,
+                  .height = vertical_endpoint_extension * 2,
+              };
+              m_bbox->extend(point_bbox);
+            }
+            const SVGPoint midpoint = cubic_bezier(0.5);
+            const SVG::SVGRect point_bbox = {
+                .x = midpoint.x - attributes.stroke_width / 2,
+                .y = midpoint.y - attributes.stroke_width / 2,
+                .width = attributes.stroke_width,
+                .height = attributes.stroke_width,
+            };
+            m_bbox->extend(point_bbox);
+          }
+          break;
+        }
+      }
       throw std::runtime_error(
           "paths other than straight vertical, straight horizontal or the "
           "cylinder special case are currently not supported");
@@ -510,6 +576,46 @@ void SVG::SVGElement::append_attribute(std::string &output,
     output += " ";
   }
   output += attribute;
+}
+
+static double interpolate(double y0, double y1, double x) {
+  double dy = y1 - y0;
+
+  return y0 + x * dy;
+}
+
+// The cubic Bezier implementation is taken from
+// https://stackoverflow.com/a/37642695/3122101
+SVG::SVGPoint SVG::SVGElement::cubic_bezier(double t) {
+  assert(t >= 0);
+  assert(t <= 1);
+  assert(path_points.size() == 4);
+
+  const auto x0 = path_points[0].x;
+  const auto y0 = path_points[0].y;
+  const auto x1 = path_points[1].x;
+  const auto y1 = path_points[1].y;
+  const auto x2 = path_points[2].x;
+  const auto y2 = path_points[2].y;
+  const auto x3 = path_points[3].x;
+  const auto y3 = path_points[3].y;
+
+  const auto xa = interpolate(x0, x1, t);
+  const auto ya = interpolate(y0, y1, t);
+  const auto xb = interpolate(x1, x2, t);
+  const auto yb = interpolate(y1, y2, t);
+  const auto xc = interpolate(x2, x3, t);
+  const auto yc = interpolate(y2, y3, t);
+
+  const auto xm = interpolate(xa, xb, t);
+  const auto ym = interpolate(ya, yb, t);
+  const auto xn = interpolate(xb, xc, t);
+  const auto yn = interpolate(yb, yc, t);
+
+  const auto x = interpolate(xm, xn, t);
+  const auto y = interpolate(ym, yn, t);
+
+  return {x, y};
 }
 
 bool SVG::SVGElement::has_all_points_equal() const {

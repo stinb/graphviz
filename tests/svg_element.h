@@ -195,6 +195,8 @@ private:
   /// handling space separation
   void append_attribute(std::string &output,
                         const std::string &attribute) const;
+  /// calculate a point along a cubic Bezier curve
+  SVG::SVGPoint cubic_bezier(double t);
   // Return true if the points of a polygon are defined clockwise
   bool has_clockwise_points() const;
   bool has_all_points_equal() const;
