@@ -21,11 +21,19 @@ void GraphvizEdge::add_outline_overlap_bbox(const GraphvizNode &node,
 static const std::unordered_set<std::string_view>
     supported_primitive_arrow_shapes = {
         "box",     //
+        "curve",   //
         "diamond", //
         "dot",     //
+        "icurve",  //
         "inv",     //
         "normal",  //
         "tee",     //
+};
+
+static const std::unordered_set<std::string_view>
+    path_based_primitive_arrow_shapes = {
+        "curve",  //
+        "icurve", //
 };
 
 static const std::unordered_set<std::string_view>
@@ -44,8 +52,10 @@ static const std::unordered_set<std::string_view>
 
 static const std::unordered_set<std::string_view>
     primitive_arrow_shapes_containing_polyline = {
-        "box", //
-        "tee", //
+        "box",    //
+        "curve",  //
+        "icurve", //
+        "tee",    //
 };
 
 static SVG::SVGElementType
@@ -55,6 +65,9 @@ edge_arrowhead_main_svg_element_type(std::string_view primitive_arrow_shape) {
   } else if (ellipse_based_primitive_arrow_shapes.contains(
                  primitive_arrow_shape)) {
     return SVG::SVGElementType::Ellipse;
+  } else if (path_based_primitive_arrow_shapes.contains(
+                 primitive_arrow_shape)) {
+    return SVG::SVGElementType::Path;
   } else {
     assert(false && "unsupported primitive arrow shape");
   }
@@ -74,8 +87,10 @@ SVG::SVGRect GraphvizEdge::arrowhead_outline_bbox(
 
   const auto main_svg_element_type =
       edge_arrowhead_main_svg_element_type(primitive_arrow_shape);
+  const auto main_index =
+      index + (main_svg_element_type == SVG::SVGElementType::Path ? 1 : 0);
   auto edge_arrowhead =
-      m_svg_g_element.find_child(main_svg_element_type, index);
+      m_svg_g_element.find_child(main_svg_element_type, main_index);
   auto edge_arrowhead_bbox = edge_arrowhead.outline_bbox();
   if (primitive_arrow_shapes_containing_polyline.contains(
           primitive_arrow_shape)) {
@@ -100,8 +115,10 @@ SVG::SVGRect GraphvizEdge::arrowtail_outline_bbox(
   const auto index = 0;
   const auto main_svg_element_type =
       edge_arrowhead_main_svg_element_type(primitive_arrow_shape);
+  const auto main_index =
+      index + (main_svg_element_type == SVG::SVGElementType::Path ? 1 : 0);
   auto edge_arrowtail =
-      m_svg_g_element.find_child(main_svg_element_type, index);
+      m_svg_g_element.find_child(main_svg_element_type, main_index);
   auto edge_arrowtail_bbox = edge_arrowtail.outline_bbox();
   if (primitive_arrow_shapes_containing_polyline.contains(
           primitive_arrow_shape)) {
