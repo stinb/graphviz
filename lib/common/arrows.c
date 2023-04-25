@@ -165,6 +165,7 @@ static double arrow_length_normal(double lenfact, double arrowsize, double penwi
 static double arrow_length_tee(double lenfact, double arrowsize, double penwidth, arrowflag_t flag);
 static double arrow_length_box(double lenfact, double arrowsize, double penwidth, arrowflag_t flag);
 static double arrow_length_diamond(double lenfact, double arrowsize, double penwidth, arrowflag_t flag);
+static double arrow_length_curve(double lenfact, double arrowsize, double penwidth, arrowflag_t flag);
 static double arrow_length_dot(double lenfact, double arrowsize, double penwidth, arrowflag_t flag);
 
 static const arrowtype_t Arrowtypes[] = {
@@ -174,7 +175,7 @@ static const arrowtype_t Arrowtypes[] = {
     {ARR_TYPE_BOX, 1.0, arrow_type_box, arrow_length_box},
     {ARR_TYPE_DIAMOND, 1.2, arrow_type_diamond, arrow_length_diamond},
     {ARR_TYPE_DOT, 0.8, arrow_type_dot, arrow_length_dot},
-    {ARR_TYPE_CURVE, 1.0, arrow_type_curve, arrow_length_generic},
+    {ARR_TYPE_CURVE, 1.0, arrow_type_curve, arrow_length_curve},
     {ARR_TYPE_GAP, 0.5, arrow_type_gap, arrow_length_generic},
 };
 
@@ -1226,4 +1227,11 @@ static double arrow_length_dot(double lenfact, double arrowsize,
   (void)flag;
 
   return lenfact * arrowsize * ARROW_LENGTH + penwidth;
+}
+
+static double arrow_length_curve(double lenfact, double arrowsize,
+                                 double penwidth, arrowflag_t flag) {
+  (void)flag;
+
+  return lenfact * arrowsize * ARROW_LENGTH + penwidth / 2;
 }
