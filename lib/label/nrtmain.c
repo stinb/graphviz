@@ -13,6 +13,7 @@
 #include <string.h>
 #include <cgraph/alloc.h>
 #include <cgraph/exit.h>
+#include <cgraph/prisize_t.h>
 #include <gvc/gvc.h>
 #include <labels/xlabels.h>
 
@@ -42,37 +43,33 @@ static pointf centerPt(xlabel_t * xlp)
     return p;
 }
 
-static int
-printData(object_t * objs, int n_objs, xlabel_t * lbls, int n_lbls,
-	  label_params_t * params)
-{
-    int i;
+static void printData(object_t *objs, size_t n_objs, xlabel_t *lbls,
+                      size_t n_lbls, label_params_t *params) {
     fprintf(stderr,
-	    "%d objs %d xlabels force=%d bb=(%.02f,%.02f) (%.02f,%.02f)\n",
+	    "%" PRISIZE_T " objs %" PRISIZE_T " xlabels force=%d bb=(%.02f,%.02f) (%.02f,%.02f)\n",
 	    n_objs, n_lbls, params->force, params->bb.LL.x,
 	    params->bb.LL.y, params->bb.UR.x, params->bb.UR.y);
     if (Verbose < 2)
-	return 0;
+	return;
     fprintf(stderr, "objects\n");
-    for (i = 0; i < n_objs; i++) {
+    for (size_t i = 0; i < n_objs; i++) {
       if(objs[i].lbl && objs[i].lbl->lbl)
-	fprintf (stderr, " [%d] %p %p (%.02f, %.02f) (%.02f, %.02f) %s\n",
+	fprintf (stderr, " [%" PRISIZE_T "] %p %p (%.02f, %.02f) (%.02f, %.02f) %s\n",
 		 i, &objs[i], objs[i].lbl, objs[i].pos.x,objs[i].pos.y,
 		 objs[i].sz.x,objs[i].sz.y,
 		 ((textlabel_t*)objs[i].lbl->lbl)->text );  
       else
-	fprintf (stderr, " [%d] %p %p (%.02f, %.02f) (%.02f, %.02f)\n",
+	fprintf (stderr, " [%" PRISIZE_T "] %p %p (%.02f, %.02f) (%.02f, %.02f)\n",
 		 i, &objs[i], objs[i].lbl, objs[i].pos.x,objs[i].pos.y,
 		 objs[i].sz.x,objs[i].sz.y);  
     }
     fprintf(stderr, "xlabels\n");
-    for (i = 0; i < n_lbls; i++) {
-	fprintf(stderr, " [%d] %p (%.02f, %.02f) (%.02f, %.02f) %s\n",
+    for (size_t i = 0; i < n_lbls; i++) {
+	fprintf(stderr, " [%" PRISIZE_T "] %p (%.02f, %.02f) (%.02f, %.02f) %s\n",
 		i, &lbls[i], lbls[i].pos.x, lbls[i].pos.y,
 		lbls[i].sz.x, lbls[i].sz.y,
 		((textlabel_t *)lbls[i].lbl)->text);
     }
-    return 0;
 }
 
 int doxlabel(opts_t * opts)
@@ -80,11 +77,10 @@ int doxlabel(opts_t * opts)
     Agraph_t *gp;
     object_t *objs;
     xlabel_t *lbls;
-    int i, n_objs, n_lbls;
     label_params_t params;
     Agnode_t *np;
     Agedge_t *ep;
-    int n_nlbls = 0, n_elbls = 0;
+    size_t n_nlbls = 0, n_elbls = 0;
     boxf bb;
     textlabel_t *lp;
     object_t *objp;
@@ -116,8 +112,8 @@ int doxlabel(opts_t * opts)
 		n_elbls++;
 	}
     }
-    n_objs = agnnodes(gp) + n_elbls;
-    n_lbls = n_nlbls + n_elbls;
+    size_t n_objs = (size_t)agnnodes(gp) + n_elbls;
+    size_t n_lbls = n_nlbls + n_elbls;
     objp = objs = gv_calloc(n_objs, sizeof(object_t));
     xlp = lbls = gv_calloc(n_lbls, sizeof(xlabel_t));
     bb.LL = (pointf){INT_MAX, INT_MAX};
@@ -175,7 +171,7 @@ int doxlabel(opts_t * opts)
 
     fprintf(stderr, "read label positions\n");
     xlp = lbls;
-    for (i = 0; i < n_lbls; i++) {
+    for (size_t i = 0; i < n_lbls; i++) {
 	if (xlp->set) {
 	    lp = (textlabel_t *) (xlp->lbl);
 	    lp->set = 1;

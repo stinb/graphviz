@@ -9,6 +9,7 @@
  *************************************************************************/
 
 #include <cgraph/agxbuf.h>
+#include <cgraph/prisize_t.h>
 #include <cgraph/unreachable.h>
 #include <common/render.h>
 #include <label/xlabels.h>
@@ -206,31 +207,29 @@ centerPt (xlabel_t* xlp) {
   return p;
 }
 
-static int
-printData (object_t* objs, int n_objs, xlabel_t* lbls, int n_lbls,
-	   label_params_t* params) {
-  int i;
+static void printData(object_t *objs, size_t n_objs, xlabel_t *lbls,
+                      size_t n_lbls, label_params_t *params) {
   xlabel_t* xp;
-  fprintf (stderr, "%d objs %d xlabels force=%d bb=(%.02f,%.02f) (%.02f,%.02f)\n",
+  fprintf (stderr, "%" PRISIZE_T " objs %" PRISIZE_T
+	   " xlabels force=%d bb=(%.02f,%.02f) (%.02f,%.02f)\n",
 	   n_objs, n_lbls, params->force, params->bb.LL.x, params->bb.LL.y,
 	   params->bb.UR.x, params->bb.UR.y);
-  if (Verbose < 2) return 0;
+  if (Verbose < 2) return;
   fprintf(stderr, "objects\n");
-  for (i = 0; i < n_objs; i++) {
+  for (size_t i = 0; i < n_objs; i++) {
     xp = objs->lbl;
-    fprintf(stderr, " [%d] (%.02f,%.02f) (%.02f,%.02f) %p \"%s\"\n",
+    fprintf(stderr, " [%" PRISIZE_T "] (%.02f,%.02f) (%.02f,%.02f) %p \"%s\"\n",
             i, objs->pos.x, objs->pos.y, objs->sz.x, objs->sz.y, objs->lbl,
             xp ? ((textlabel_t*)xp->lbl)->text : "");
     objs++;
   }
   fprintf(stderr, "xlabels\n");
-  for (i = 0; i < n_lbls; i++) {
-    fprintf(stderr, " [%d] %p set %d (%.02f,%.02f) (%.02f,%.02f) %s\n",
+  for (size_t i = 0; i < n_lbls; i++) {
+    fprintf(stderr, " [%" PRISIZE_T "] %p set %d (%.02f,%.02f) (%.02f,%.02f) %s\n",
             i, lbls, lbls->set, lbls->pos.x, lbls->pos.y, lbls->sz.x,
             lbls->sz.y, ((textlabel_t*)lbls->lbl)->text);
     lbls++;
   }
-  return 0;
 }
 
 static pointf
@@ -382,13 +381,11 @@ addClusterObj (Agraph_t* g, cinfo_t info)
     return info;
 }
 
-static int
-countClusterLabels (Agraph_t* g)
-{
-    int c, i = 0;
+static size_t countClusterLabels(Agraph_t *g) {
+    size_t i = 0;
     if (g != agroot(g) && GD_label(g) && GD_label(g)->set)
 	i++;
-    for (c = 1; c <= GD_n_cluster(g); c++)
+    for (int c = 1; c <= GD_n_cluster(g); c++)
 	i += countClusterLabels (GD_clust(g)[c]);
     return i;
 }
@@ -406,11 +403,10 @@ static void addXLabels(Agraph_t * gp)
 {
     Agnode_t *np;
     Agedge_t *ep;
-    int cnt, i, n_objs, n_lbls;
-    int n_nlbls = 0;		/* # of unset node xlabels */
-    int n_elbls = 0;		/* # of unset edge labels or xlabels */
-    int n_set_lbls = 0;		/* # of set xlabels and edge labels */
-    int n_clbls = 0;		/* # of set cluster labels */
+    size_t n_nlbls = 0; // # of unset node xlabels
+    size_t n_elbls = 0; // # of unset edge labels or xlabels
+    size_t n_set_lbls = 0; // # of set xlabels and edge labels
+    size_t n_clbls = 0; // # of set cluster labels
     boxf bb;
     textlabel_t* lp;
     label_params_t params;
@@ -466,13 +462,13 @@ static void addXLabels(Agraph_t * gp)
 	n_clbls = countClusterLabels (gp);
 
     /* A label for each unpositioned external label */
-    n_lbls = n_nlbls + n_elbls;
+    size_t n_lbls = n_nlbls + n_elbls;
     if (n_lbls == 0) return;
 
     /* An object for each node, each positioned external label, any cluster label, 
      * and all unset edge labels and xlabels.
      */
-    n_objs = agnnodes(gp) + n_set_lbls + n_clbls + n_elbls;
+    size_t n_objs = (size_t)agnnodes(gp) + n_set_lbls + n_clbls + n_elbls;
     objp = objs = N_NEW(n_objs, object_t);
     xlp = lbls = N_NEW(n_lbls, xlabel_t);
     bb.LL = (pointf){INT_MAX, INT_MAX};
@@ -573,8 +569,8 @@ static void addXLabels(Agraph_t * gp)
 	printData(objs, n_objs, lbls, n_lbls, &params);
 
     xlp = lbls;
-    cnt = 0;
-    for (i = 0; i < n_lbls; i++) {
+    size_t cnt = 0;
+    for (size_t i = 0; i < n_lbls; i++) {
 	if (xlp->set) {
 	    cnt++;
 	    lp = (textlabel_t *)xlp->lbl;
@@ -585,9 +581,11 @@ static void addXLabels(Agraph_t * gp)
 	xlp++;
     }
     if (Verbose)
-	fprintf (stderr, "%d out of %d labels positioned.\n", cnt, n_lbls);
+	fprintf(stderr, "%" PRISIZE_T " out of %" PRISIZE_T " labels positioned.\n",
+	        cnt, n_lbls);
     else if (cnt != n_lbls)
-	agerr(AGWARN, "%d out of %d exterior labels positioned.\n", cnt, n_lbls);
+	agerr(AGWARN, "%" PRISIZE_T " out of %" PRISIZE_T " exterior labels positioned.\n",
+	      cnt, n_lbls);
     free(objs);
     free(lbls);
 }
