@@ -2449,188 +2449,184 @@ static bool edge_in_box(edge_t *e, boxf b)
     return false;
 }
 
-static void emit_begin_edge(GVJ_t * job, edge_t * e, char** styles)
-{
-    obj_state_t *obj;
-    int flags = job->flags;
-    char *s;
-    textlabel_t *lab = NULL, *tlab = NULL, *hlab = NULL;
-    pointf *pbs = NULL;
-    int	i, *pbs_n = NULL, pbs_poly_n = 0;
-    char* dflt_url = NULL;
-    char* dflt_target = NULL;
-    double penwidth;
+static void emit_begin_edge(GVJ_t *job, edge_t *e, char **styles) {
+  obj_state_t *obj;
+  int flags = job->flags;
+  char *s;
+  textlabel_t *lab = NULL, *tlab = NULL, *hlab = NULL;
+  pointf *pbs = NULL;
+  int i, *pbs_n = NULL, pbs_poly_n = 0;
+  char *dflt_url = NULL;
+  char *dflt_target = NULL;
+  double penwidth;
 
-    obj = push_obj_state(job);
-    obj->type = EDGE_OBJTYPE;
-    obj->u.e = e;
-    obj->emit_state = EMIT_EDRAW;
-    if (ED_label(e) && !ED_label(e)->html && mapBool(agget(e,"labelaligned"), false))
-	obj->labeledgealigned = true;
+  obj = push_obj_state(job);
+  obj->type = EDGE_OBJTYPE;
+  obj->u.e = e;
+  obj->emit_state = EMIT_EDRAW;
+  if (ED_label(e) && !ED_label(e)->html &&
+      mapBool(agget(e, "labelaligned"), false))
+    obj->labeledgealigned = true;
 
-    /* We handle the edge style and penwidth here because the width
-     * is needed below for calculating polygonal image maps
-     */
-    if (styles && ED_spl(e)) gvrender_set_style(job, styles);
+  /* We handle the edge style and penwidth here because the width
+   * is needed below for calculating polygonal image maps
+   */
+  if (styles && ED_spl(e))
+    gvrender_set_style(job, styles);
 
-    if (E_penwidth && (s = agxget(e, E_penwidth)) && s[0]) {
-	penwidth = late_double(e, E_penwidth, 1.0, 0.0);
-	gvrender_set_penwidth(job, penwidth);
+  if (E_penwidth && (s = agxget(e, E_penwidth)) && s[0]) {
+    penwidth = late_double(e, E_penwidth, 1.0, 0.0);
+    gvrender_set_penwidth(job, penwidth);
+  }
+
+  if (flags & GVRENDER_DOES_Z) {
+    if (GD_odim(agraphof(agtail(e))) >= 3) {
+      obj->tail_z = POINTS(ND_pos(agtail(e))[2]);
+      obj->head_z = POINTS(ND_pos(aghead(e))[2]);
+    } else {
+      obj->tail_z = obj->head_z = 0.0;
     }
+  }
 
-    if (flags & GVRENDER_DOES_Z) {
-	if (GD_odim(agraphof(agtail(e))) >=3) {
-            obj->tail_z = POINTS(ND_pos(agtail(e))[2]);
-            obj->head_z = POINTS(ND_pos(aghead(e))[2]);
-	} else {
-            obj->tail_z = obj->head_z = 0.0;
-	}
+  if (flags & GVRENDER_DOES_LABELS) {
+    if ((lab = ED_label(e)))
+      obj->label = lab->text;
+    obj->taillabel = obj->headlabel = obj->xlabel = obj->label;
+    if ((tlab = ED_xlabel(e)))
+      obj->xlabel = tlab->text;
+    if ((tlab = ED_tail_label(e)))
+      obj->taillabel = tlab->text;
+    if ((hlab = ED_head_label(e)))
+      obj->headlabel = hlab->text;
+  }
+
+  if (flags & GVRENDER_DOES_MAPS) {
+    agxbuf xb = {0};
+
+    s = getObjId(job, e, &xb);
+    obj->id = strdup_and_subst_obj(s, e);
+    agxbfree(&xb);
+
+    if (((s = agget(e, "href")) && s[0]) || ((s = agget(e, "URL")) && s[0]))
+      dflt_url = strdup_and_subst_obj(s, e);
+    if (((s = agget(e, "edgehref")) && s[0]) ||
+        ((s = agget(e, "edgeURL")) && s[0]))
+      obj->url = strdup_and_subst_obj(s, e);
+    else if (dflt_url)
+      obj->url = gv_strdup(dflt_url);
+    if (((s = agget(e, "labelhref")) && s[0]) ||
+        ((s = agget(e, "labelURL")) && s[0]))
+      obj->labelurl = strdup_and_subst_obj(s, e);
+    else if (dflt_url)
+      obj->labelurl = gv_strdup(dflt_url);
+    if (((s = agget(e, "tailhref")) && s[0]) ||
+        ((s = agget(e, "tailURL")) && s[0])) {
+      obj->tailurl = strdup_and_subst_obj(s, e);
+      obj->explicit_tailurl = true;
+    } else if (dflt_url)
+      obj->tailurl = gv_strdup(dflt_url);
+    if (((s = agget(e, "headhref")) && s[0]) ||
+        ((s = agget(e, "headURL")) && s[0])) {
+      obj->headurl = strdup_and_subst_obj(s, e);
+      obj->explicit_headurl = true;
+    } else if (dflt_url)
+      obj->headurl = gv_strdup(dflt_url);
+  }
+
+  if (flags & GVRENDER_DOES_TARGETS) {
+    if ((s = agget(e, "target")) && s[0])
+      dflt_target = strdup_and_subst_obj(s, e);
+    if ((s = agget(e, "edgetarget")) && s[0]) {
+      obj->explicit_edgetarget = true;
+      obj->target = strdup_and_subst_obj(s, e);
+    } else if (dflt_target)
+      obj->target = gv_strdup(dflt_target);
+    if ((s = agget(e, "labeltarget")) && s[0])
+      obj->labeltarget = strdup_and_subst_obj(s, e);
+    else if (dflt_target)
+      obj->labeltarget = gv_strdup(dflt_target);
+    if ((s = agget(e, "tailtarget")) && s[0]) {
+      obj->tailtarget = strdup_and_subst_obj(s, e);
+      obj->explicit_tailtarget = true;
+    } else if (dflt_target)
+      obj->tailtarget = gv_strdup(dflt_target);
+    if ((s = agget(e, "headtarget")) && s[0]) {
+      obj->explicit_headtarget = true;
+      obj->headtarget = strdup_and_subst_obj(s, e);
+    } else if (dflt_target)
+      obj->headtarget = gv_strdup(dflt_target);
+  }
+
+  if (flags & GVRENDER_DOES_TOOLTIPS) {
+    if (((s = agget(e, "tooltip")) && s[0]) ||
+        ((s = agget(e, "edgetooltip")) && s[0])) {
+      char *tooltip = preprocessTooltip(s, e);
+      obj->tooltip = strdup_and_subst_obj(tooltip, e);
+      free(tooltip);
+      obj->explicit_tooltip = true;
+    } else if (obj->label)
+      obj->tooltip = gv_strdup(obj->label);
+
+    if ((s = agget(e, "labeltooltip")) && s[0]) {
+      char *tooltip = preprocessTooltip(s, e);
+      obj->labeltooltip = strdup_and_subst_obj(tooltip, e);
+      free(tooltip);
+      obj->explicit_labeltooltip = true;
+    } else if (obj->label)
+      obj->labeltooltip = gv_strdup(obj->label);
+
+    if ((s = agget(e, "tailtooltip")) && s[0]) {
+      char *tooltip = preprocessTooltip(s, e);
+      obj->tailtooltip = strdup_and_subst_obj(tooltip, e);
+      free(tooltip);
+      obj->explicit_tailtooltip = true;
+    } else if (obj->taillabel)
+      obj->tailtooltip = gv_strdup(obj->taillabel);
+
+    if ((s = agget(e, "headtooltip")) && s[0]) {
+      char *tooltip = preprocessTooltip(s, e);
+      obj->headtooltip = strdup_and_subst_obj(tooltip, e);
+      free(tooltip);
+      obj->explicit_headtooltip = true;
+    } else if (obj->headlabel)
+      obj->headtooltip = gv_strdup(obj->headlabel);
+  }
+
+  free(dflt_url);
+  free(dflt_target);
+
+  if (flags & (GVRENDER_DOES_MAPS | GVRENDER_DOES_TOOLTIPS)) {
+    if (ED_spl(e) && (obj->url || obj->tooltip) &&
+        (flags & GVRENDER_DOES_MAP_POLYGON)) {
+      int ns;
+      splines *spl;
+      double w2 = MAX(job->obj->penwidth / 2.0, 2.0);
+
+      spl = ED_spl(e);
+      ns = spl->size; /* number of splines */
+      for (i = 0; i < ns; i++)
+        map_output_bspline(&pbs, &pbs_n, &pbs_poly_n, spl->list + i, w2);
+      obj->url_bsplinemap_poly_n = pbs_poly_n;
+      obj->url_bsplinemap_n = pbs_n;
+      if (!(flags & GVRENDER_DOES_TRANSFORM)) {
+        size_t nump;
+        for (nump = 0, i = 0; i < pbs_poly_n; i++) {
+          assert(pbs_n[i] >= 0);
+          nump += (size_t)pbs_n[i];
+        }
+        gvrender_ptf_A(job, pbs, pbs, nump);
+      }
+      obj->url_bsplinemap_p = pbs;
+      obj->url_map_shape = MAP_POLYGON;
+      obj->url_map_p = pbs;
+      assert(pbs_n[0] >= 0);
+      obj->url_map_n = (size_t)pbs_n[0];
     }
+  }
 
-    if (flags & GVRENDER_DOES_LABELS) {
-	if ((lab = ED_label(e)))
-	    obj->label = lab->text;
-	obj->taillabel = obj->headlabel = obj->xlabel = obj->label;
-	if ((tlab = ED_xlabel(e)))
-	    obj->xlabel = tlab->text;
-	if ((tlab = ED_tail_label(e)))
-	    obj->taillabel = tlab->text;
-	if ((hlab = ED_head_label(e)))
-	    obj->headlabel = hlab->text;
-    }
-
-    if (flags & GVRENDER_DOES_MAPS) {
-	agxbuf xb = {0};
-
-	s = getObjId (job, e, &xb);
-	obj->id = strdup_and_subst_obj(s, e);
-	agxbfree(&xb);
-
-        if (((s = agget(e, "href")) && s[0]) || ((s = agget(e, "URL")) && s[0]))
-            dflt_url = strdup_and_subst_obj(s, e);
-	if (((s = agget(e, "edgehref")) && s[0]) || ((s = agget(e, "edgeURL")) && s[0]))
-            obj->url = strdup_and_subst_obj(s, e);
-	else if (dflt_url)
-	    obj->url = gv_strdup(dflt_url);
-	if (((s = agget(e, "labelhref")) && s[0]) || ((s = agget(e, "labelURL")) && s[0]))
-            obj->labelurl = strdup_and_subst_obj(s, e);
-	else if (dflt_url)
-	    obj->labelurl = gv_strdup(dflt_url);
-	if (((s = agget(e, "tailhref")) && s[0]) || ((s = agget(e, "tailURL")) && s[0])) {
-            obj->tailurl = strdup_and_subst_obj(s, e);
-            obj->explicit_tailurl = true;
-	}
-	else if (dflt_url)
-	    obj->tailurl = gv_strdup(dflt_url);
-	if (((s = agget(e, "headhref")) && s[0]) || ((s = agget(e, "headURL")) && s[0])) {
-            obj->headurl = strdup_and_subst_obj(s, e);
-            obj->explicit_headurl = true;
-	}
-	else if (dflt_url)
-	    obj->headurl = gv_strdup(dflt_url);
-    } 
-
-    if (flags & GVRENDER_DOES_TARGETS) {
-        if ((s = agget(e, "target")) && s[0])
-            dflt_target = strdup_and_subst_obj(s, e);
-        if ((s = agget(e, "edgetarget")) && s[0]) {
-	    obj->explicit_edgetarget = true;
-            obj->target = strdup_and_subst_obj(s, e);
-	}
-	else if (dflt_target)
-	    obj->target = gv_strdup(dflt_target);
-        if ((s = agget(e, "labeltarget")) && s[0])
-            obj->labeltarget = strdup_and_subst_obj(s, e);
-	else if (dflt_target)
-	    obj->labeltarget = gv_strdup(dflt_target);
-        if ((s = agget(e, "tailtarget")) && s[0]) {
-            obj->tailtarget = strdup_and_subst_obj(s, e);
-	    obj->explicit_tailtarget = true;
-	}
-	else if (dflt_target)
-	    obj->tailtarget = gv_strdup(dflt_target);
-        if ((s = agget(e, "headtarget")) && s[0]) {
-	    obj->explicit_headtarget = true;
-            obj->headtarget = strdup_and_subst_obj(s, e);
-	}
-	else if (dflt_target)
-	    obj->headtarget = gv_strdup(dflt_target);
-    } 
-
-    if (flags & GVRENDER_DOES_TOOLTIPS) {
-        if (((s = agget(e, "tooltip")) && s[0]) ||
-            ((s = agget(e, "edgetooltip")) && s[0])) {
-	    char* tooltip = preprocessTooltip (s, e);
-            obj->tooltip = strdup_and_subst_obj(tooltip, e);
-	    free (tooltip);
-	    obj->explicit_tooltip = true;
-	}
-	else if (obj->label)
-	    obj->tooltip = gv_strdup(obj->label);
-
-        if ((s = agget(e, "labeltooltip")) && s[0]) {
-	    char* tooltip = preprocessTooltip (s, e);
-            obj->labeltooltip = strdup_and_subst_obj(tooltip, e);
-	    free (tooltip);
-	    obj->explicit_labeltooltip = true;
-	}
-	else if (obj->label)
-	    obj->labeltooltip = gv_strdup(obj->label);
-
-        if ((s = agget(e, "tailtooltip")) && s[0]) {
-	    char* tooltip = preprocessTooltip (s, e);
-            obj->tailtooltip = strdup_and_subst_obj(tooltip, e);
-	    free (tooltip);
-	    obj->explicit_tailtooltip = true;
-	}
-	else if (obj->taillabel)
-	    obj->tailtooltip = gv_strdup(obj->taillabel);
-
-        if ((s = agget(e, "headtooltip")) && s[0]) {
-	    char* tooltip = preprocessTooltip (s, e);
-            obj->headtooltip = strdup_and_subst_obj(tooltip, e);
-	    free (tooltip);
-	    obj->explicit_headtooltip = true;
-	}
-	else if (obj->headlabel)
-	    obj->headtooltip = gv_strdup(obj->headlabel);
-    } 
-    
-    free (dflt_url);
-    free (dflt_target);
-
-    if (flags & (GVRENDER_DOES_MAPS | GVRENDER_DOES_TOOLTIPS)) {
-	if (ED_spl(e) && (obj->url || obj->tooltip) && (flags & GVRENDER_DOES_MAP_POLYGON)) {
-	    int ns;
-	    splines *spl;
-	    double w2 = MAX(job->obj->penwidth/2.0,2.0);
-
-	    spl = ED_spl(e);
-	    ns = spl->size; /* number of splines */
-	    for (i = 0; i < ns; i++)
-		map_output_bspline (&pbs, &pbs_n, &pbs_poly_n, spl->list+i, w2);
-	    obj->url_bsplinemap_poly_n = pbs_poly_n;
-	    obj->url_bsplinemap_n = pbs_n;
-	    if (! (flags & GVRENDER_DOES_TRANSFORM)) {
-    		size_t nump;
-    		for ( nump = 0, i = 0; i < pbs_poly_n; i++) {
-        	    assert(pbs_n[i] >= 0);
-        	    nump += (size_t)pbs_n[i];
-    		}
-		gvrender_ptf_A(job, pbs, pbs, nump);
-	    }
-	    obj->url_bsplinemap_p = pbs;
-	    obj->url_map_shape = MAP_POLYGON;
-	    obj->url_map_p = pbs;
-	    assert(pbs_n[0] >= 0);
-	    obj->url_map_n = (size_t)pbs_n[0];
-	}
-    }
-
-    gvrender_begin_edge(job);
-    if (obj->url || obj->explicit_tooltip)
-	gvrender_begin_anchor(job,
-		obj->url, obj->tooltip, obj->target, obj->id);
+  gvrender_begin_edge(job);
+  if (obj->url || obj->explicit_tooltip)
+    gvrender_begin_anchor(job, obj->url, obj->tooltip, obj->target, obj->id);
 }
 
 static void
