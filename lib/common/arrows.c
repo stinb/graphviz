@@ -951,6 +951,18 @@ static pointf arrow_type_curve(GVJ_t *job, pointf p, pointf u, double arrowsize,
     pointf q, v, w;
     pointf AF[4], a[2];
 
+    if (!flag.mod_inv && (u.x != 0 || u.y != 0)) {
+        const pointf P = {-u.x, -u.y};
+        // phi = angle of arrow
+        const double cosPhi = P.x / hypot(P.x, P.y);
+        const double sinPhi = P.y / hypot(P.x, P.y);
+        const pointf delta = {penwidth / 2.0 * cosPhi, penwidth / 2.0 * sinPhi};
+
+        // move the arrow backwards to not visually overlap the node
+        p.x -= delta.x;
+        p.y -= delta.y;
+    }
+
     q.x = p.x + u.x;
     q.y = p.y + u.y; 
     v.x = -u.y * arrowwidth; 
