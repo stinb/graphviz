@@ -139,6 +139,11 @@ def gvpr(program: Path) -> str:
     )
 
 
+def is_64bit() -> bool:
+    """is the current platform a 64-bit environment?"""
+    return sys.maxsize > 2**32
+
+
 def is_cmake() -> bool:
     """was the Graphviz under test built with CMake?"""
     return os.getenv("build_system") == "cmake"

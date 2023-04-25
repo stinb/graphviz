@@ -33,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   has been fixed.
 - A minor inaccuracy in node width and height for some cases of defining
   record-based nodes has been fixed.
+- On all known supported platforms except 32-bit MinGW, graphs involving small
+  distance constraints no longer cause a crash during majorization. #1554
 
 ## [8.0.3] – 2023-04-16
 

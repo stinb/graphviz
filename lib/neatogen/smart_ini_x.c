@@ -8,6 +8,8 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
+#include <float.h>
+#include <math.h>
 #include <neatogen/digcola.h>
 #ifdef DIGCOLA
 #include <neatogen/kkutils.h>
@@ -30,6 +32,12 @@ standardize(double* orthog, int nvtxs)
 	
 	/* normalize: */
 	len = norm(orthog, 0, nvtxs-1);
+
+	// if we have a degenerate length, do not attempt to scale by it
+	if (fabs(len) < DBL_EPSILON) {
+		return;
+	}
+
 	vecscale(orthog, 0, nvtxs-1, 1.0 / len, orthog);
 }
 
@@ -290,7 +298,7 @@ int IMDS_given_dim(vtx_data* graph, int n, double* given_coords,
 				sum2+=1.0/(Dij[i][j]*Dij[i][j])*fabs(x[i]-x[j])*fabs(x[i]-x[j]);
 			}
 		}
-		uniLength=sum1/sum2;
+		uniLength = isinf(sum2) ? 0 : sum1 / sum2;
 		for (i=0; i<n; i++)
 			x[i]*=uniLength;
 	}
@@ -371,7 +379,7 @@ int IMDS_given_dim(vtx_data* graph, int n, double* given_coords,
 		}
 	}
 	
-	for (i=0; i<n; i++) {
+	for (i = 0; !(fabs(uniLength) < DBL_EPSILON) && i < n; i++) {
 		x[i] /= uniLength;
 		y[i] /= uniLength;
 	}

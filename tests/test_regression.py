@@ -28,6 +28,8 @@ from gvtest import (  # pylint: disable=wrong-import-position
     ROOT,
     dot,
     gvpr,
+    is_64bit,
+    is_mingw,
     is_python36,
     remove_xtype_warnings,
     run_c,
@@ -723,6 +725,30 @@ def test_1449():
         assert p.returncode == 0, "Graphviz exited with non-zero status"
 
     assert stderr.strip() == "", "SVG color scheme use caused warnings"
+
+
+@pytest.mark.xfail(
+    not is_64bit() and is_mingw(),
+    strict=True,
+    reason="https://gitlab.com/graphviz/graphviz/-/issues/1554",
+)
+def test_1554():
+    """
+    small distances between nodes should not cause a crash in majorization
+    https://gitlab.com/graphviz/graphviz/-/issues/1554
+    """
+
+    # locate our associated test case in this directory
+    input = Path(__file__).parent / "1554.dot"
+    assert input.exists(), "unexpectedly missing test case"
+
+    # run it through Graphviz
+    output = dot("svg", input)
+
+    # the output should not have NaN values, indicating out of bounds computation
+    assert (
+        re.search(r"\bnan\b", output, flags=re.IGNORECASE) is None
+    ), "computation exceeded bounds"
 
 
 @pytest.mark.skipif(which("gvpr") is None, reason="GVPR not available")
