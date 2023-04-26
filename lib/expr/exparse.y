@@ -52,7 +52,6 @@
 	Sflong_t	integer;
 	int		op;
 	char*		string;
-	void*		user;
 }
 
 %start	program
