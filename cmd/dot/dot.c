@@ -34,18 +34,6 @@ static GVC_t *Gvc;
 static graph_t * G;
 
 #ifndef _WIN32
-static void intr(int s)
-{
-    (void)s;
-
-/* if interrupted we try to produce a partial rendering before exiting */
-    if (G)
-	gvRenderJobs(Gvc, G);
-/* Note that we don't call gvFinalize() so that we don't start event-driven
- * devices like -Tgtk or -Txlib */
-    graphviz_exit(gvFreeContext(Gvc));
-}
-
 #ifndef NO_FPERR
 static void fperr(int s)
 {
@@ -66,7 +54,6 @@ int main(int argc, char **argv)
     gvParseArgs(Gvc, argc, argv);
 #ifndef _WIN32
     signal(SIGUSR1, gvToggle);
-    signal(SIGINT, intr);
 #ifndef NO_FPERR
     signal(SIGFPE, fperr);
 #endif

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for versions of Pango prior to 1.22.0 has been removed.
 - On Windows, the Pango plugin now uses the newer `pango_layout_get_baseline`
   API.
+- `dot` no longer installs a signal handler for `SIGINT`. This means typing
+  Ctrl+C while `dot` is running will no longer attempt a partial render and exit
+  with 0 status. Ctrl+C will have the standard behavior, typically aborting
+  `dot`.
 
 ### Fixed
 
