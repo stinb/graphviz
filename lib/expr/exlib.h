@@ -26,13 +26,6 @@ extern "C" {
 #include <cgraph/agxbuf.h>
 #include <sfio/sfio_t.h>
 
-#define sfstrseek(f,p,m) \
-    ( \
-        (((p) < 0 || (p) > (f)->size) ? (char*)0 : \
-         (char*)((f)->next = (f)->data+(p)) ) \
-    )
-
-
 typedef struct Exinput_s		/* input stack			*/
 {
 	struct Exinput_s*next;		/* next in stack		*/
