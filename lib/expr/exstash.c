@@ -26,5 +26,5 @@ exstash(Sfio_t* sp, Vmalloc_t* vp)
 {
 	char*	s;
 
-	return ((s = sfstruse(sp)) && (!vp || (s = vmstrdup(vp, s)))) ? s : exnospace();
+	return ((s = sfstruse(sp)) && (s = vmstrdup(vp, s))) ? s : exnospace();
 }
