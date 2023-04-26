@@ -53,7 +53,6 @@
 	int		op;
 	char*		string;
 	void*		user;
-	struct Exbuf_s*	buffer;
 }
 
 %start	program
