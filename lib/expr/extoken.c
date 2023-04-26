@@ -562,8 +562,6 @@ extoken_fn(Expr_t* ex)
 				if (c == '#')
 				{
 					sfputc(ex->tmp, c);
-					/* s = exstash(ex->tmp, NULL); */
-					/* b = strtol(s, NULL, 10); */
 					do
 					{
 						sfputc(ex->tmp, c);
