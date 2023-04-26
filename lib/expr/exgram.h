@@ -27,6 +27,7 @@ extern "C" {
 #define _EXPARSE_H
 #endif
 
+#include <cgraph/agxbuf.h>
 #include <expr/exlib.h>
 #include <stddef.h>
 #include <string.h>
@@ -617,7 +618,7 @@ preprint(Exnode_t* args)
 {
 	Print_t*	x;
 	char*		s;
-	int		c;
+	char		c;
 	int			t;
 	int			i;
 	int			n;
@@ -639,7 +640,7 @@ preprint(Exnode_t* args)
 	args = args->data.operand.right;
 	for (s = f; *s; s++)
 	{
-		sfputc(expr.program->tmp, *s);
+		agxbputc(&expr.program->tmp, *s);
 		if (*s == '%')
 		{
 			if (!*++s)
@@ -647,7 +648,7 @@ preprint(Exnode_t* args)
 			if (*s != '%')
 				break;
 			if (args)
-				sfputc(expr.program->tmp, '%');
+				agxbputc(&expr.program->tmp, '%');
 		}
 	}
 	x = 0;
@@ -691,7 +692,7 @@ preprint(Exnode_t* args)
 					n = 1;
 					for (;;)
 					{
-						sfputc(expr.program->tmp, c);
+						agxbputc(&expr.program->tmp, c);
 						switch (c = *s++)
 						{
 						case 0:
@@ -739,10 +740,10 @@ preprint(Exnode_t* args)
 						goto specified;
 					break;
 				}
-				sfputc(expr.program->tmp, c);
+				agxbputc(&expr.program->tmp, c);
 			}
 		specified:
-			sfputc(expr.program->tmp, c);
+			agxbputc(&expr.program->tmp, c);
 			for (e = s; *s; s++)
 			{
 				if (*s == '%')
@@ -759,7 +760,7 @@ preprint(Exnode_t* args)
 						break;
 					}
 				}
-				sfputc(expr.program->tmp, *s);
+				agxbputc(&expr.program->tmp, *s);
 			}
 			if (!args)
 			{
@@ -798,7 +799,10 @@ preprint(Exnode_t* args)
 			}
 			args = args->data.operand.right;
 		}
-		x->format = exstash(expr.program->tmp, expr.program->vm);
+		x->format = vmstrdup(expr.program->vm, agxbuse(&expr.program->tmp));
+		if (x->format == NULL) {
+			x->format = exnospace();
+		}
 		if (!*s)
 			break;
 		f = s;
@@ -806,7 +810,7 @@ preprint(Exnode_t* args)
 	if (args)
 		exerror("too many format arguments");
  done:
-	sfstrseek(expr.program->tmp, 0, SEEK_SET);
+	agxbclear(&expr.program->tmp);
 	return p;
 }
 
@@ -978,8 +982,7 @@ exclose(Expr_t* p, int all)
 				vmclose(p->ve);
 			if (p->symbols)
 				dtclose(p->symbols);
-			if (p->tmp)
-				sfclose(p->tmp);
+			agxbfree(&p->tmp);
 			while ((in = p->input))
 			{
 				if (in->pushback)

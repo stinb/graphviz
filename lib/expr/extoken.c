@@ -16,6 +16,7 @@
  */
 
 #include "config.h"
+#include <cgraph/agxbuf.h>
 #include <ctype.h>
 #include <expr/exlib.h>
 #include <stddef.h>
@@ -494,13 +495,13 @@ extoken_fn(Expr_t* ex)
 		case '\'':
 		case '"':
 			q = c;
-			sfstrseek(ex->tmp, 0, SEEK_SET);
+			agxbclear(&ex->tmp);
 			ex->input->nesting++;
 			while ((c = lex(ex)) != q)
 			{
 				if (c == '\\')
 				{
-					sfputc(ex->tmp, c);
+					agxbputc(&ex->tmp, '\\');
 					c = lex(ex);
 				}
 				if (!c)
@@ -514,10 +515,10 @@ extoken_fn(Expr_t* ex)
 						error_info.line++;
 					else error_info.line = 2;
 				}
-				sfputc(ex->tmp, c);
+				agxbputc(&ex->tmp, (char)c);
 			}
 			ex->input->nesting--;
-			s = exstash(ex->tmp, NULL);
+			s = agxbuse(&ex->tmp);
 			if (q == '"' || (ex->disc->flags & EX_CHARSTRING))
 			{
 				if (!(ex_lval.string = vmstrdup(ex->vm, s)))
@@ -530,41 +531,40 @@ extoken_fn(Expr_t* ex)
 		case '.':
 			if (isdigit(c = lex(ex)))
 			{
-				sfstrseek(ex->tmp, 0, SEEK_SET);
-				sfputc(ex->tmp, '0');
-				sfputc(ex->tmp, '.');
+				agxbclear(&ex->tmp);
+				agxbput(&ex->tmp, "0.");
 				goto floating;
 			}
 			exunlex(ex, c);
 			return ex_lval.op = '.';
 		case '0': case '1': case '2': case '3': case '4':
 		case '5': case '6': case '7': case '8': case '9': {
-			sfstrseek(ex->tmp, 0, SEEK_SET);
-			sfputc(ex->tmp, c);
+			agxbclear(&ex->tmp);
+			agxbputc(&ex->tmp, (char)c);
 			q = INTEGER;
 			int b = 0;
 			if ((c = lex(ex)) == 'x' || c == 'X')
 			{
 				b = 16;
-				sfputc(ex->tmp, c);
+				agxbputc(&ex->tmp, (char)c);
 				for (c = lex(ex); isxdigit(c); c = lex(ex))
 				{
-					sfputc(ex->tmp, c);
+					agxbputc(&ex->tmp, (char)c);
 				}
 			}
 			else
 			{
 				while (isdigit(c))
 				{
-					sfputc(ex->tmp, c);
+					agxbputc(&ex->tmp, (char)c);
 					c = lex(ex);
 				}
 				if (c == '#')
 				{
-					sfputc(ex->tmp, c);
+					agxbputc(&ex->tmp, (char)c);
 					do
 					{
-						sfputc(ex->tmp, c);
+						agxbputc(&ex->tmp, (char)c);
 					} while (isalnum(c = lex(ex)));
 				}
 				else
@@ -573,28 +573,28 @@ extoken_fn(Expr_t* ex)
 					{
 					floating:
 						q = FLOATING;
-						sfputc(ex->tmp, c);
+						agxbputc(&ex->tmp, (char)c);
 						while (isdigit(c = lex(ex)))
-							sfputc(ex->tmp, c);
+							agxbputc(&ex->tmp, (char)c);
 					}
 					if (c == 'e' || c == 'E')
 					{
 						q = FLOATING;
-						sfputc(ex->tmp, c);
+						agxbputc(&ex->tmp, (char)c);
 						if ((c = lex(ex)) == '-' || c == '+')
 						{
-							sfputc(ex->tmp, c);
+							agxbputc(&ex->tmp, (char)c);
 							c = lex(ex);
 						}
 						while (isdigit(c))
 						{
-							sfputc(ex->tmp, c);
+							agxbputc(&ex->tmp, (char)c);
 							c = lex(ex);
 						}
 					}
 				}
 			}
-			s = exstash(ex->tmp, NULL);
+			s = agxbuse(&ex->tmp);
 			if (q == FLOATING)
 				ex_lval.floating = strtod(s, &e);
 			else
@@ -619,12 +619,12 @@ extoken_fn(Expr_t* ex)
 		default:
 			if (isalpha(c) || c == '_' || c == '$')
 			{
-				sfstrseek(ex->tmp, 0, SEEK_SET);
-				sfputc(ex->tmp, c);
+				agxbclear(&ex->tmp);
+				agxbputc(&ex->tmp, (char)c);
 				while (isalnum(c = lex(ex)) || c == '_' || c == '$')
-					sfputc(ex->tmp, c);
+					agxbputc(&ex->tmp, (char)c);
 				exunlex(ex, c);
-				s = exstash(ex->tmp, NULL);
+				s = agxbuse(&ex->tmp);
 				/* v = expr.declare ? dtview(ex->symbols, NULL) : (Dt_t*)0; FIX */
 				v = (Dt_t*)0;
 				ex_lval.id = dtmatch(ex->symbols, s);
@@ -696,7 +696,7 @@ extoken_fn(Expr_t* ex)
 						int	t;
 
 						/*UNDENT...*/
-		sfstrseek(ex->tmp, 0, SEEK_SET);
+		agxbclear(&ex->tmp);
 		b = 1;
 		n = 0;
 		po = 0;
@@ -741,7 +741,7 @@ extoken_fn(Expr_t* ex)
 						}
 						if (!b++)
 							goto eof;
-						sfputc(ex->tmp, ' ');
+						agxbputc(&ex->tmp, ' ');
 						break;
 					}
 					break;
@@ -753,12 +753,12 @@ extoken_fn(Expr_t* ex)
 						error_info.line++;
 					else error_info.line = 2;
 					b = 1;
-					sfputc(ex->tmp, '\n');
+					agxbputc(&ex->tmp, '\n');
 					break;
 				default:
 					b = 0;
-					sfputc(ex->tmp, c);
-					sfputc(ex->tmp, q);
+					agxbputc(&ex->tmp, (char)c);
+					agxbputc(&ex->tmp, (char)q);
 					break;
 				}
 				continue;
@@ -767,13 +767,13 @@ extoken_fn(Expr_t* ex)
 					error_info.line++;
 				else error_info.line = 2;
 				b = 1;
-				sfputc(ex->tmp, '\n');
+				agxbputc(&ex->tmp, '\n');
 				continue;
 			case ' ':
 			case '\t':
 				if (!b++)
 					goto eof;
-				sfputc(ex->tmp, ' ');
+				agxbputc(&ex->tmp, ' ');
 				continue;
 			case '(':
 			case '{':
@@ -797,7 +797,7 @@ extoken_fn(Expr_t* ex)
 				}
 				else if (c == po)
 					n++;
-				sfputc(ex->tmp, c);
+				agxbputc(&ex->tmp, (char)c);
 				continue;
 			case ')':
 			case '}':
@@ -808,7 +808,7 @@ extoken_fn(Expr_t* ex)
 					exunlex(ex, c);
 					break;
 				}
-				sfputc(ex->tmp, c);
+				agxbputc(&ex->tmp, (char)c);
 				if (c == pc && --n <= 0)
 				{
 					if (t == po)
@@ -820,19 +820,19 @@ extoken_fn(Expr_t* ex)
 				b = 0;
 				if (!n)
 					break;
-				sfputc(ex->tmp, c);
+				agxbputc(&ex->tmp, (char)c);
 				continue;
 			case '\'':
 			case '"':
 				b = 0;
-				sfputc(ex->tmp, c);
+				agxbputc(&ex->tmp, (char)c);
 				ex->input->nesting++;
 				q = c;
 				while ((c = lex(ex)) != q)
 				{
 					if (c == '\\')
 					{
-						sfputc(ex->tmp, c);
+						agxbputc(&ex->tmp, '\\');
 						c = lex(ex);
 					}
 					if (!c)
@@ -846,13 +846,13 @@ extoken_fn(Expr_t* ex)
 							error_info.line++;
 						else error_info.line = 2;
 					}
-					sfputc(ex->tmp, c);
+					agxbputc(&ex->tmp, (char)c);
 				}
 				ex->input->nesting--;
 				continue;
 			default:
 				b = 0;
-				sfputc(ex->tmp, c);
+				agxbputc(&ex->tmp, (char)c);
 				continue;
 			}
 			break;
