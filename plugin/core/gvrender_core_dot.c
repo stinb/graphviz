@@ -518,7 +518,7 @@ static void dot_end_graph(GVJ_t *job)
     g->clos->disc.io = io_save;
 }
 
-static unsigned int flag_masks[] = { 0x1F, 0x3F, 0x7F };
+static const unsigned int flag_masks[] = {0x1F, 0x3F, 0x7F};
 
 static void xdot_textspan(GVJ_t * job, pointf p, textspan_t * span)
 {
