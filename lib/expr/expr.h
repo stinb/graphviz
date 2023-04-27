@@ -129,12 +129,6 @@ struct Exref_s				/* . reference list		*/
 	Exnode_t*	index;		/* optional reference index	*/
 };
 
-typedef struct Exbuf_s			/* sized buffer			*/
-{
-	uint64_t	size;		/* buffer size			*/
-	char*		data;		/* buffer data			*/
-} Exbuf_t;
-
 union Exdata_u
 {
 
