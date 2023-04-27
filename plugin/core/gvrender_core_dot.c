@@ -34,8 +34,6 @@
 #include <gvc/gvc.h>
 #include <gvc/gvio.h>
 
-/* #define NEW_XDOT */
-
 typedef enum {
 	FORMAT_DOT,
 	FORMAT_CANON,
@@ -313,40 +311,6 @@ static void xdot_end_edge(GVJ_t* job)
     textflags[EMIT_TLABEL] = 0;
     textflags[EMIT_HLABEL] = 0;
 }
-
-#ifdef NEW_XDOT
-/* xdot_begin_anchor:
- * The encoding of which fields are present assumes that one of the fields is present,
- * so there is never a 0 after the H.
- */
-static void xdot_begin_anchor(GVJ_t * job, char *href, char *tooltip, char *target, char *id)
-{
-    emit_state_t emit_state = job->obj->emit_state;
-    unsigned int flags = 0;
-
-    agxbput(xbufs[emit_state], "H ");
-    if (href)
-	flags |= 1;
-    if (tooltip)
-	flags |= 2;
-    if (target)
-	flags |= 4;
-    agxbprint(xbufs[emit_state], "%d ", flags);
-    if (href)
-	xdot_str (job, "", href);
-    if (tooltip)
-	xdot_str (job, "", tooltip);
-    if (target)
-	xdot_str (job, "", target);
-}
-
-static void xdot_end_anchor(GVJ_t * job)
-{
-    emit_state_t emit_state = job->obj->emit_state;
-
-    agxbput(xbufs[emit_state], "H 0 ");
-}
-#endif
 
 static void xdot_end_cluster(GVJ_t * job)
 {
@@ -804,13 +768,8 @@ gvrender_engine_t xdot_engine = {
     xdot_end_node,
     0,				/* xdot_begin_edge */
     xdot_end_edge,
-#ifdef NEW_XDOT
-    xdot_begin_anchor,
-    xdot_end_anchor,
-#else
     0,                          /* xdot_begin_anchor */
     0,                          /* xdot_end_anchor */
-#endif
     0,				/* xdot_begin_label */
     0,				/* xdot_end_label */
     xdot_textspan,
