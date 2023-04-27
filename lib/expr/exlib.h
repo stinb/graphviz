@@ -23,14 +23,8 @@ extern "C" {
 #define _EXLIB_H
 
 #include <ast/ast.h>
+#include <cgraph/agxbuf.h>
 #include <sfio/sfio_t.h>
-
-#define sfstrseek(f,p,m) \
-    ( \
-        (((p) < 0 || (p) > (f)->size) ? (char*)0 : \
-         (char*)((f)->next = (f)->data+(p)) ) \
-    )
-
 
 typedef struct Exinput_s		/* input stack			*/
 {
@@ -111,7 +105,7 @@ typedef struct Print_s			/* compiled printf arg node	*/
 	Exdisc_t*	disc;		/* user discipline		*/ \
 	Exinput_t*	input;		/* input stack			*/ \
 	Expr_t*		program;	/* previous program on stack	*/ \
-	Sfio_t*		tmp;		/* tmp string buffer		*/ \
+	agxbuf		tmp;		/* tmp string buffer		*/ \
 	Extype_t	loopret;	/* return value			*/ \
 	Exid_t		main;		/* main procedure		*/ \
 	char		line[512];	/* last few input tokens	*/ \
