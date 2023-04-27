@@ -585,7 +585,8 @@ static void xdot_textspan(GVJ_t * job, pointf p, textspan_t * span)
 	flags = span->font->flags;
     else
 	flags = 0;
-    if (xd->version >= 15) {
+    const size_t flag_masks_size = sizeof(flag_masks) / sizeof(flag_masks[0]);
+    if (xd->version >= 15 && (size_t)xd->version - 15 < flag_masks_size) {
 	unsigned int mask = flag_masks[xd->version-15];
 	unsigned int bits = flags & mask;
 	if (textflags[emit_state] != bits) {

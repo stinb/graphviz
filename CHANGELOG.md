@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   of iterations that exceeds `INT_MAX` are rounded down to `INT_MAX`. Iteration
   numbers outside this range do not have useful behavior, but could be caused
   unintentionally by users.
+- Setting `xdotversion` attributes that parse as greater than 17 (`xdotversion`
+  is parsed as a series of digits, ignoring all non-digits) no longer causes an
+  out of bounds read when rendering to xdot. #2390
 
 ## [8.0.5] – 2023-04-30
 

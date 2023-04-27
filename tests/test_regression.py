@@ -2737,7 +2737,6 @@ def test_2375():
     run_c(c_src, link=["gvc"])
 
 
-@pytest.mark.xfail()  # FIXME
 def test_2390():
     """
     using an out of range `xdotversion` should not crash Graphviz
