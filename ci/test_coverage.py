@@ -48,7 +48,7 @@ def main(args: List[str]) -> int:  # pylint: disable=C0116
         cwd / "build/lib/cgraph/grammar.c",
         cwd / "build/lib/cgraph/scan.c",
         cwd / "build/lib/common/htmlparse.c",
-        cwd / "build/lib/expr/y.tab.c",
+        cwd / "build/lib/expr/exparse.c",
         cwd / "build/cmd/gvedit/gvedit_autogen/EWIEGA46WW/moc_csettings.cpp",
         cwd / "build/cmd/gvedit/gvedit_autogen/EWIEGA46WW/moc_imageviewer.cpp",
         cwd / "build/cmd/gvedit/gvedit_autogen/EWIEGA46WW/moc_mainwindow.cpp",

@@ -56,6 +56,9 @@
     <ClCompile Include="exopen.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="exparse.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="exstash.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -66,9 +69,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="exzero.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="y.tab.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

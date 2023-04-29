@@ -28,15 +28,8 @@ libexpr_C_la_LIBADD = \
 $(libexpr_C_la_OBJECTS) $(libexpr_la_OBJECTS): \
 	exparse.h exparse.c exgram.h exop.h
 
-exparse.c: y.tab.c
-	$(SED) "s/fprintf/sfprintf/g" <y.tab.c | \
-		$(SED) "s/FILE/Sfio_t/g" | \
-		$(SED) "s/stderr/sfstderr/g" > exparse.c
-
-y.tab.c y.tab.h: y.output
-
-y.output: $(top_srcdir)/lib/expr/exparse.y
-	$(YACC) -Wno-yacc -dtv $(top_srcdir)/lib/expr/exparse.y -o y.tab.c
+exparse.c exparse.h: $(top_srcdir)/lib/expr/exparse.y
+	$(YACC) -Wno-yacc -dtv $(top_srcdir)/lib/expr/exparse.y -o exparse.c
 
 .3.3.pdf:
 	rm -f $@; pdffile=$@; psfile=$${pdffile%pdf}ps; \
@@ -44,8 +37,6 @@ y.output: $(top_srcdir)/lib/expr/exparse.y
 	$(PS2PDF) $$psfile && rm -f $$psfile || { rm -f $$psfile; exit 1; }
 SUFFIXES = .3 .3.pdf
 
-EXTRA_DIST = \
-	exparse.c \
-	y.tab.c y.tab.h y.output expr.vcxproj*
+EXTRA_DIST = exparse.c exparse.h expr.vcxproj*
 
-DISTCLEANFILES = exparse.c y.tab.[ch] y.output $(pdf_DATA)
+DISTCLEANFILES = exparse.c exparse.h $(pdf_DATA)
