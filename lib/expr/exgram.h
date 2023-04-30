@@ -978,8 +978,7 @@ exclose(Expr_t* p, int all)
 			agxbfree(&p->tmp);
 			while ((in = p->input))
 			{
-				if (in->pushback)
-					free(in->pushback);
+				free(in->pushback);
 				if (in->fp && in->close)
 					sfclose(in->fp);
 				if ((p->input = in->next))
