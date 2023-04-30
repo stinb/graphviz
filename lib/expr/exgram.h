@@ -921,11 +921,7 @@ void exinit(void) {
 	memset (&expr, 0, sizeof(Exstate_t));
 }
 
-/*
- * compile the expression in fp
- */
-
-int excomp(Expr_t *p, const char *name, int line, Sfio_t *fp) {
+int excomp(Expr_t *p, const char *name, int line, Sfio_t *fp, char *prefix) {
 	Exid_t*	v;
 	int	eof;
 
@@ -934,6 +930,8 @@ int excomp(Expr_t *p, const char *name, int line, Sfio_t *fp) {
 	if (expush(p, name, line, fp))
 		return -1;
 	p->input->unit = line >= 0;
+	// insert prefix as pre-loaded pushback
+	p->input->pushback = p->input->pp = prefix;
 	ex_parse();
 	p->input->unit = 0;
 	expop(p);
