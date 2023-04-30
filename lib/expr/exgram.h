@@ -932,12 +932,7 @@ int excomp(Expr_t *p, const char *name, int line, Sfio_t *fp) {
 
 	p->more = 0;
 	eof = p->eof;
-	if (!fp)
-	{
-		if (!p->input)
-			return -1;
-	}
-	else if (expush(p, name, line, fp))
+	if (expush(p, name, line, fp))
 		return -1;
 	else
 		p->input->unit = line >= 0;
