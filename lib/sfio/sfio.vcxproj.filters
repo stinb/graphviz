@@ -92,9 +92,6 @@
     <ClCompile Include="sfscanf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sfseek.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="sfsetbuf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
