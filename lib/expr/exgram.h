@@ -904,8 +904,7 @@ expop(Expr_t* p)
 	}
 	if (in->fp && in->close)
 		sfclose(in->fp);
-	if (in->pushback)
-		free(in->pushback);
+	free(in->pushback);
 	p->input = in->next;
 	free(in);
 	setcontext(p);
