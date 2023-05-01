@@ -27,7 +27,7 @@ TEST_CASE("Edge node overlap for all arrow shapes",
   const auto arrow_shape =
       fmt::format("{}{}", arrow_shape_modifier, primitive_arrow_shape);
   INFO("Edge arrow shape: " << arrow_shape);
-  filename_base += fmt::format("_arrow_shape{}", arrow_shape);
+  filename_base += fmt::format("_arrow_shape_{}", arrow_shape);
 
   const graph_options graph_options = {
       .node_shape = "polygon",

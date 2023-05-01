@@ -165,6 +165,7 @@ static double arrow_length_normal(double lenfact, double arrowsize, double penwi
 static double arrow_length_tee(double lenfact, double arrowsize, double penwidth, arrowflag_t flag);
 static double arrow_length_box(double lenfact, double arrowsize, double penwidth, arrowflag_t flag);
 static double arrow_length_diamond(double lenfact, double arrowsize, double penwidth, arrowflag_t flag);
+static double arrow_length_curve(double lenfact, double arrowsize, double penwidth, arrowflag_t flag);
 static double arrow_length_dot(double lenfact, double arrowsize, double penwidth, arrowflag_t flag);
 
 static const arrowtype_t Arrowtypes[] = {
@@ -174,7 +175,7 @@ static const arrowtype_t Arrowtypes[] = {
     {ARR_TYPE_BOX, 1.0, arrow_type_box, arrow_length_box},
     {ARR_TYPE_DIAMOND, 1.2, arrow_type_diamond, arrow_length_diamond},
     {ARR_TYPE_DOT, 0.8, arrow_type_dot, arrow_length_dot},
-    {ARR_TYPE_CURVE, 1.0, arrow_type_curve, arrow_length_generic},
+    {ARR_TYPE_CURVE, 1.0, arrow_type_curve, arrow_length_curve},
     {ARR_TYPE_GAP, 0.5, arrow_type_gap, arrow_length_generic},
 };
 
@@ -951,6 +952,18 @@ static pointf arrow_type_curve(GVJ_t *job, pointf p, pointf u, double arrowsize,
     pointf q, v, w;
     pointf AF[4], a[2];
 
+    if (!flag.mod_inv && (u.x != 0 || u.y != 0)) {
+        const pointf P = {-u.x, -u.y};
+        // phi = angle of arrow
+        const double cosPhi = P.x / hypot(P.x, P.y);
+        const double sinPhi = P.y / hypot(P.x, P.y);
+        const pointf delta = {penwidth / 2.0 * cosPhi, penwidth / 2.0 * sinPhi};
+
+        // move the arrow backwards to not visually overlap the node
+        p.x -= delta.x;
+        p.y -= delta.y;
+    }
+
     q.x = p.x + u.x;
     q.y = p.y + u.y; 
     v.x = -u.y * arrowwidth; 
@@ -1214,4 +1227,11 @@ static double arrow_length_dot(double lenfact, double arrowsize,
   (void)flag;
 
   return lenfact * arrowsize * ARROW_LENGTH + penwidth;
+}
+
+static double arrow_length_curve(double lenfact, double arrowsize,
+                                 double penwidth, arrowflag_t flag) {
+  (void)flag;
+
+  return lenfact * arrowsize * ARROW_LENGTH + penwidth / 2;
 }
