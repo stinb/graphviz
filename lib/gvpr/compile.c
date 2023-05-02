@@ -2278,17 +2278,15 @@ static Exnode_t *compile(Expr_t * prog, char *src, char *input, int line,
 	sf = sfopen(input, "rs");
 
     /*  prefixing label if necessary */
+    agxbuf label = {0};
     if (lbl) {
-	prefix = sfopen(0, "sr+");
-	sfprintf(prefix, "%s:\n", lbl);
-	sfseek(prefix, 0, 0);
-	sfstack(sf, prefix);
+	agxbprint(&label, "%s:\n", lbl);
 	line--;
     }
 
     if (!src)
 	src = "<command line>";
-    rv = excomp(prog, src, line, sf);
+    rv = excomp(prog, src, line, sf, lbl ? agxbdisown(&label) : NULL);
     sfclose(sf);
 
     if (rv >= 0 && getErrorErrors() == 0)

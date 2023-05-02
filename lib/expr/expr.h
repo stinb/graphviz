@@ -237,7 +237,22 @@ struct Expr_s				/* ex program state		*/
 extern Exnode_t*	excast(Expr_t*, Exnode_t*, int, Exnode_t*, int);
 extern Exnode_t*	exnoncast(Exnode_t *);
 extern void		exclose(Expr_t*, int);
-extern int		excomp(Expr_t*, const char*, int, Sfio_t*);
+
+/** Compile an expression
+ *
+ * The callee takes ownership of the pointer \p prefix and will free it during
+ * \p expop or \p exclose.
+ *
+ * \param p Program structure to store result in
+ * \param name Filename of originating source file
+ * \param line Line number of originating source file
+ * \param fp Handle to source file
+ * \param prefix Optional program text to include ahead of the file content
+ * \return 0 on success
+ */
+extern int excomp(Expr_t *p, const char *name, int line, Sfio_t *fp,
+                  char *prefix);
+
 extern char*		excontext(Expr_t*, char*, int);
 extern int		exdump(Expr_t*, Exnode_t*, agxbuf*);
 #ifdef __GNUC__

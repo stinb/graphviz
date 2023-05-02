@@ -17,6 +17,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import textwrap
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import List
@@ -2803,3 +2804,59 @@ def test_duplicate_hard_coded_metrics_warnings():
     assert (
         p.stderr.count("no hard-coded metrics for 'sans'") <= 1
     ), "multiple identical “no hard-coded metrics” warnings printed"
+
+
+@pytest.mark.parametrize("branch", (0, 1, 2, 3))
+@pytest.mark.skipif(which("gvpr") is None, reason="gvpr not available")
+def test_gvpr_switches(branch: int):
+    """
+    confirm the behavior of GVPR switch statements
+    """
+
+    # an input GVPR program with multiple blocks and switches
+    program = textwrap.dedent(
+        f"""\
+    BEGIN {{
+      switch ({branch}) {{
+        case 0:
+          printf("begin 0\\n");
+          break;
+        case 1:
+          printf("begin 1\\n");
+          break;
+        case 2:
+          printf("begin 2\\n");
+          break;
+        default:
+          printf("begin 3\\n");
+          break;
+      }}
+    }}
+
+    END {{
+      switch ({branch}) {{
+        case 0:
+          printf("end 0\\n");
+          break;
+        case 1:
+          printf("end 1\\n");
+          break;
+        case 2:
+          printf("end 2\\n");
+          break;
+        default:
+          printf("end 3\\n");
+          break;
+      }}
+    }}
+    """
+    )
+
+    # run this through GVPR with no input graph
+    gvpr_bin = which("gvpr")
+    result = subprocess.check_output(
+        [gvpr_bin, program], stdin=subprocess.DEVNULL, universal_newlines=True
+    )
+
+    # confirm we got the expected output
+    assert result == f"begin {branch}\nend {branch}\n", "incorrect GVPR switch behavior"

@@ -904,8 +904,7 @@ expop(Expr_t* p)
 	}
 	if (in->fp && in->close)
 		sfclose(in->fp);
-	if (in->pushback)
-		free(in->pushback);
+	free(in->pushback);
 	p->input = in->next;
 	free(in);
 	setcontext(p);
@@ -922,25 +921,17 @@ void exinit(void) {
 	memset (&expr, 0, sizeof(Exstate_t));
 }
 
-/*
- * compile the expression in fp
- */
-
-int excomp(Expr_t *p, const char *name, int line, Sfio_t *fp) {
+int excomp(Expr_t *p, const char *name, int line, Sfio_t *fp, char *prefix) {
 	Exid_t*	v;
 	int	eof;
 
 	p->more = 0;
 	eof = p->eof;
-	if (!fp)
-	{
-		if (!p->input)
-			return -1;
-	}
-	else if (expush(p, name, line, fp))
+	if (expush(p, name, line, fp))
 		return -1;
-	else
-		p->input->unit = line >= 0;
+	p->input->unit = line >= 0;
+	// insert prefix as pre-loaded pushback
+	p->input->pushback = p->input->pp = prefix;
 	ex_parse();
 	p->input->unit = 0;
 	expop(p);
@@ -985,8 +976,7 @@ exclose(Expr_t* p, int all)
 			agxbfree(&p->tmp);
 			while ((in = p->input))
 			{
-				if (in->pushback)
-					free(in->pushback);
+				free(in->pushback);
 				if (in->fp && in->close)
 					sfclose(in->fp);
 				if ((p->input = in->next))

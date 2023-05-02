@@ -514,9 +514,6 @@ extern "C" {
 #undef min
 #define min(x,y)	((x) < (y) ? (x) : (y))
 
-/* fast functions for memory copy and memory clear */
-#define memclear(s,n)	memset((s),'\0',(n))
-
 /* note that MEMCPY advances the associated pointers */
 #define MEMCPY(to,fr,n) \
 	do { memcpy((void*)to,(void*)fr,n); to += n; fr += n; } while (0)
