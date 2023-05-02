@@ -396,7 +396,7 @@ DEFINE_LIST(strs, char*)
  * At present, the str argument is unused, but may be used to modify
  * the search as in gvplugin_list above.
  */
-char **gvPluginList(GVC_t * gvc, const char *kind, int *sz, const char *str)
+char **gvPluginList(GVC_t * gvc, const char *kind, int *sz, char *str)
 {
     size_t api;
     const gvplugin_available_t *pnext, *plugin;
