@@ -102,7 +102,7 @@ static std::string find_me(void) {
         path.resize(size);
       }
 
-      rc = GetModuleFileName(NULL, path.data(), path.size());
+      rc = GetModuleFileNameA(NULL, path.data(), path.size());
       if (rc == 0) {
         errout << "failed to get path for executable.\n";
         return "";
