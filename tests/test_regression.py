@@ -2736,6 +2736,36 @@ def test_2375():
     run_c(c_src, link=["gvc"])
 
 
+@pytest.mark.xfail(strict=True)  # FIXME
+def test_2391():
+    """
+    `nslimit1=0` should not cause Graphviz to crash
+    https://gitlab.com/graphviz/graphviz/-/issues/2391
+    """
+
+    # locate our associated test case in this directory
+    input = Path(__file__).parent / "2391.dot"
+    assert input.exists(), "unexpectedly missing test case"
+
+    # run it through Graphviz
+    dot("svg", input)
+
+
+@pytest.mark.xfail(strict=True)  # FIXME
+def test_2391_1():
+    """
+    `nslimit1=0` with a label should not cause Graphviz to crash
+    https://gitlab.com/graphviz/graphviz/-/issues/2391
+    """
+
+    # locate our associated test case in this directory
+    input = Path(__file__).parent / "2391_1.dot"
+    assert input.exists(), "unexpectedly missing test case"
+
+    # run it through Graphviz
+    dot("svg", input)
+
+
 def test_changelog_dates():
     """
     Check the dates of releases in the changelog are correctly formatted
