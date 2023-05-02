@@ -16,6 +16,7 @@ add_library(cgraph SHARED
   bitarray.h
   cghdr.h
   cgraph.h
+  clamp.h
   exit.h
   likely.h
   list.h

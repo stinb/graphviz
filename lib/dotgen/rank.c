@@ -24,6 +24,7 @@
  */
 
 #include	<cgraph/alloc.h>
+#include	<cgraph/clamp.h>
 #include	<dotgen/dot.h>
 #include	<limits.h>
 #include	<stdbool.h>
@@ -375,7 +376,7 @@ void rank1(graph_t * g)
     char *s;
 
     if ((s = agget(g, "nslimit1")))
-	maxiter = atof(s) * agnnodes(g);
+	maxiter = scale_clamp(agnnodes(g), atof(s));
     for (size_t c = 0; c < GD_comp(g).size; c++) {
 	GD_nlist(g) = GD_comp(g).list[c];
 	rank(g, (GD_n_cluster(g) == 0 ? 1 : 0), maxiter);	/* TB balance */
@@ -1062,7 +1063,7 @@ void dot2_rank(graph_t * g, aspect_t* asp)
     edgelabel_ranks(g);
 
     if ((s = agget(g, "nslimit1")))
-	maxiter = atof(s) * agnnodes(g);
+	maxiter = scale_clamp(agnnodes(g), atof(s));
     else
 	maxiter = INT_MAX;
 

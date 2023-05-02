@@ -30,6 +30,9 @@
     <ClInclude Include="cgraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="clamp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="exit.h">
       <Filter>Header Files</Filter>
     </ClInclude>

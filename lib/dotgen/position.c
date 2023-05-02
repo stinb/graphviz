@@ -18,6 +18,7 @@
  */
 
 #include <cgraph/alloc.h>
+#include <cgraph/clamp.h>
 #include <dotgen/dot.h>
 #include <dotgen/aspect.h>
 #include <math.h>
@@ -149,7 +150,7 @@ static int nsiter2(graph_t * g)
     char *s;
 
     if ((s = agget(g, "nslimit")))
-	maxiter = atof(s) * agnnodes(g);
+	maxiter = scale_clamp(agnnodes(g), atof(s));
     return maxiter;
 }
 

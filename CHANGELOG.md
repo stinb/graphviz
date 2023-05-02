@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Failure of arrowhead and arrowtail to respect penwidth #372 \
   Fixed also for the `curve` and `icurve`
   [edge arrow shapes](https://graphviz.org/doc/info/arrows.html#primitive-shapes).
+- Iteration calculations based on `nslimit` and/or `nslimit1` attributes are
+  clamped to `[0, INT_MAX]`. That is, calculations that result in a negative
+  number of iterations are rounded up to `0` and those that result in a number
+  of iterations that exceeds `INT_MAX` are rounded down to `INT_MAX`. Iteration
+  numbers outside this range do not have useful behavior, but could be caused
+  unintentionally by users.
 
 ## [8.0.5] – 2023-04-30
 
