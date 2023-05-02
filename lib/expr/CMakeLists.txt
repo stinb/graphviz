@@ -1,16 +1,8 @@
 BISON_TARGET(
   Exparse
   ${CMAKE_CURRENT_SOURCE_DIR}/exparse.y
-  ${CMAKE_CURRENT_BINARY_DIR}/y.tab.c
+  ${CMAKE_CURRENT_BINARY_DIR}/exparse.c
   COMPILE_FLAGS "--yacc -Wno-yacc --defines --debug --verbose"
-)
-
-add_custom_command(
-  OUTPUT exparse.c
-  MAIN_DEPENDENCY y.tab.c
-  COMMAND ${CMAKE_COMMAND}
-  ARGS -P ${CMAKE_CURRENT_SOURCE_DIR}/exparse-replacements.cmake
-  COMMENT "exparse replacements"
 )
 
 add_library(expr STATIC
@@ -18,7 +10,6 @@ add_library(expr STATIC
   exgram.h
   exlib.h
   exop.h
-  exparse.h
   expr.h
 
   # Source files
@@ -36,13 +27,13 @@ add_library(expr STATIC
   exstash.c
 
   # Generated files
-  ${CMAKE_CURRENT_BINARY_DIR}/exparse.c
+  ${BISON_Exparse_OUTPUTS}
 )
 
 target_include_directories(expr PRIVATE
   ..
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}/.. # needed to find generated expr/y.tab.h
+  ${CMAKE_CURRENT_BINARY_DIR}/.. # needed to find generated expr/exparse.h
   ../ast
   ../vmalloc
   ../sfio
