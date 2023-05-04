@@ -11,6 +11,7 @@ pacman -S --noconfirm --needed \
     bison \
     ${MINGW_PACKAGE_PREFIX}-cairo \
     ${MINGW_PACKAGE_PREFIX}-cmake \
+    ${MINGW_PACKAGE_PREFIX}-devil \
     ${MINGW_PACKAGE_PREFIX}-diffutils \
     ${MINGW_PACKAGE_PREFIX}-expat \
     flex \
