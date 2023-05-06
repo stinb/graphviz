@@ -2860,3 +2860,79 @@ def test_gvpr_switches(branch: int):
 
     # confirm we got the expected output
     assert result == f"begin {branch}\nend {branch}\n", "incorrect GVPR switch behavior"
+
+
+@pytest.mark.parametrize(
+    "statement,expected",
+    (
+        ('printf("%d", 5)', "5"),
+        ('printf("%d", 0)', "0"),
+        ('printf("%.0d", 0)', ""),
+        ('printf("%.0d", 1)', "1"),
+        ('printf("%.d", 2)', "2"),
+        ('printf("%d", -1)', "-1"),
+        ('printf("%.3d", 5)', "005"),
+        ('printf("%.3d", -5)', "-005"),
+        ('printf("%5.3d", 5)', "  005"),
+        ('printf("%-5.3d", -5)', "-005 "),
+        ('printf("%-d", 5)', "5"),
+        ('printf("%-+d", 5)', "+5"),
+        ('printf("%+-d", 5)', "+5"),
+        ('printf("%+d", -5)', "-5"),
+        ('printf("% d", 5)', " 5"),
+        ('printf("% .0d", 0)', " "),
+        ('printf("%03d", 5)', "005"),
+        ('printf("%03d", -5)', "-05"),
+        ('printf("% +d", 5)', "+5"),
+        ('printf("%-03d", -5)', "-5 "),
+        ('printf("%o", 5)', "5"),
+        ('printf("%o", 8)', "10"),
+        ('printf("%o", 0)', "0"),
+        ('printf("%.0o", 0)', ""),
+        ('printf("%.0o", 1)', "1"),
+        ('printf("%.3o", 5)', "005"),
+        ('printf("%.3o", 8)', "010"),
+        ('printf("%5.3o", 5)', "  005"),
+        ('printf("%u", 5)', "5"),
+        ('printf("%u", 0)', "0"),
+        ('printf("%.0u", 0)', ""),
+        ('printf("%.0u", 1)', "1"),
+        ('printf("%.3u", 5)', "005"),
+        ('printf("%5.3u", 5)', "  005"),
+        ('printf("%u", 5)', "5"),
+        ('printf("%u", 0)', "0"),
+        ('printf("%.0u", 0)', ""),
+        ('printf("%.0u", 1)', "1"),
+        ('printf("%.3u", 5)', "005"),
+        ('printf("%5.3u", 5)', "  005"),
+        ('printf("%-x", 5)', "5"),
+        ('printf("%03x", 5)', "005"),
+        ('printf("%-x", 5)', "5"),
+        ('printf("%03x", 5)', "005"),
+        ('printf("%-X", 5)', "5"),
+        ('printf("%03X", 5)', "005"),
+        ('printf("%.2s", "abc")', "ab"),
+        ('printf("%.6s", "abc")', "abc"),
+        ('printf("%5s", "abc")', "  abc"),
+        ('printf("%-5s", "abc")', "abc  "),
+        ('printf("%5.2s", "abc")', "   ab"),
+        ('printf("%%")', "%"),
+    ),
+)
+@pytest.mark.skipif(which("gvpr") is None, reason="gvpr not available")
+def test_gvpr_printf(statement: str, expected: str):
+    """
+    check various behaviors of `printf` in a GVPR program
+    """
+
+    # a program that performs the given `printf`
+    program = f"BEGIN {{ {statement}; }}"
+
+    # run this through GVPR with no input graph
+    gvpr_bin = which("gvpr")
+    result = subprocess.check_output(
+        [gvpr_bin, program], stdin=subprocess.DEVNULL, universal_newlines=True
+    )
+
+    # confirm we got the expected output
+    assert result == expected, "incorrect GVPR printf behavior"
