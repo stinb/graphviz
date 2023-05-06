@@ -62,7 +62,7 @@ static int iofread(void *chan, char *buf, int bufsize)
 
 static int ioputstr(void *chan, const char *str)
 {
-    return sfputr(chan, str, -1);
+    return sfputr(chan, str);
 }
 
 static int ioflush(void *chan)

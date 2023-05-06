@@ -371,7 +371,7 @@ static int prints(Expr_t *ex, Exnode_t *exnode, void *env, Sfio_t *sp) {
     args = exnode->data.operand.left;
     while (args) {
 	v = eval(ex, args->data.operand.left, env);
-	sfputr(sp, v.string, -1);
+	sfputr(sp, v.string);
 	args = args->data.operand.right;
     }
     sfputc(sp, '\n');
@@ -412,7 +412,7 @@ static int print(Expr_t *ex, Exnode_t *exnode, void *env, Sfio_t *sp) {
 				sfprintf(sp, "%!", &fmt);
 			}
 			else
-				sfputr(sp, x->format, -1);
+				sfputr(sp, x->format);
 		} while ((x = x->next));
 	else
 	{
