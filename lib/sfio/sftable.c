@@ -33,7 +33,7 @@ static Fmtpos_t *sffmtpos(Sfio_t * f, const char *form, va_list args,
     char *t_str, *sp;
     int v, n, skip, dollar;
     char decimal, thousand;
-    Sffmt_t *ft, savft;
+    Sffmt_t *ft = NULL, savft;
     Fmtpos_t *fp;		/* position array of arguments  */
     int argp, argn, maxp, need[FP_INDEX];
 
