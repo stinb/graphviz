@@ -454,7 +454,7 @@ extern "C" {
 	char *sf_digits;	/* digits for general bases     */
 	int (*sf_cvinitf) (void);	/* initialization function      */
 	int sf_cvinit;		/* initialization state         */
-	Fmtpos_t *(*sf_fmtposf) (Sfio_t *, const char *, va_list, int);
+	Fmtpos_t *(*sf_fmtposf)(const char *, va_list, int);
 	char *(*sf_fmtintf) (const char *, int *);
 	uchar sf_cv36[UCHAR_MAX + 1];	/* conversion for base [2-36]   */
 	uchar sf_cv64[UCHAR_MAX + 1];	/* conversion for base [37-64]  */

@@ -113,7 +113,7 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
 
     // stack a new environment
     assert(strcmp(form, "%!") == 0);
-    fp = _Sffmtposf(f, oform, oargs, 0);
+    fp = _Sffmtposf(oform, oargs, 0);
     argv.ft = va_arg(args, Sffmt_t*);
     assert(argv.ft != NULL);
     assert(argv.ft->form != NULL);
@@ -187,7 +187,7 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
 		    else {
 			t_str = _Sffmtintf(t_str + 1, &n);
 			if (*t_str == '$') {
-			    if (!fp && !(fp = _Sffmtposf(f, oform, oargs, 0)))
+			    if (!fp && !(fp = _Sffmtposf(oform, oargs, 0)))
 				goto pop_fmt;
 			    n = FP_SET(n, argn);
 			} else
@@ -271,7 +271,7 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
 	    form = _Sffmtintf(form, &n);
 	    if (*form == '$') {
 		form += 1;
-		if (!fp && !(fp = _Sffmtposf(f, oform, oargs, 0)))
+		if (!fp && !(fp = _Sffmtposf(oform, oargs, 0)))
 		    goto pop_fmt;
 		n = FP_SET(n, argn);
 	    } else
@@ -306,7 +306,7 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
 		v = v * 10 + (*form - '0');
 	    if (*form == '$') {
 		form += 1;
-		if (!fp && !(fp = _Sffmtposf(f, oform, oargs, 0)))
+		if (!fp && !(fp = _Sffmtposf(oform, oargs, 0)))
 		    goto pop_fmt;
 		argp = v - 1;
 		goto loop_flags;
@@ -333,7 +333,7 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
 		form = _Sffmtintf(form + 1, &n);
 		if (*form == '$') {
 		    form += 1;
-		    if (!fp && !(fp = _Sffmtposf(f, oform, oargs, 0)))
+		    if (!fp && !(fp = _Sffmtposf(oform, oargs, 0)))
 			goto pop_fmt;
 		    n = FP_SET(n, argn);
 		} else
