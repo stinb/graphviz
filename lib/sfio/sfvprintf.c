@@ -29,11 +29,9 @@
 
 /**
  * @param f file to print to
- * @param form format to use
- * @param args arg list if !argf
+ * @param format Structure describing how to print
  */
-int sfvprintf(Sfio_t * f, const char *form, va_list args)
-{
+int sfvprintf(Sfio_t *f, Sffmt_t *format) {
     int v = 0, n_s, base, fmt, flags;
     Sflong_t lv;
     char *sp, *ssp, *endsp, *ep, *endep;
@@ -114,8 +112,7 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
     argn = -1;
 
     // stack a new environment
-    assert(strcmp(form, "%!") == 0);
-    argv.ft = va_arg(args, Sffmt_t*);
+    argv.ft = format;
     assert(argv.ft != NULL);
     assert(argv.ft->form != NULL);
     if (!(fm = malloc(sizeof(Fmt_t))))
@@ -129,7 +126,8 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
     fm->argn = argn;
     fm->fp = NULL;
 
-    form = argv.ft->form;
+    const char *form = argv.ft->form;
+    va_list args;
     va_copy(args, argv.ft->args);
     fp = NULL;
 
