@@ -176,7 +176,7 @@ extern "C" {
     extern ssize_t sfputr(Sfio_t*, const char*);
     extern ssize_t sfnputc(Sfio_t *, int, size_t);
     extern int sfungetc(Sfio_t *, int);
-    extern int sfvprintf(Sfio_t*, Sffmt_t *format);
+    extern int sfprint(Sfio_t*, Sffmt_t *format);
     extern int sfscanf(Sfio_t *, const char *, ...);
     extern int sfsscanf(const char *, const char *, ...);
     extern int sfvsscanf(const char *, const char *, va_list);

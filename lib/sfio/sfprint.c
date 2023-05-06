@@ -31,7 +31,7 @@
  * @param f file to print to
  * @param format Structure describing how to print
  */
-int sfvprintf(Sfio_t *f, Sffmt_t *format) {
+int sfprint(Sfio_t *f, Sffmt_t *format) {
     int v = 0, n_s, base, fmt, flags;
     Sflong_t lv;
     char *sp, *ssp, *endsp, *ep, *endep;

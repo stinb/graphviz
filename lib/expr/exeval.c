@@ -409,7 +409,7 @@ static int print(Expr_t *ex, Exnode_t *exnode, void *env, Sfio_t *sp) {
 			{
 				fmt.fmt.form = x->format;
 				fmt.args = x;
-				sfvprintf(sp, &fmt.fmt);
+				sfprint(sp, &fmt.fmt);
 			}
 			else
 				sfputr(sp, x->format);
@@ -419,7 +419,7 @@ static int print(Expr_t *ex, Exnode_t *exnode, void *env, Sfio_t *sp) {
 		v = eval(ex, x->arg->data.operand.left, env);
 		fmt.fmt.form = v.string;
 		fmt.actuals = x->arg;
-		sfvprintf(sp, &fmt.fmt);
+		sfprint(sp, &fmt.fmt);
 		if (fmt.actuals->data.operand.right)
 			exerror("(s)printf: \"%s\": too many arguments", fmt.fmt.form);
 	}

@@ -30,7 +30,7 @@ add_library(sfio STATIC
   sfsync.c
   sftable.c
   sfungetc.c
-  sfvprintf.c
+  sfprint.c
   sfvscanf.c
   sfwr.c
   sfwrite.c

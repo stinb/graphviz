@@ -113,7 +113,7 @@
     <ClCompile Include="sfungetc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sfvprintf.c">
+    <ClCompile Include="sfprint.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sfvscanf.c">
