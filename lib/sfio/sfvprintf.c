@@ -12,6 +12,7 @@
 #include <inttypes.h>
 #include	<sfio/sfhdr.h>
 #include	<stddef.h>
+#include	<string.h>
 
 /*	The engine for formatting data
 **
@@ -107,13 +108,13 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
     fmstk = NULL;
     ft = NULL;
 
-    oform = (char *) form;
-    va_copy(oargs, args);
+    oform = "";
+    memset(&oargs, 0, sizeof(oargs));
+    fp = NULL;
     argn = -1;
 
     // stack a new environment
     assert(strcmp(form, "%!") == 0);
-    fp = _Sffmtposf(oform, oargs, 0);
     argv.ft = va_arg(args, Sffmt_t*);
     assert(argv.ft != NULL);
     assert(argv.ft->form != NULL);
@@ -121,12 +122,12 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
 	goto done;
 
     fm->form = "";
-    va_copy(fm->args, args);
+    memset(&fm->args, 0, sizeof(fm->args));
 
-    fm->oform = oform;
-    va_copy(fm->oargs, oargs);
+    fm->oform = "";
+    memset(&fm->oargs, 0, sizeof(fm->oargs));
     fm->argn = argn;
-    fm->fp = fp;
+    fm->fp = NULL;
 
     form = argv.ft->form;
     va_copy(args, argv.ft->args);
