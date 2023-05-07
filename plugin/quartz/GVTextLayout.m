@@ -18,6 +18,7 @@
 
 #include "gvplugin_quartz.h"
 
+#ifdef __ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__
 #if __ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__ >= 20000 && __ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__ < 30200
 
 #import "GVTextLayout.h"
@@ -92,4 +93,5 @@ static NSString* _defaultFontName = @"TimesNewRomanPSMT";
 
 @end
 
+#endif
 #endif
