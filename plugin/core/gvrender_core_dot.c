@@ -169,7 +169,6 @@ static void xdot_style (GVJ_t *job)
 {
     agxbuf xb = {0};
     char* p, **s;
-    int more;
 
     /* First, check if penwidth state is correct */
     if (job->obj->penwidth != penwidth[job->obj->emit_state]) {
@@ -196,14 +195,10 @@ static void xdot_style (GVJ_t *job)
         p++;
         if (*p) {  /* arguments */
             agxbputc(&xb, '(');
-            more = 0;
-            while (*p) {
-                if (more)
-                    agxbputc(&xb, ',');
-                agxbput(&xb, p);
+            for (const char *separator = ""; *p; separator = ",") {
+                agxbprint(&xb, "%s%s", separator, p);
                 while (*p) p++;
                 p++;
-                more++;
             }
             agxbputc(&xb, ')');
         }
