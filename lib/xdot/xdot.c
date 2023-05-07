@@ -434,17 +434,18 @@ static void printRect(xdot_rect * r, pf print, void *info)
 
 static void printPolyline(xdot_polyline * p, pf print, void *info)
 {
-    char buf[512];
+    agxbuf buf = {0};
 
     print(info, " %" PRISIZE_T, p->cnt);
     for (size_t i = 0; i < p->cnt; i++) {
-	snprintf(buf, sizeof(buf), " %.02f", p->pts[i].x);
-	trim(buf);
-	print(info, "%s", buf);
-	snprintf(buf, sizeof(buf), " %.02f", p->pts[i].y);
-	trim(buf);
-	print(info, "%s", buf);
+	agxbprint(&buf, " %.02f", p->pts[i].x);
+	agxbuf_trim_zeros(&buf);
+	print(info, "%s", agxbuse(&buf));
+	agxbprint(&buf, " %.02f", p->pts[i].y);
+	agxbuf_trim_zeros(&buf);
+	print(info, "%s", agxbuse(&buf));
     }
+    agxbfree(&buf);
 }
 
 static void printString(char *p, pf print, void *info)
