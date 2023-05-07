@@ -23,10 +23,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#if !defined(TRACE_lex) && _BLD_DEBUG
-#define TRACE_lex	-10
-#endif
-
 #if TRACE_lex
 
 /*
