@@ -168,7 +168,6 @@ static void xdot_fillcolor (GVJ_t *job)
 static void xdot_style (GVJ_t *job)
 {
     char buf0[BUFSIZ];
-    char buf [128]; /* enough to hold a double */
     agxbuf xb;
     char* p, **s;
     int more;
@@ -179,9 +178,9 @@ static void xdot_style (GVJ_t *job)
     if (job->obj->penwidth != penwidth[job->obj->emit_state]) {
 	penwidth[job->obj->emit_state] = job->obj->penwidth;
 	agxbput (&xb, "setlinewidth(");
-	snprintf(buf, sizeof(buf), "%.3f", job->obj->penwidth);
-	xdot_trim_zeros(buf);
-	agxbprint(&xb, "%s)", buf);
+	agxbprint(&xb, "%.3f", job->obj->penwidth);
+	agxbuf_trim_zeros(&xb);
+	agxbputc(&xb, ')');
         xdot_str (job, "S ", agxbuse(&xb));
     }
 
