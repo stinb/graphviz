@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#if TRACE_lex
+#if defined(TRACE_lex) && TRACE_lex
 
 /*
  * trace c for op
