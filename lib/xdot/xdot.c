@@ -415,20 +415,21 @@ static void trim (char* buf)
 
 static void printRect(xdot_rect * r, pf print, void *info)
 {
-    char buf[128];
+    agxbuf buf = {0};
 
-    snprintf(buf, sizeof(buf), " %.02f", r->x);
-    trim(buf);
-    print(info, "%s", buf);
-    snprintf(buf, sizeof(buf), " %.02f", r->y);
-    trim(buf);
-    print(info, "%s", buf);
-    snprintf(buf, sizeof(buf), " %.02f", r->w);
-    trim(buf);
-    print(info, "%s", buf);
-    snprintf(buf, sizeof(buf), " %.02f", r->h);
-    trim(buf);
-    print(info, "%s", buf);
+    agxbprint(&buf, " %.02f", r->x);
+    agxbuf_trim_zeros(&buf);
+    print(info, "%s", agxbuse(&buf));
+    agxbprint(&buf, " %.02f", r->y);
+    agxbuf_trim_zeros(&buf);
+    print(info, "%s", agxbuse(&buf));
+    agxbprint(&buf, " %.02f", r->w);
+    agxbuf_trim_zeros(&buf);
+    print(info, "%s", agxbuse(&buf));
+    agxbprint(&buf, " %.02f", r->h);
+    agxbuf_trim_zeros(&buf);
+    print(info, "%s", agxbuse(&buf));
+    agxbfree(&buf);
 }
 
 static void printPolyline(xdot_polyline * p, pf print, void *info)
