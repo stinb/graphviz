@@ -393,26 +393,6 @@ xdot *parseXDot(char *s)
 
 typedef int (*pf)(void*, char*, ...);
 
-/* trim:
- * Trailing zeros are removed and decimal point, if possible.
- */
-static void trim (char* buf)
-{
-    char* dotp;
-    char* p;
-
-    if ((dotp = strchr (buf,'.'))) {
-        p = dotp+1;
-        while (*p) p++;  // find end of string
-        p--;
-        while (*p == '0') *p-- = '\0';
-        if (*p == '.')        // If all decimals were zeros, remove ".".
-            *p = '\0';
-        else
-            p++;
-    }
-}
-
 static void printRect(xdot_rect * r, pf print, void *info)
 {
     agxbuf buf = {0};
@@ -454,14 +434,15 @@ static void printString(char *p, pf print, void *info)
 }
 
 static void printFloat(double f, pf print, void *info, int space) {
-    char buf[128];
+    agxbuf buf = {0};
 
     if (space)
-	snprintf(buf, sizeof(buf), " %.02f", f);
+	agxbprint(&buf, " %.02f", f);
     else
-	snprintf(buf, sizeof(buf), "%.02f", f);
-    trim (buf);
-    print(info, "%s", buf);
+	agxbprint(&buf, "%.02f", f);
+    agxbuf_trim_zeros(&buf);
+    print(info, "%s", agxbuse(&buf));
+    agxbfree(&buf);
 }
 
 static void printAlign(xdot_align a, pf print, void *info)
