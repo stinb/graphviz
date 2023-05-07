@@ -92,25 +92,6 @@ static void xdot_str (GVJ_t *job, char* pfx, const char* s)
     xdot_str_xbuf (xbufs[emit_state], pfx, s);
 }
 
-/* xdot_trim_zeros
- * Trailing zeros are removed and decimal point, if possible.
- */
-static void xdot_trim_zeros(char *buf) {
-    char* dotp;
-    char* p;
-
-    if ((dotp = strchr (buf,'.'))) {
-	p = dotp+1;
-	while (*p) p++;  // find end of string
-	p--;
-	while (*p == '0') *p-- = '\0';
-        if (*p == '.')        // If all decimals were zeros, remove ".".
-            *p = '\0';
-	else
-	    p++;
-    }
-}
-
 /* xdot_fmt_num:
  * Convert double to string with space at end.
  * Trailing zeros are removed and decimal point, if possible.
@@ -539,12 +520,10 @@ static void xdot_textspan(GVJ_t * job, pointf p, textspan_t * span)
 
 static void xdot_color_stop (agxbuf* xb, float v, gvcolor_t* clr)
 {
-    char buf[BUFSIZ];
-
-    snprintf(buf, sizeof(buf), "%.03f", v);
-    xdot_trim_zeros(buf);
-    strcat(buf, " ");
-    xdot_str_xbuf (xb, buf, color2str (clr->u.rgba));
+  agxbprint(xb, "%.03f", v);
+  agxbuf_trim_zeros(xb);
+  agxbputc(xb, ' ');
+  xdot_str_xbuf(xb, "", color2str (clr->u.rgba));
 }
 
 static void xdot_gradient_fillcolor (GVJ_t* job, int filled, pointf* A, int n)
