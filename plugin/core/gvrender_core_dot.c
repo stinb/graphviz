@@ -94,10 +94,8 @@ static void xdot_str (GVJ_t *job, char* pfx, const char* s)
 
 /* xdot_trim_zeros
  * Trailing zeros are removed and decimal point, if possible.
- * Add trailing space if addSpace is non-zero.
  */
-static void xdot_trim_zeros (char* buf, int addSpace)
-{
+static void xdot_trim_zeros(char *buf) {
     char* dotp;
     char* p;
 
@@ -110,13 +108,6 @@ static void xdot_trim_zeros (char* buf, int addSpace)
             *p = '\0';
 	else
 	    p++;
-    }
-    else if (addSpace)
-	p = buf + strlen(buf);
-
-    if (addSpace) { /* p points to null byte */
-	*p++ = ' ';
-	*p = '\0';
     }
 }
 
@@ -132,7 +123,8 @@ static void xdot_fmt_num(char *buf, size_t buf_size, double v) {
         return;
     }
     snprintf(buf, buf_size, "%.02f", v);
-    xdot_trim_zeros (buf, 1);
+    xdot_trim_zeros(buf);
+    strcat(buf, " ");
 }
 
 static void xdot_point(agxbuf *xb, pointf p)
@@ -199,7 +191,7 @@ static void xdot_style (GVJ_t *job)
 	penwidth[job->obj->emit_state] = job->obj->penwidth;
 	agxbput (&xb, "setlinewidth(");
 	snprintf(buf, sizeof(buf), "%.3f", job->obj->penwidth);
-	xdot_trim_zeros (buf, 0);
+	xdot_trim_zeros(buf);
 	agxbprint(&xb, "%s)", buf);
         xdot_str (job, "S ", agxbuse(&xb));
     }
@@ -573,7 +565,8 @@ static void xdot_color_stop (agxbuf* xb, float v, gvcolor_t* clr)
     char buf[BUFSIZ];
 
     snprintf(buf, sizeof(buf), "%.03f", v);
-    xdot_trim_zeros (buf, 1);
+    xdot_trim_zeros(buf);
+    strcat(buf, " ");
     xdot_str_xbuf (xb, buf, color2str (clr->u.rgba));
 }
 
