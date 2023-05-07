@@ -520,45 +520,15 @@ int main (int argc, char *argv[])
 }
 #endif
 
-/* gv_trim_zeros
-* Identify Trailing zeros and decimal point, if possible.
-* Assumes the input is the result of %.02f printing.
-*/
-static size_t gv_trim_zeros(const char *buf) {
-  char *dotp = strchr(buf, '.');
-  if (dotp == NULL) {
-    return strlen(buf);
-  }
-
-  // check this really is the result of %.02f printing
-  assert(isdigit((int)dotp[1]) && isdigit((int)dotp[2]) && dotp[3] == '\0');
-
-  if (dotp[2] == '0') {
-    if (dotp[1] == '0') {
-      return (size_t)(dotp - buf);
-    } else {
-      return (size_t)(dotp - buf) + 2;
-    }
-  }
-
-  return strlen(buf);
-}
-
 void gvprintdouble(GVJ_t * job, double num)
 {
-    // Prevents values like -0
-    if (num > -0.005 && num < 0.005)
-    {
-        gvwrite(job, "0", 1);
-        return;
-    }
+    agxbuf buf = {0};
 
-    char buf[50];
+    agxbprint(&buf, "%.02f", num);
+    agxbuf_trim_zeros(&buf);
 
-    snprintf(buf, 50, "%.02f", num);
-    size_t len = gv_trim_zeros(buf);
-
-    gvwrite(job, buf, len);
+    gvputs(job, agxbuse(&buf));
+    agxbfree(&buf);
 }
 
 void gvprintpointf(GVJ_t * job, pointf p)
