@@ -2,10 +2,9 @@ find_package(PANGOCAIRO)
 find_package(PkgConfig)
 if(PkgConfig_FOUND)
   pkg_check_modules(RSVG librsvg-2.0)
-  pkg_check_modules(XRENDER xrender)
 endif()
 
-if(PANGOCAIRO_FOUND AND RSVG_FOUND AND XRENDER_FOUND)
+if(PANGOCAIRO_FOUND AND RSVG_FOUND)
 
   add_library(gvplugin_rsvg SHARED
     gvloadimage_rsvg.c
@@ -24,7 +23,6 @@ if(PANGOCAIRO_FOUND AND RSVG_FOUND AND XRENDER_FOUND)
   target_include_directories(gvplugin_rsvg SYSTEM PRIVATE
     ${PANGOCAIRO_LIBRARIES}
     ${RSVG_LIBRARIES}
-    ${XRENDER_LIBRARIES}
   )
 
   install(
