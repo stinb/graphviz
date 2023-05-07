@@ -816,7 +816,7 @@ gvplugin_installed_t gvrender_svg_types[] = {
 
 gvplugin_installed_t gvdevice_svg_types[] = {
     {FORMAT_SVG, "svg:svg", 1, NULL, &device_features_svg},
-#if HAVE_LIBZ
+#ifdef HAVE_LIBZ
     {FORMAT_SVGZ, "svgz:svg", 1, NULL, &device_features_svgz},
 #endif
     {0, NULL, 0, NULL, NULL}
