@@ -28,30 +28,12 @@ struct FontFamilyMetrics {
   short widths_bold_italic[128];
 };
 
-static const char *times_aliases[] = {
-    "times",           "timesroman",  "timesnewroman", "freeserif",
-    "liberationserif", "nimbusroman", "texgyretermes", "tinos",
-    "thorndale",       NULL};
-static const char *helvetica_aliases[] = {
-    "helvetica", "arial",  "arialmt",    "freesans",    "liberationsans",
-    "arimo",     "albany", "nimbussans", "nimbussansa", "texgyreheros",
-    "albany",    "arimo",  NULL};
-static const char *courier_aliases[] = {
-    "cour",     "courier",        "couriernew", "nimbusmono", "texgyrecursor",
-    "freemono", "liberationmono", "cousine",    "cumberland", NULL};
-static const char *nunito_aliases[] = {"Nunito", NULL};
-static const char *dejavu_aliases[] = {"dejavusans", NULL};
-static const char *consola_aliases[] = {"consola", "consolas", NULL};
-static const char *trebuchet_aliases[] = {"Trebuchet MS", "Trebuchet", NULL};
-static const char *verdana_aliases[] = {"Verdana", NULL};
-static const char *opensans_aliases[] = {"OpenSans", NULL};
-static const char *georgia_aliases[] = {"Georgia", NULL};
-static const char *calibri_aliases[] = {"Calibri", NULL};
-
 static const struct FontFamilyMetrics all_font_metrics[] = {
     // Times_New_Roman.ttf (+ variants) from ttf-mscorefonts-installer.
     {
-        times_aliases,
+        (const char *[]){"times", "timesroman", "timesnewroman", "freeserif",
+                         "liberationserif", "nimbusroman", "texgyretermes",
+                         "tinos", "thorndale", NULL},
         2048,
         {
             -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -112,7 +94,10 @@ static const struct FontFamilyMetrics all_font_metrics[] = {
     },
     // Arial.ttf (+ variants) from ttf-mscorefonts-installer.
     {
-        helvetica_aliases,
+        (const char *[]){"helvetica", "arial", "arialmt", "freesans",
+                         "liberationsans", "arimo", "albany", "nimbussans",
+                         "nimbussansa", "texgyreheros", "albany", "arimo",
+                         NULL},
         2048,
         {
             -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -173,7 +158,9 @@ static const struct FontFamilyMetrics all_font_metrics[] = {
     },
     // Courier_New.ttf (+ variants) from ttf-mscorefonts-installer.
     {
-        courier_aliases,
+        (const char *[]){"cour", "courier", "couriernew", "nimbusmono",
+                         "texgyrecursor", "freemono", "liberationmono",
+                         "cousine", "cumberland", NULL},
         2048,
         {
             -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -234,7 +221,7 @@ static const struct FontFamilyMetrics all_font_metrics[] = {
     },
     // https://fonts.google.com/specimen/Nunito
     {
-        nunito_aliases,
+        (const char *[]){"Nunito", NULL},
         1000,
         {
             0,   -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,   -1,  -1,  -1,
@@ -288,7 +275,7 @@ static const struct FontFamilyMetrics all_font_metrics[] = {
     // Based on DejaVuSans, DejaVuSans-Bold, DejaVuSans-Oblique and
     // DejaVuSans-BoldOblique (as opposed to italic)
     {
-        dejavu_aliases,
+        (const char *[]){"dejavusans", NULL},
         2048,
         {
             -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -348,7 +335,7 @@ static const struct FontFamilyMetrics all_font_metrics[] = {
         },
     },
     {
-        consola_aliases,
+        (const char *[]){"consola", "consolas", NULL},
         2048,
         {
             1126, -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -408,7 +395,7 @@ static const struct FontFamilyMetrics all_font_metrics[] = {
         },
     },
     {
-        trebuchet_aliases,
+        (const char *[]){"Trebuchet MS", "Trebuchet", NULL},
         2048,
         {
             -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -468,7 +455,7 @@ static const struct FontFamilyMetrics all_font_metrics[] = {
         },
     },
     {
-        verdana_aliases,
+        (const char *[]){"Verdana", NULL},
         2048,
         {
             -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -528,7 +515,7 @@ static const struct FontFamilyMetrics all_font_metrics[] = {
         },
     },
     {
-        opensans_aliases,
+        (const char *[]){"OpenSans", NULL},
         2048,
         {
             -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -588,7 +575,7 @@ static const struct FontFamilyMetrics all_font_metrics[] = {
         },
     },
     {
-        georgia_aliases,
+        (const char *[]){"Georgia", NULL},
         2048,
         {
             -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -648,7 +635,7 @@ static const struct FontFamilyMetrics all_font_metrics[] = {
         },
     },
     {
-        calibri_aliases,
+        (const char *[]){"Calibri", NULL},
         2048,
         {
             -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
