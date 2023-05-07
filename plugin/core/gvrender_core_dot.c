@@ -167,12 +167,9 @@ static void xdot_fillcolor (GVJ_t *job)
 
 static void xdot_style (GVJ_t *job)
 {
-    char buf0[BUFSIZ];
-    agxbuf xb;
+    agxbuf xb = {0};
     char* p, **s;
     int more;
-
-    agxbinit(&xb, BUFSIZ, buf0);
 
     /* First, check if penwidth state is correct */
     if (job->obj->penwidth != penwidth[job->obj->emit_state]) {
