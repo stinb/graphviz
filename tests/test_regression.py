@@ -2737,6 +2737,19 @@ def test_2375():
     run_c(c_src, link=["gvc"])
 
 
+def test_2390():
+    """
+    using an out of range `xdotversion` should not crash Graphviz
+    https://gitlab.com/graphviz/graphviz/-/issues/2390
+    """
+
+    # some input with an invalid large `xdotversion`
+    input = 'graph { xdotversion=99; n[label="hello world"]; }'
+
+    # run this through Graphviz
+    dot("xdot", source=input)
+
+
 @pytest.mark.xfail(strict=True)  # FIXME
 def test_2391():
     """
