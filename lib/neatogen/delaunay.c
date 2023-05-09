@@ -556,7 +556,7 @@ freeSurface (surface_t* s)
     free (s->faces);
     free (s->neigh);
 }
-#elif HAVE_TRIANGLE
+#elif defined(HAVE_TRIANGLE)
 #define TRILIBRARY
 #include <triangle.c>
 #include <assert.h>

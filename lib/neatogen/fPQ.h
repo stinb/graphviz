@@ -161,7 +161,7 @@ PQupdate (PQ* pq, PQTYPE n, PQVTYPE d)
 #endif
 }
 
-#if DEBUG > 1
+#if defined(DEBUG) && DEBUG > 1
 
 static void
 PQprint (PQ* pq)
