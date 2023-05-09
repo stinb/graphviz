@@ -91,7 +91,6 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
     Sffmt_t *ft;
     Fmt_t *fm, *fmstk;
 
-    Fmtpos_t *fp;
     char *oform;
     va_list oargs;
     int argp, argn;
@@ -130,7 +129,6 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
     fmstk = NULL;
     ft = NULL;
 
-    fp = NULL;
     argn = -1;
     oform = (char *) form;
     va_copy(oargs, args);
@@ -206,10 +204,7 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 			t_str = _Sffmtintf(t_str + 1, &n);
 			n = FP_SET(-1, argn);
 
-			if (fp) {
-			    t_str = fp[n].argv.s;
-			    n_str = fp[n].ft.size;
-			} else if (ft && ft->extf) {
+			if (ft && ft->extf) {
 			    FMTSET(ft, form, args,
 				   LEFTP, 0, 0, 0, 0, 0, NULL, 0);
 			    n = ft->extf(&argv, ft);
@@ -243,9 +238,7 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 		form = _Sffmtintf(form + 1, &n);
 		n = FP_SET(-1, argn);
 
-		if (fp)
-		    v = fp[n].argv.i;
-		else if (ft && ft->extf) {
+		if (ft && ft->extf) {
 		    FMTSET(ft, form, args, '.', dot, 0, 0, 0, 0,
 			   NULL, 0);
 		    if (ft->extf(&argv, ft) < 0)
@@ -293,9 +286,7 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 		form = _Sffmtintf(form + 1, &n);
 		n = FP_SET(-1, argn);
 
-		if (fp)		/* use position list */
-		    size = fp[n].argv.i;
-		else if (ft && ft->extf) {
+		if (ft && ft->extf) {
 		    FMTSET(ft, form, args, 'I', sizeof(int), 0, 0, 0, 0,
 			   NULL, 0);
 		    if (ft->extf(&argv, ft) < 0)
@@ -363,16 +354,7 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 	}
 
 	argp = FP_SET(argp, argn);
-	if (fp) {
-	    if (!(fp[argp].ft.flags & SFFMT_SKIP)) {
-		n_assign += 1;
-		value = fp[argp].argv.vp;
-		size = fp[argp].ft.size;
-		if (ft && ft->extf && fp[argp].ft.fmt != fp[argp].fmt)
-		    fmt = fp[argp].ft.fmt;
-	    } else
-		flags |= SFFMT_SKIP;
-	} else if (ft && ft->extf) {
+	if (ft && ft->extf) {
 	    FMTSET(ft, form, args, fmt, size, flags, width, 0, base, t_str,
 		   n_str);
 	    SFEND(f);
@@ -416,12 +398,10 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 		    fm->oform = oform;
 		    va_copy(fm->oargs, oargs);
 		    fm->argn = argn;
-		    fm->fp = fp;
 
 		    form = argv.ft->form;
 		    va_copy(args, argv.ft->args);
 		    argn = -1;
-		    fp = NULL;
 		} else
 		    fm->form = NULL;
 
@@ -696,8 +676,6 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
     }
 
   pop_fmt:
-    free(fp);
-    fp = NULL;
     while ((fm = fmstk)) {	/* pop the format stack and continue */
 	if (fm->eventf) {
 	    if (!form || !form[0])
@@ -712,7 +690,6 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 	    oform = fm->oform;
 	    va_copy(oargs, fm->oargs);
 	    argn = fm->argn;
-	    fp = fm->fp;
 	}
 	ft = fm->ft;
 	free(fm);
@@ -721,7 +698,6 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
     }
 
   done:
-    free(fp);
     while ((fm = fmstk)) {
 	if (fm->eventf)
 	    fm->eventf(f, SF_FINAL, NULL, fm->ft);
