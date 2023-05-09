@@ -204,12 +204,7 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 			n_str = (form - 1) - t_str;
 		    else {
 			t_str = _Sffmtintf(t_str + 1, &n);
-			if (*t_str == '$') {
-			    if (!fp && !(fp = _Sffmtposf(oform, oargs, 1)))
-				goto pop_fmt;
-			    n = FP_SET(n, argn);
-			} else
-			    n = FP_SET(-1, argn);
+			n = FP_SET(-1, argn);
 
 			if (fp) {
 			    t_str = fp[n].argv.s;
@@ -246,13 +241,7 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 		goto dot_size;
 	    } else if (*form == '*') {
 		form = _Sffmtintf(form + 1, &n);
-		if (*form == '$') {
-		    form += 1;
-		    if (!fp && !(fp = _Sffmtposf(oform, oargs, 1)))
-			goto pop_fmt;
-		    n = FP_SET(n, argn);
-		} else
-		    n = FP_SET(-1, argn);
+		n = FP_SET(-1, argn);
 
 		if (fp)
 		    v = fp[n].argv.i;
@@ -287,14 +276,6 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 	    for (v = fmt - '0'; isdigit((int)*form); ++form)
 		v = v * 10 + (*form - '0');
 
-	    if (*form == '$') {
-		form += 1;
-		if (!fp && !(fp = _Sffmtposf(oform, oargs, 1)))
-		    goto pop_fmt;
-		argp = v - 1;
-		goto loop_flags;
-	    }
-
 	  dot_set:
 	    if (dot == 0 || dot == 1)
 		width = v;
@@ -310,13 +291,7 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 		    size = size * 10 + (n - '0');
 	    } else if (*form == '*') {
 		form = _Sffmtintf(form + 1, &n);
-		if (*form == '$') {
-		    form += 1;
-		    if (!fp && !(fp = _Sffmtposf(oform, oargs, 1)))
-			goto pop_fmt;
-		    n = FP_SET(n, argn);
-		} else
-		    n = FP_SET(-1, argn);
+		n = FP_SET(-1, argn);
 
 		if (fp)		/* use position list */
 		    size = fp[n].argv.i;
@@ -424,11 +399,6 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 	    continue;
 
 	if (fmt == '!') {
-	    if (!fp)
-		fp = _Sffmtposf(oform, oargs, 1);
-	    else
-		goto pop_fmt;
-
 	    if (!(argv.ft = va_arg(args, Sffmt_t *)))
 		continue;
 	    if (!argv.ft->form && ft) {	/* change extension functions */
