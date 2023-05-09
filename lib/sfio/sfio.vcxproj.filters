@@ -74,9 +74,6 @@
     <ClCompile Include="sfpkrd.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sfprintf.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="sfputr.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -116,7 +113,7 @@
     <ClCompile Include="sfungetc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sfvprintf.c">
+    <ClCompile Include="sfprint.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sfvscanf.c">

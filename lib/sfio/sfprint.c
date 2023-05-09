@@ -8,9 +8,11 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
+#include <assert.h>
 #include <inttypes.h>
 #include	<sfio/sfhdr.h>
 #include	<stddef.h>
+#include	<string.h>
 
 /*	The engine for formatting data
 **
@@ -27,11 +29,9 @@
 
 /**
  * @param f file to print to
- * @param form format to use
- * @param args arg list if !argf
+ * @param format Structure describing how to print
  */
-int sfvprintf(Sfio_t * f, const char *form, va_list args)
-{
+int sfprint(Sfio_t *f, Sffmt_t *format) {
     int v = 0, n_s, base, fmt, flags;
     Sflong_t lv;
     char *sp, *ssp, *endsp, *ep, *endep;
@@ -89,9 +89,6 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
 
     SFMTXSTART(f, -1);
 
-    if (!form)
-	SFMTXRETURN(f, -1);
-
     /* make sure stream is in write mode and buffer is not NULL */
     if (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0)
 	SFMTXRETURN(f, -1);
@@ -109,10 +106,36 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
     fmstk = NULL;
     ft = NULL;
 
-    oform = (char *) form;
-    va_copy(oargs, args);
+    oform = "";
+    memset(&oargs, 0, sizeof(oargs));
     fp = NULL;
     argn = -1;
+
+    // stack a new environment
+    argv.ft = format;
+    assert(argv.ft != NULL);
+    assert(argv.ft->form != NULL);
+    if (!(fm = malloc(sizeof(Fmt_t))))
+	goto done;
+
+    fm->form = "";
+    memset(&fm->args, 0, sizeof(fm->args));
+
+    fm->oform = "";
+    memset(&fm->oargs, 0, sizeof(fm->oargs));
+    fm->argn = argn;
+    fm->fp = NULL;
+
+    const char *form = argv.ft->form;
+    va_list args;
+    va_copy(args, argv.ft->args);
+    fp = NULL;
+
+    fm->eventf = argv.ft->eventf;
+    fm->ft = ft;
+    fm->next = fmstk;
+    fmstk = fm;
+    ft = argv.ft;
 
   loop_fmt:
     while ((n = *form)) {
@@ -163,7 +186,7 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
 		    else {
 			t_str = _Sffmtintf(t_str + 1, &n);
 			if (*t_str == '$') {
-			    if (!fp && !(fp = _Sffmtposf(f, oform, oargs, 0)))
+			    if (!fp && !(fp = _Sffmtposf(oform, oargs, 0)))
 				goto pop_fmt;
 			    n = FP_SET(n, argn);
 			} else
@@ -247,7 +270,7 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
 	    form = _Sffmtintf(form, &n);
 	    if (*form == '$') {
 		form += 1;
-		if (!fp && !(fp = _Sffmtposf(f, oform, oargs, 0)))
+		if (!fp && !(fp = _Sffmtposf(oform, oargs, 0)))
 		    goto pop_fmt;
 		n = FP_SET(n, argn);
 	    } else
@@ -282,7 +305,7 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
 		v = v * 10 + (*form - '0');
 	    if (*form == '$') {
 		form += 1;
-		if (!fp && !(fp = _Sffmtposf(f, oform, oargs, 0)))
+		if (!fp && !(fp = _Sffmtposf(oform, oargs, 0)))
 		    goto pop_fmt;
 		argp = v - 1;
 		goto loop_flags;
@@ -309,7 +332,7 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
 		form = _Sffmtintf(form + 1, &n);
 		if (*form == '$') {
 		    form += 1;
-		    if (!fp && !(fp = _Sffmtposf(f, oform, oargs, 0)))
+		    if (!fp && !(fp = _Sffmtposf(oform, oargs, 0)))
 			goto pop_fmt;
 		    n = FP_SET(n, argn);
 		} else
@@ -442,46 +465,6 @@ int sfvprintf(Sfio_t * f, const char *form, va_list args)
 	default:		/* unknown directive */
 	    form -= 1;
 	    argn -= 1;
-	    continue;
-
-	case '!':		/* stacking a new environment */
-	    if (!fp)
-		fp = _Sffmtposf(f, oform, oargs, 0);
-	    else
-		goto pop_fmt;
-
-	    if (!argv.ft)
-		goto pop_fmt;
-	    if (!argv.ft->form && ft) {	/* change extension functions */
-		if (ft->eventf && ft->eventf(f, SF_DPOP, (void *) form, ft) < 0)
-		    continue;
-		fmstk->ft = ft = argv.ft;
-	    } else {		/* stack a new environment */
-		if (!(fm = malloc(sizeof(Fmt_t))))
-		    goto done;
-
-		if (argv.ft->form) {
-		    fm->form = (char *) form;
-		    va_copy(fm->args, args);
-
-		    fm->oform = oform;
-		    va_copy(fm->oargs, oargs);
-		    fm->argn = argn;
-		    fm->fp = fp;
-
-		    form = argv.ft->form;
-		    va_copy(args, argv.ft->args);
-		    argn = -1;
-		    fp = NULL;
-		} else
-		    fm->form = NULL;
-
-		fm->eventf = argv.ft->eventf;
-		fm->ft = ft;
-		fm->next = fmstk;
-		fmstk = fm;
-		ft = argv.ft;
-	    }
 	    continue;
 
 	case 's':

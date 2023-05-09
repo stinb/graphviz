@@ -17,7 +17,6 @@ add_library(sfio STATIC
   sfnputc.c
   sfopen.c
   sfpkrd.c
-  sfprintf.c
   sfputr.c
   sfraise.c
   sfrd.c
@@ -31,7 +30,7 @@ add_library(sfio STATIC
   sfsync.c
   sftable.c
   sfungetc.c
-  sfvprintf.c
+  sfprint.c
   sfvscanf.c
   sfwr.c
   sfwrite.c

@@ -25,21 +25,19 @@ static char *sffmtint(const char *str, int *v)
     return (char *) str;
 }
 
-static Fmtpos_t *sffmtpos(Sfio_t * f, const char *form, va_list args,
-			  int type)
-{
+static Fmtpos_t *sffmtpos(const char *form, va_list args, int type) {
     int base, fmt, flags, dot, width, precis;
     ssize_t n_str, size = 0;
     char *t_str, *sp;
     int v, n, skip, dollar;
     char decimal, thousand;
-    Sffmt_t *ft, savft;
+    Sffmt_t *ft = NULL, savft;
     Fmtpos_t *fp;		/* position array of arguments  */
     int argp, argn, maxp, need[FP_INDEX];
 
     if (type < 0)
 	fp = NULL;
-    else if (!(fp = sffmtpos(f, form, args, -1)))
+    else if (!(fp = sffmtpos(form, args, -1)))
 	return NULL;
 
     dollar = 0;

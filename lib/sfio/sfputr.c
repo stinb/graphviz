@@ -18,10 +18,8 @@
 /**
  * @param f write to this stream
  * @param s string to write
- * @param rc record separator
  */
-ssize_t sfputr(Sfio_t * f, const char *s, int rc)
-{
+ssize_t sfputr(Sfio_t *f, const char *s) {
     ssize_t p, n, w;
     uchar *ps;
 
@@ -32,33 +30,27 @@ ssize_t sfputr(Sfio_t * f, const char *s, int rc)
 
     SFLOCK(f, 0);
 
-    for (w = 0; (*s || rc >= 0);) {
+    for (w = 0; *s;) {
 	SFWPEEK(f, ps, p);
 
 	if (p == 0 || (f->flags & SF_WHOLE)) {
 	    n = strlen(s);
-	    if (p >= (n + (rc < 0 ? 0 : 1))) {	/* buffer can hold everything */
+	    if (p >= n) {	/* buffer can hold everything */
 		if (n > 0) {
 		    memcpy(ps, s, n);
 		    ps += n;
 		    w += n;
 		}
-		if (rc >= 0) {
-		    *ps++ = rc;
-		    w += 1;
-		}
 		f->next = ps;
 	    } else {		/* create a reserve buffer to hold data */
 		Sfrsrv_t *rsrv;
 
-		p = n + (rc >= 0 ? 1 : 0);
+		p = n;
 		if (!(rsrv = _sfrsrv(f, p)))
 		    n = 0;
 		else {
 		    if (n > 0)
 			memcpy(rsrv->data, s, n);
-		    if (rc >= 0)
-			rsrv->data[n] = rc;
 		    if ((n = SFWRITE(f, rsrv->data, p)) < 0)
 			n = 0;
 		}
@@ -68,12 +60,6 @@ ssize_t sfputr(Sfio_t * f, const char *s, int rc)
 	    break;
 	}
 
-	if (*s == 0) {
-	    *ps++ = rc;
-	    f->next = ps;
-	    w += 1;
-	    break;
-	}
 	if ((ps = memccpy(ps, s, '\0', p)) != NULL)
 	    ps -= 1;
 	else

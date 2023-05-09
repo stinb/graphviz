@@ -205,7 +205,7 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 		    else {
 			t_str = _Sffmtintf(t_str + 1, &n);
 			if (*t_str == '$') {
-			    if (!fp && !(fp = _Sffmtposf(f, oform, oargs, 1)))
+			    if (!fp && !(fp = _Sffmtposf(oform, oargs, 1)))
 				goto pop_fmt;
 			    n = FP_SET(n, argn);
 			} else
@@ -248,7 +248,7 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 		form = _Sffmtintf(form + 1, &n);
 		if (*form == '$') {
 		    form += 1;
-		    if (!fp && !(fp = _Sffmtposf(f, oform, oargs, 1)))
+		    if (!fp && !(fp = _Sffmtposf(oform, oargs, 1)))
 			goto pop_fmt;
 		    n = FP_SET(n, argn);
 		} else
@@ -289,7 +289,7 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 
 	    if (*form == '$') {
 		form += 1;
-		if (!fp && !(fp = _Sffmtposf(f, oform, oargs, 1)))
+		if (!fp && !(fp = _Sffmtposf(oform, oargs, 1)))
 		    goto pop_fmt;
 		argp = v - 1;
 		goto loop_flags;
@@ -312,7 +312,7 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 		form = _Sffmtintf(form + 1, &n);
 		if (*form == '$') {
 		    form += 1;
-		    if (!fp && !(fp = _Sffmtposf(f, oform, oargs, 1)))
+		    if (!fp && !(fp = _Sffmtposf(oform, oargs, 1)))
 			goto pop_fmt;
 		    n = FP_SET(n, argn);
 		} else
@@ -425,7 +425,7 @@ int sfvscanf(Sfio_t * f, const char *form, va_list args)
 
 	if (fmt == '!') {
 	    if (!fp)
-		fp = _Sffmtposf(f, oform, oargs, 1);
+		fp = _Sffmtposf(oform, oargs, 1);
 	    else
 		goto pop_fmt;
 
