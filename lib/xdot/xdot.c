@@ -393,57 +393,39 @@ xdot *parseXDot(char *s)
 
 typedef int (*pf)(void*, char*, ...);
 
-/* trim:
- * Trailing zeros are removed and decimal point, if possible.
- */
-static void trim (char* buf)
-{
-    char* dotp;
-    char* p;
-
-    if ((dotp = strchr (buf,'.'))) {
-        p = dotp+1;
-        while (*p) p++;  // find end of string
-        p--;
-        while (*p == '0') *p-- = '\0';
-        if (*p == '.')        // If all decimals were zeros, remove ".".
-            *p = '\0';
-        else
-            p++;
-    }
-}
-
 static void printRect(xdot_rect * r, pf print, void *info)
 {
-    char buf[128];
+    agxbuf buf = {0};
 
-    snprintf(buf, sizeof(buf), " %.02f", r->x);
-    trim(buf);
-    print(info, "%s", buf);
-    snprintf(buf, sizeof(buf), " %.02f", r->y);
-    trim(buf);
-    print(info, "%s", buf);
-    snprintf(buf, sizeof(buf), " %.02f", r->w);
-    trim(buf);
-    print(info, "%s", buf);
-    snprintf(buf, sizeof(buf), " %.02f", r->h);
-    trim(buf);
-    print(info, "%s", buf);
+    agxbprint(&buf, " %.02f", r->x);
+    agxbuf_trim_zeros(&buf);
+    print(info, "%s", agxbuse(&buf));
+    agxbprint(&buf, " %.02f", r->y);
+    agxbuf_trim_zeros(&buf);
+    print(info, "%s", agxbuse(&buf));
+    agxbprint(&buf, " %.02f", r->w);
+    agxbuf_trim_zeros(&buf);
+    print(info, "%s", agxbuse(&buf));
+    agxbprint(&buf, " %.02f", r->h);
+    agxbuf_trim_zeros(&buf);
+    print(info, "%s", agxbuse(&buf));
+    agxbfree(&buf);
 }
 
 static void printPolyline(xdot_polyline * p, pf print, void *info)
 {
-    char buf[512];
+    agxbuf buf = {0};
 
     print(info, " %" PRISIZE_T, p->cnt);
     for (size_t i = 0; i < p->cnt; i++) {
-	snprintf(buf, sizeof(buf), " %.02f", p->pts[i].x);
-	trim(buf);
-	print(info, "%s", buf);
-	snprintf(buf, sizeof(buf), " %.02f", p->pts[i].y);
-	trim(buf);
-	print(info, "%s", buf);
+	agxbprint(&buf, " %.02f", p->pts[i].x);
+	agxbuf_trim_zeros(&buf);
+	print(info, "%s", agxbuse(&buf));
+	agxbprint(&buf, " %.02f", p->pts[i].y);
+	agxbuf_trim_zeros(&buf);
+	print(info, "%s", agxbuse(&buf));
     }
+    agxbfree(&buf);
 }
 
 static void printString(char *p, pf print, void *info)
@@ -452,14 +434,15 @@ static void printString(char *p, pf print, void *info)
 }
 
 static void printFloat(double f, pf print, void *info, int space) {
-    char buf[128];
+    agxbuf buf = {0};
 
     if (space)
-	snprintf(buf, sizeof(buf), " %.02f", f);
+	agxbprint(&buf, " %.02f", f);
     else
-	snprintf(buf, sizeof(buf), "%.02f", f);
-    trim (buf);
-    print(info, "%s", buf);
+	agxbprint(&buf, "%.02f", f);
+    agxbuf_trim_zeros(&buf);
+    print(info, "%s", agxbuse(&buf));
+    agxbfree(&buf);
 }
 
 static void printAlign(xdot_align a, pf print, void *info)

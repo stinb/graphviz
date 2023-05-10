@@ -16,6 +16,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -351,4 +352,70 @@ static inline char *agxbdisown(agxbuf *xb) {
   agxbinit(xb, 0, NULL);
 
   return buf;
+}
+
+/** trim extraneous trailing information from a printed floating point value
+ *
+ * tl;dr:
+ *   - “42.00” → “42”
+ *   - “42.01” → “42.01”
+ *   - “42.10” → “42.1”
+ *   - “-0.0” → “0”
+ *
+ * Printing a \p double or \p float via, for example,
+ * \p agxbprint("%.02f", 42.003) can result in output like “42.00”. If this data
+ * is destined for something that does generalized floating point
+ * parsing/decoding (e.g. SVG viewers) the “.00” is unnecessary. “42” would be
+ * interpreted identically. This function can be called after such a
+ * \p agxbprint to normalize data.
+ *
+ * \param xb Buffer to operate on
+ */
+static inline void agxbuf_trim_zeros(agxbuf *xb) {
+
+  // find last period
+  char *start = agxbstart(xb);
+  size_t period;
+  for (period = agxblen(xb) - 1;; --period) {
+    if (period == SIZE_MAX) {
+      // we searched the entire string and did not find a period
+      return;
+    }
+    if (start[period] == '.') {
+      break;
+    }
+  }
+
+  // truncate any “0”s that provide no information
+  for (size_t follower = agxblen(xb) - 1;; --follower) {
+    if (follower == period || start[follower] == '0') {
+      // truncate this character
+      if (agxbuf_is_inline(xb)) {
+        assert(xb->located > AGXBUF_INLINE_SIZE_0);
+        --xb->located;
+      } else {
+        --xb->size;
+      }
+      if (follower == period) {
+        break;
+      }
+    } else {
+      return;
+    }
+  }
+
+  // is the remainder we have left not “-0”?
+  const size_t len = agxblen(xb);
+  if (len < 2 || start[len - 2] != '-' || start[len - 1] != '0') {
+    return;
+  }
+
+  // turn “-0” into “0”
+  start[len - 2] = '0';
+  if (agxbuf_is_inline(xb)) {
+    assert(xb->located > AGXBUF_INLINE_SIZE_0);
+    --xb->located;
+  } else {
+    --xb->size;
+  }
 }
