@@ -35,7 +35,9 @@ static inline void *gv_calloc(size_t nmemb, size_t size) {
 
   void *p = calloc(nmemb, size);
   if (UNLIKELY(nmemb > 0 && size > 0 && p == NULL)) {
-    fprintf(stderr, "out of memory\n");
+    fprintf(stderr,
+            "out of memory when trying to allocate %" PRISIZE_T " bytes\n",
+            nmemb * size);
     graphviz_exit(EXIT_FAILURE);
   }
 
@@ -54,7 +56,9 @@ static inline void *gv_realloc(void *ptr, size_t old_size, size_t new_size) {
 
   void *p = realloc(ptr, new_size);
   if (UNLIKELY(p == NULL)) {
-    fprintf(stderr, "out of memory\n");
+    fprintf(stderr,
+            "out of memory when trying to allocate %" PRISIZE_T " bytes\n",
+            new_size);
     graphviz_exit(EXIT_FAILURE);
   }
 
@@ -98,7 +102,9 @@ static inline char *gv_strdup(const char *original) {
 
   char *copy = strdup(original);
   if (UNLIKELY(copy == NULL)) {
-    fprintf(stderr, "out of memory\n");
+    fprintf(stderr,
+            "out of memory when trying to allocate %" PRISIZE_T " bytes\n",
+            strlen(original) + 1);
     graphviz_exit(EXIT_FAILURE);
   }
 
@@ -140,7 +146,9 @@ static inline char *gv_strndup(const char *original, size_t length) {
 #endif
 
   if (UNLIKELY(copy == NULL)) {
-    fprintf(stderr, "out of memory\n");
+    fprintf(stderr,
+            "out of memory when trying to allocate %" PRISIZE_T " bytes\n",
+            length + 1);
     graphviz_exit(EXIT_FAILURE);
   }
 
