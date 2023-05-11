@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased (8.0.6)]
 
+### Changed
+
+- When an integer overflow during memory allocation causes Graphviz to exit, the
+  overflowing computation is included in the error message.
+
 ### Fixed
 
 - Failure of arrowhead and arrowtail to respect penwidth #372 \
