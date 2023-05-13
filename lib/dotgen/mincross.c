@@ -1427,13 +1427,15 @@ void enqueue_neighbors(nodequeue * q, node_t * n0, int pass)
     }
 }
 
-static int constraining_flat_edge(Agraph_t *g, Agedge_t *e) {
-	if (ED_weight(e) == 0) return FALSE;
-	if (!inside_cluster(g,agtail(e))) return FALSE;
-	if (!inside_cluster(g,aghead(e))) return FALSE;
-	return TRUE;
+static bool constraining_flat_edge(Agraph_t *g, Agedge_t *e) {
+  if (ED_weight(e) == 0)
+    return false;
+  if (!inside_cluster(g, agtail(e)))
+    return false;
+  if (!inside_cluster(g, aghead(e)))
+    return false;
+  return true;
 }
-
 
 /* construct nodes reachable from 'here' in post-order.
 * This is the same as doing a topological sort in reverse order.
