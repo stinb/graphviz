@@ -9,6 +9,7 @@
  *************************************************************************/
 
 #include <assert.h>
+#include <cgraph/agxbuf.h>
 #include <cgraph/alloc.h>
 #include <time.h>
 #include <dotgen/dot.h>
@@ -266,18 +267,19 @@ attach_phase_attrs (Agraph_t * g, int maxphase)
     Agsym_t* rk = agnodeattr(g,"rank","");
     Agsym_t* order = agnodeattr(g,"order","");
     Agnode_t* n;
-    char buf[BUFSIZ];
+    agxbuf buf = {0};
 
     for (n = agfstnode(g); n; n = agnxtnode(g,n)) {
 	if (maxphase >= 1) {
-	    snprintf(buf, sizeof(buf), "%d", ND_rank(n));
-	    agxset(n,rk,buf);
+	    agxbprint(&buf, "%d", ND_rank(n));
+	    agxset(n, rk, agxbuse(&buf));
 	}
 	if (maxphase >= 2) {
-	    snprintf(buf, sizeof(buf), "%d", ND_order(n));
-	    agxset(n,order,buf);
+	    agxbprint(&buf, "%d", ND_order(n));
+	    agxset(n, order, agxbuse(&buf));
 	}
     }
+    agxbfree(&buf);
 }
 
 static void dotLayout(Agraph_t * g)
