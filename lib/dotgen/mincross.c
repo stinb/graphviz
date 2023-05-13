@@ -1022,8 +1022,7 @@ static bool is_a_vnode_of_an_edge_of(graph_t *g, node_t *v) {
     return false;
 }
 
-static int inside_cluster(graph_t * g, node_t * v)
-{
+static bool inside_cluster(graph_t *g, node_t *v) {
     return is_a_normal_node_of(g, v) | is_a_vnode_of_an_edge_of(g, v);
 }
 
