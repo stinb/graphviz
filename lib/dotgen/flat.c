@@ -258,7 +258,8 @@ checkFlatAdjacent (edge_t* e)
 int 
 flat_edges(graph_t * g)
 {
-    int i, reset = FALSE;
+    int i;
+    bool reset = false;
     node_t *n;
     edge_t *e;
     int found = FALSE;
@@ -301,7 +302,7 @@ flat_edges(graph_t * g)
 			else ED_dist(e) = ED_label(e)->dimen.x; 
 		    }
 		    else {
-			reset = TRUE;
+			reset = true;
 			flat_node(e);
 		    }
 		}
@@ -323,7 +324,7 @@ flat_edges(graph_t * g)
 			ED_dist(le) = MAX(lw,ED_dist(le));
 		    }
 		    else {
-			reset = TRUE;
+			reset = true;
 			flat_node(e);
 		    }
 		}
