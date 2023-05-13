@@ -1644,7 +1644,6 @@ static int local_cross(elist l, int dir)
 
 static int rcross(graph_t * g, int r)
 {
-    static int *Count, C;
     int top, bot, cross, max, i, k;
     node_t **rtop, *v;
 
@@ -1652,13 +1651,7 @@ static int rcross(graph_t * g, int r)
     max = 0;
     rtop = GD_rank(g)[r].v;
 
-    if (C <= GD_rank(Root)[r + 1].n) {
-	C = GD_rank(Root)[r + 1].n + 1;
-	Count = ALLOC(C, Count, int);
-    }
-
-    for (i = 0; i < GD_rank(g)[r + 1].n; i++)
-	Count[i] = 0;
+    int *Count = gv_calloc(GD_rank(Root)[r + 1].n + 1, sizeof(int));
 
     for (top = 0; top < GD_rank(g)[r].n; top++) {
 	edge_t *e;
@@ -1685,6 +1678,7 @@ static int rcross(graph_t * g, int r)
 	if (ND_has_port(v))
 	    cross += local_cross(ND_in(v), -1);
     }
+    free(Count);
     return cross;
 }
 
