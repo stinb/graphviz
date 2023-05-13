@@ -544,8 +544,7 @@ static int mincross_clust(graph_t * g, int doBalance)
     return nc;
 }
 
-static int left2right(graph_t * g, node_t * v, node_t * w)
-{
+static bool left2right(graph_t *g, node_t *v, node_t *w) {
     adjmatrix_t *M;
     int rv;
 
@@ -554,18 +553,18 @@ static int left2right(graph_t * g, node_t * v, node_t * w)
 	if (ND_clust(v) != ND_clust(w) && ND_clust(v) && ND_clust(w)) {
 	    /* the following allows cluster skeletons to be swapped */
 	    if (ND_ranktype(v) == CLUSTER && ND_node_type(v) == VIRTUAL)
-		return FALSE;
+		return false;
 	    if (ND_ranktype(w) == CLUSTER && ND_node_type(w) == VIRTUAL)
-		return FALSE;
-	    return TRUE;
+		return false;
+	    return true;
 	}
     } else {
 	if (ND_clust(v) != ND_clust(w))
-	    return TRUE;
+	    return true;
     }
     M = GD_rank(g)[ND_rank(v)].flat;
     if (M == NULL)
-	rv = FALSE;
+	rv = 0;
     else {
 	if (GD_flip(g)) {
 	    node_t *t = v;
@@ -574,7 +573,7 @@ static int left2right(graph_t * g, node_t * v, node_t * w)
 	}
 	rv = ELT(M, flatindex(v), flatindex(w));
     }
-    return rv;
+    return rv != 0;
 }
 
 static int in_cross(node_t * v, node_t * w)
