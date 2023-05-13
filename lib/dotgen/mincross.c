@@ -1622,13 +1622,10 @@ static void mincross_step(graph_t * g, int pass)
 
 static int local_cross(elist l, int dir)
 {
-    int i, j, is_out;
+    int i, j;
     int cross = 0;
     edge_t *e, *f;
-    if (dir > 0)
-	is_out = TRUE;
-    else
-	is_out = FALSE;
+    bool is_out = dir > 0;
     for (i = 0; (e = l.list[i]); i++) {
 	if (is_out)
 	    for (j = i + 1; (f = l.list[j]); j++) {
