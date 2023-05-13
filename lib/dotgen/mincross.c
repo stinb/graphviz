@@ -1006,8 +1006,7 @@ assert((rv == 0) || (ND_order(rv)-ND_order(v))*dir > 0);
     return rv;
 }
 
-static int is_a_normal_node_of(graph_t * g, node_t * v)
-{
+static bool is_a_normal_node_of(graph_t *g, node_t *v) {
     return ND_node_type(v) == NORMAL && agcontains(g, v);
 }
 
