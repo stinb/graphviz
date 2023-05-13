@@ -1010,17 +1010,16 @@ static bool is_a_normal_node_of(graph_t *g, node_t *v) {
     return ND_node_type(v) == NORMAL && agcontains(g, v);
 }
 
-static int is_a_vnode_of_an_edge_of(graph_t * g, node_t * v)
-{
+static bool is_a_vnode_of_an_edge_of(graph_t *g, node_t *v) {
     if (ND_node_type(v) == VIRTUAL
 	&& ND_in(v).size == 1 && ND_out(v).size == 1) {
 	edge_t *e = ND_out(v).list[0];
 	while (ED_edge_type(e) != NORMAL)
 	    e = ED_to_orig(e);
 	if (agcontains(g, e))
-	    return TRUE;
+	    return true;
     }
-    return FALSE;
+    return false;
 }
 
 static int inside_cluster(graph_t * g, node_t * v)
