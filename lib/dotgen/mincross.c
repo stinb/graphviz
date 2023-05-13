@@ -426,8 +426,7 @@ static int betweenclust(edge_t * e)
     return (ND_clust(agtail(e)) != ND_clust(aghead(e)));
 }
 
-static void do_ordering_node (graph_t * g, node_t* n, int outflag)
-{
+static void do_ordering_node(graph_t *g, node_t *n, bool outflag) {
     int i, ne;
     node_t *u, *v;
     edge_t *e, *f, *fe;
@@ -467,8 +466,7 @@ static void do_ordering_node (graph_t * g, node_t* n, int outflag)
     }
 }
 
-static void do_ordering(graph_t * g, int outflag)
-{
+static void do_ordering(graph_t *g, bool outflag) {
     /* Order all nodes in graph */
     node_t *n;
 
@@ -486,9 +484,9 @@ static void do_ordering_for_nodes(graph_t * g)
     for (n = agfstnode(g); n; n = agnxtnode(g, n)) {
 	if ((ordering = late_string(n, N_ordering, NULL))) {
 	    if (streq(ordering, "out"))
-		do_ordering_node(g, n, TRUE);
+		do_ordering_node(g, n, true);
 	    else if (streq(ordering, "in"))
-		do_ordering_node(g, n, FALSE);
+		do_ordering_node(g, n, false);
 	    else if (ordering[0])
 		agerr(AGERR, "ordering '%s' not recognized for node '%s'.\n", ordering, agnameof(n));
 	}
@@ -510,9 +508,9 @@ static void ordered_edges(graph_t * g)
 	return;
     if ((ordering = late_string(g, G_ordering, NULL))) {
 	if (streq(ordering, "out"))
-	    do_ordering(g, TRUE);
+	    do_ordering(g, true);
 	else if (streq(ordering, "in"))
-	    do_ordering(g, FALSE);
+	    do_ordering(g, false);
 	else if (ordering[0])
 	    agerr(AGERR, "ordering '%s' not recognized.\n", ordering);
     }
