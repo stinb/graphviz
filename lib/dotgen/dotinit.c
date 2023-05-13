@@ -378,8 +378,6 @@ resetCoord (Agraph_t* g)
     free (sp);
 }
 
-/* copyCluster:
- */
 static void
 copyCluster (Agraph_t* scl, Agraph_t* cl)
 {
