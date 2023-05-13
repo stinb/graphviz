@@ -546,7 +546,6 @@ static int mincross_clust(graph_t * g, int doBalance)
 
 static bool left2right(graph_t *g, node_t *v, node_t *w) {
     adjmatrix_t *M;
-    int rv;
 
     /* CLUSTER indicates orig nodes of clusters, and vnodes of skeletons */
     if (!ReMincross) {
@@ -564,16 +563,13 @@ static bool left2right(graph_t *g, node_t *v, node_t *w) {
     }
     M = GD_rank(g)[ND_rank(v)].flat;
     if (M == NULL)
-	rv = 0;
-    else {
-	if (GD_flip(g)) {
-	    node_t *t = v;
-	    v = w;
-	    w = t;
-	}
-	rv = ELT(M, flatindex(v), flatindex(w));
+	return false;
+    if (GD_flip(g)) {
+	node_t *t = v;
+	v = w;
+	w = t;
     }
-    return rv != 0;
+    return ELT(M, flatindex(v), flatindex(w)) != 0;
 }
 
 static int in_cross(node_t * v, node_t * w)
