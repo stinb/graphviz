@@ -262,7 +262,6 @@ flat_edges(graph_t * g)
     bool reset = false;
     node_t *n;
     edge_t *e;
-    int found = FALSE;
 
     for (n = GD_nlist(g); n; n = ND_next(n)) {
 	if (ND_flat_out(n).list) {
@@ -278,11 +277,12 @@ flat_edges(graph_t * g)
     }
 
     if ((GD_rank(g)[0].flat) || (GD_n_cluster(g) > 0)) {
+	bool found = false;
 	for (i = 0; (n = GD_rank(g)[0].v[i]); i++) {
 	    for (size_t j = 0; (e = ND_flat_in(n).list[j]); j++) {
 		if ((ED_label(e)) && !ED_adjacent(e)) {
 		    abomination(g);
-		    found = TRUE;
+		    found = true;
 		    break;
 		}
 	    }
