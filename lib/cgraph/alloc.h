@@ -16,6 +16,7 @@
 #include <assert.h>
 #include <cgraph/exit.h>
 #include <cgraph/likely.h>
+#include <cgraph/prisize_t.h>
 #include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -24,9 +25,19 @@
 
 static inline void *gv_calloc(size_t nmemb, size_t size) {
 
+  if (UNLIKELY(nmemb > 0 && SIZE_MAX / nmemb < size)) {
+    fprintf(stderr,
+            "integer overflow when trying to allocate "
+            "%" PRISIZE_T " * %" PRISIZE_T " bytes\n",
+            nmemb, size);
+    graphviz_exit(EXIT_FAILURE);
+  }
+
   void *p = calloc(nmemb, size);
   if (UNLIKELY(nmemb > 0 && size > 0 && p == NULL)) {
-    fprintf(stderr, "out of memory\n");
+    fprintf(stderr,
+            "out of memory when trying to allocate %" PRISIZE_T " bytes\n",
+            nmemb * size);
     graphviz_exit(EXIT_FAILURE);
   }
 
@@ -45,7 +56,9 @@ static inline void *gv_realloc(void *ptr, size_t old_size, size_t new_size) {
 
   void *p = realloc(ptr, new_size);
   if (UNLIKELY(p == NULL)) {
-    fprintf(stderr, "out of memory\n");
+    fprintf(stderr,
+            "out of memory when trying to allocate %" PRISIZE_T " bytes\n",
+            new_size);
     graphviz_exit(EXIT_FAILURE);
   }
 
@@ -65,7 +78,10 @@ static inline void *gv_recalloc(void *ptr, size_t old_nmemb, size_t new_nmemb,
 
   // will multiplication overflow?
   if (UNLIKELY(new_nmemb > SIZE_MAX / size)) {
-    fprintf(stderr, "integer overflow in dynamic memory reallocation\n");
+    fprintf(stderr,
+            "integer overflow when trying to allocate %" PRISIZE_T
+            " * %" PRISIZE_T " bytes\n",
+            new_nmemb, size);
     graphviz_exit(EXIT_FAILURE);
   }
 
@@ -86,7 +102,9 @@ static inline char *gv_strdup(const char *original) {
 
   char *copy = strdup(original);
   if (UNLIKELY(copy == NULL)) {
-    fprintf(stderr, "out of memory\n");
+    fprintf(stderr,
+            "out of memory when trying to allocate %" PRISIZE_T " bytes\n",
+            strlen(original) + 1);
     graphviz_exit(EXIT_FAILURE);
   }
 
@@ -110,7 +128,10 @@ static inline char *gv_strndup(const char *original, size_t length) {
 
   // will our calculation to include the NUL byte below overflow?
   if (UNLIKELY(SIZE_MAX - length < 1)) {
-    fprintf(stderr, "integer overflow in strndup calculation\n");
+    fprintf(stderr,
+            "integer overflow when trying to allocate %" PRISIZE_T
+            " + 1 bytes\n",
+            length);
     graphviz_exit(EXIT_FAILURE);
   }
 
@@ -125,7 +146,9 @@ static inline char *gv_strndup(const char *original, size_t length) {
 #endif
 
   if (UNLIKELY(copy == NULL)) {
-    fprintf(stderr, "out of memory\n");
+    fprintf(stderr,
+            "out of memory when trying to allocate %" PRISIZE_T " bytes\n",
+            length + 1);
     graphviz_exit(EXIT_FAILURE);
   }
 
