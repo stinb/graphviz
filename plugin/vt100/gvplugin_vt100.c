@@ -3,8 +3,55 @@
 
 #include <gvc/gvplugin.h>
 #include <gvc/gvplugin_device.h>
+#include <limits.h>
+#include <stddef.h>
 
 #include <gvc/gvio.h>
+
+/// an ANSI color
+typedef struct {
+  unsigned value;
+  unsigned red;
+  unsigned green;
+  unsigned blue;
+
+} color_t;
+
+/// ANSI 3-bit colors
+static const color_t COLORS[] = {
+    {0, 0x00, 0x00, 0x00}, ///< black
+    {1, 0xff, 0x00, 0x00}, ///< red
+    {2, 0x00, 0xff, 0x00}, ///< green
+    {3, 0xff, 0xff, 0x00}, ///< yellow
+    {4, 0x00, 0x00, 0xff}, ///< blue
+    {5, 0xff, 0x00, 0xff}, ///< magenta
+    {6, 0x00, 0xff, 0xff}, ///< cyan
+    {7, 0xff, 0xff, 0xff}, ///< white
+};
+
+/// a metric of “closeness” to a given color
+static unsigned distance(const color_t base, unsigned red, unsigned green,
+                         unsigned blue) {
+  unsigned diff = 0;
+  diff += red > base.red ? red - base.red : base.red - red;
+  diff += green > base.green ? green - base.green : base.green - green;
+  diff += blue > base.blue ? blue - base.blue : base.blue - blue;
+  return diff;
+}
+
+/// find closest ANSI color
+static unsigned get_color(unsigned red, unsigned green, unsigned blue) {
+  unsigned winner = 0;
+  unsigned diff = UINT_MAX;
+  for (size_t i = 0; i < sizeof(COLORS) / sizeof(COLORS[0]); ++i) {
+    unsigned d = distance(COLORS[i], red, green, blue);
+    if (d < diff) {
+      diff = d;
+      winner = COLORS[i].value;
+    }
+  }
+  return winner;
+}
 
 static void process(GVJ_t *job) {
 
@@ -24,23 +71,8 @@ static void process(GVJ_t *job) {
         unsigned blue = data[offset];
 
         // use this to select a foreground color
-        if (red == 0 && green == 0 && blue == 0) {
-          gvprintf(job, "\033[30m"); // black
-        } else if (red == 0xff && green == 0 && blue == 0) {
-          gvprintf(job, "\033[31m"); // red
-        } else if (red == 0 && green == 0xff && blue == 0) {
-          gvprintf(job, "\033[32m"); // green
-        } else if (red == 0xff && green == 0xff && blue == 0) {
-          gvprintf(job, "\033[33m"); // yellow
-        } else if (red == 0 && green == 0 && blue == 0xff) {
-          gvprintf(job, "\033[34m"); // blue
-        } else if (red == 0xff && green == 0 && blue == 0xff) {
-          gvprintf(job, "\033[35m"); // magenta
-        } else if (red == 0 && green == 0xff && blue == 0xff) {
-          gvprintf(job, "\033[36m"); // cyan
-        } else if (red == 0xff && green == 0xff && blue == 0xff) {
-          gvprintf(job, "\033[37m"); // white
-        }
+        unsigned fg = get_color(red, green, blue);
+        gvprintf(job, "\033[3%um", fg);
       }
 
       {
@@ -56,23 +88,8 @@ static void process(GVJ_t *job) {
         }
 
         // use this to select a background color
-        if (red == 0 && green == 0 && blue == 0) {
-          gvprintf(job, "\033[40m"); // black
-        } else if (red == 0xff && green == 0 && blue == 0) {
-          gvprintf(job, "\033[41m"); // red
-        } else if (red == 0 && green == 0xff && blue == 0) {
-          gvprintf(job, "\033[42m"); // green
-        } else if (red == 0xff && green == 0xff && blue == 0) {
-          gvprintf(job, "\033[43m"); // yellow
-        } else if (red == 0 && green == 0 && blue == 0xff) {
-          gvprintf(job, "\033[44m"); // blue
-        } else if (red == 0xff && green == 0 && blue == 0xff) {
-          gvprintf(job, "\033[45m"); // magenta
-        } else if (red == 0 && green == 0xff && blue == 0xff) {
-          gvprintf(job, "\033[46m"); // cyan
-        } else if (red == 0xff && green == 0xff && blue == 0xff) {
-          gvprintf(job, "\033[47m"); // white
-        }
+        unsigned bg = get_color(red, green, blue);
+        gvprintf(job, "\033[4%um", bg);
       }
 
       // print unicode “upper half block” to effectively do two rows of
