@@ -8,7 +8,7 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
-
+#include	<cgraph/alloc.h>
 #include	<dotgen/dot.h>
 #include	<stdbool.h>
 #include	<stddef.h>
@@ -258,10 +258,10 @@ checkFlatAdjacent (edge_t* e)
 int 
 flat_edges(graph_t * g)
 {
-    int i, reset = FALSE;
+    int i;
+    bool reset = false;
     node_t *n;
     edge_t *e;
-    int found = FALSE;
 
     for (n = GD_nlist(g); n; n = ND_next(n)) {
 	if (ND_flat_out(n).list) {
@@ -277,11 +277,12 @@ flat_edges(graph_t * g)
     }
 
     if ((GD_rank(g)[0].flat) || (GD_n_cluster(g) > 0)) {
+	bool found = false;
 	for (i = 0; (n = GD_rank(g)[0].v[i]); i++) {
 	    for (size_t j = 0; (e = ND_flat_in(n).list[j]); j++) {
 		if ((ED_label(e)) && !ED_adjacent(e)) {
 		    abomination(g);
-		    found = TRUE;
+		    found = true;
 		    break;
 		}
 	    }
@@ -301,7 +302,7 @@ flat_edges(graph_t * g)
 			else ED_dist(e) = ED_label(e)->dimen.x; 
 		    }
 		    else {
-			reset = TRUE;
+			reset = true;
 			flat_node(e);
 		    }
 		}
@@ -323,7 +324,7 @@ flat_edges(graph_t * g)
 			ED_dist(le) = MAX(lw,ED_dist(le));
 		    }
 		    else {
-			reset = TRUE;
+			reset = true;
 			flat_node(e);
 		    }
 		}

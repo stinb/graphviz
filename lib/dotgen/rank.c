@@ -941,7 +941,7 @@ static void readout_levels(graph_t * g, graph_t * Xg, int ncc)
     GD_maxrank(g) = -1;
     if (ncc > 1) {
 	int i;
-	minrk = N_NEW(ncc+1,int);
+	minrk = gv_calloc(ncc + 1, sizeof(int));
 	for (i = 1; i <= ncc; i++)
 	    minrk[i] = INT_MAX;
     }
@@ -983,8 +983,7 @@ static void readout_levels(graph_t * g, graph_t * Xg, int ncc)
     for (n = agfstnode(g); n; n = agnxtnode(g, n)) {
 	ND_alg(n) = NULL;
     }
-    if (minrk)
-	free (minrk);
+    free(minrk);
 }
 
 static void dfscc(graph_t * g, node_t * n, int cc)

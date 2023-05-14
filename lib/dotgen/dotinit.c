@@ -9,6 +9,7 @@
  *************************************************************************/
 
 #include <assert.h>
+#include <cgraph/agxbuf.h>
 #include <cgraph/alloc.h>
 #include <time.h>
 #include <dotgen/dot.h>
@@ -266,18 +267,19 @@ attach_phase_attrs (Agraph_t * g, int maxphase)
     Agsym_t* rk = agnodeattr(g,"rank","");
     Agsym_t* order = agnodeattr(g,"order","");
     Agnode_t* n;
-    char buf[BUFSIZ];
+    agxbuf buf = {0};
 
     for (n = agfstnode(g); n; n = agnxtnode(g,n)) {
 	if (maxphase >= 1) {
-	    snprintf(buf, sizeof(buf), "%d", ND_rank(n));
-	    agxset(n,rk,buf);
+	    agxbprint(&buf, "%d", ND_rank(n));
+	    agxset(n, rk, agxbuse(&buf));
 	}
 	if (maxphase >= 2) {
-	    snprintf(buf, sizeof(buf), "%d", ND_order(n));
-	    agxset(n,order,buf);
+	    agxbprint(&buf, "%d", ND_order(n));
+	    agxset(n, order, agxbuse(&buf));
 	}
     }
+    agxbfree(&buf);
 }
 
 static void dotLayout(Agraph_t * g)
@@ -346,7 +348,7 @@ static void
 attachPos (Agraph_t* g)
 {
     node_t* np;
-    double* ps = N_NEW(2*agnnodes(g), double);
+    double* ps = gv_calloc(2 * agnnodes(g), sizeof(double));
 
     for (np = agfstnode(g); np; np = agnxtnode(g, np)) {
 	ND_pos(np) = ps;
@@ -376,8 +378,6 @@ resetCoord (Agraph_t* g)
     free (sp);
 }
 
-/* copyCluster:
- */
 static void
 copyCluster (Agraph_t* scl, Agraph_t* cl)
 {
@@ -389,7 +389,7 @@ copyCluster (Agraph_t* scl, Agraph_t* cl)
     GD_label_pos(cl) = GD_label_pos(scl);
     memcpy(GD_border(cl), GD_border(scl), 4*sizeof(pointf));
     nclust = GD_n_cluster(cl) = GD_n_cluster(scl);
-    GD_clust(cl) = N_NEW(nclust+1,Agraph_t*);
+    GD_clust(cl) = gv_calloc(nclust + 1, sizeof(Agraph_t*));
     for (j = 1; j <= nclust; j++) {
 	cg = mapClust(GD_clust(scl)[j]);
 	GD_clust(cl)[j] = cg;
@@ -415,7 +415,7 @@ copyClusterInfo (int ncc, Agraph_t** ccs, Agraph_t* root)
 	nclust += GD_n_cluster(ccs[i]);
 
     GD_n_cluster(root) = nclust;
-    GD_clust(root) = N_NEW(nclust+1,Agraph_t*);
+    GD_clust(root) = gv_calloc(nclust + 1, sizeof(Agraph_t*));
     nclust = 1;
     for (i = 0; i < ncc; i++) {
 	sg = ccs[i];
