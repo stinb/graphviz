@@ -47,8 +47,6 @@ int sfprint(Sfio_t *f, Sffmt_t *format) {
     Sffmt_t *ft;		/* format environment           */
     Fmt_t *fm, *fmstk;		/* stack contexts               */
 
-    char *oform;		/* original format string       */
-    va_list oargs;		/* original arg list            */
     Fmtpos_t *fp;		/* arg position list            */
     int argp, argn;		/* arg position and number      */
 
@@ -106,8 +104,6 @@ int sfprint(Sfio_t *f, Sffmt_t *format) {
     fmstk = NULL;
     ft = NULL;
 
-    oform = "";
-    memset(&oargs, 0, sizeof(oargs));
     fp = NULL;
     argn = -1;
 
@@ -121,8 +117,6 @@ int sfprint(Sfio_t *f, Sffmt_t *format) {
     fm->form = "";
     memset(&fm->args, 0, sizeof(fm->args));
 
-    fm->oform = "";
-    memset(&fm->oargs, 0, sizeof(fm->oargs));
     fm->argn = argn;
     fm->fp = NULL;
 
@@ -185,12 +179,7 @@ int sfprint(Sfio_t *f, Sffmt_t *format) {
 			n_str = (form - 1) - t_str;
 		    else {
 			t_str = _Sffmtintf(t_str + 1, &n);
-			if (*t_str == '$') {
-			    if (!fp && !(fp = _Sffmtposf(oform, oargs, 0)))
-				goto pop_fmt;
-			    n = FP_SET(n, argn);
-			} else
-			    n = FP_SET(-1, argn);
+			n = FP_SET(-1, argn);
 
 			if (fp) {
 			    t_str = fp[n].argv.s;
@@ -268,13 +257,7 @@ int sfprint(Sfio_t *f, Sffmt_t *format) {
 	    form += 1;		/* fall through */
 	case '*':
 	    form = _Sffmtintf(form, &n);
-	    if (*form == '$') {
-		form += 1;
-		if (!fp && !(fp = _Sffmtposf(oform, oargs, 0)))
-		    goto pop_fmt;
-		n = FP_SET(n, argn);
-	    } else
-		n = FP_SET(-1, argn);
+	    n = FP_SET(-1, argn);
 
 	    if (fp)
 		v = fp[n].argv.i;
@@ -303,13 +286,6 @@ int sfprint(Sfio_t *f, Sffmt_t *format) {
 	  dot_size:
 	    for (v = fmt - '0'; isdigit((int)*form); ++form)
 		v = v * 10 + (*form - '0');
-	    if (*form == '$') {
-		form += 1;
-		if (!fp && !(fp = _Sffmtposf(oform, oargs, 0)))
-		    goto pop_fmt;
-		argp = v - 1;
-		goto loop_flags;
-	    }
 	  dot_set:
 	    if (dot == 0) {
 		if ((width = v) < 0) {
@@ -330,13 +306,7 @@ int sfprint(Sfio_t *f, Sffmt_t *format) {
 		    size = size * 10 + (n - '0');
 	    } else if (*form == '*') {
 		form = _Sffmtintf(form + 1, &n);
-		if (*form == '$') {
-		    form += 1;
-		    if (!fp && !(fp = _Sffmtposf(oform, oargs, 0)))
-			goto pop_fmt;
-		    n = FP_SET(n, argn);
-		} else
-		    n = FP_SET(-1, argn);
+		n = FP_SET(-1, argn);
 
 		if (fp)		/* use position list */
 		    size = fp[n].argv.i;
@@ -949,8 +919,6 @@ int sfprint(Sfio_t *f, Sffmt_t *format) {
 	fmstk = fm->next;
 	if ((form = fm->form)) {
 	    va_copy(args, fm->args);
-	    oform = fm->oform;
-	    va_copy(oargs, fm->oargs);
 	    argn = fm->argn;
 	    fp = fm->fp;
 	}

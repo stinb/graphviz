@@ -442,7 +442,6 @@ extern "C" {
 #define _Sfdigits	(_Sftable.sf_digits)
 #define _Sfcvinitf	(_Sftable.sf_cvinitf)
 #define _Sfcvinit	(_Sftable.sf_cvinit)
-#define _Sffmtposf	(_Sftable.sf_fmtposf)
 #define _Sffmtintf	(_Sftable.sf_fmtintf)
 #define _Sfcv36		(_Sftable.sf_cv36)
 #define _Sfcv64		(_Sftable.sf_cv64)
@@ -454,7 +453,6 @@ extern "C" {
 	char *sf_digits;	/* digits for general bases     */
 	int (*sf_cvinitf) (void);	/* initialization function      */
 	int sf_cvinit;		/* initialization state         */
-	Fmtpos_t *(*sf_fmtposf)(const char *, va_list, int);
 	char *(*sf_fmtintf) (const char *, int *);
 	uchar sf_cv36[UCHAR_MAX + 1];	/* conversion for base [2-36]   */
 	uchar sf_cv64[UCHAR_MAX + 1];	/* conversion for base [37-64]  */
