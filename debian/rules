@@ -77,7 +77,6 @@ configure-stamp:
 	--disable-sharp \
 	--enable-guile \
 	--disable-java \
-	--disable-io \
 	--enable-lua \
 	--enable-ocaml \
 	--enable-php \
