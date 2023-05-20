@@ -2780,6 +2780,39 @@ def test_2391_1():
     dot("svg", input)
 
 
+@pytest.mark.xfail(strict=True)  # FIXME
+def test_2397():
+    """
+    escapes in strings should be handled correctly
+    https://gitlab.com/graphviz/graphviz/-/issues/2397
+    """
+
+    # find co-located test source
+    c_src = (Path(__file__).parent / "2397.c").resolve()
+    assert c_src.exists(), "missing test case"
+
+    # run this to generate a graph
+    source, _ = run_c(c_src, link=["cgraph", "gvc"])
+
+    # this should have produced a valid graph
+    dot("svg", source=source)
+
+
+def test_2397_1():
+    """
+    a variant of test_2397 that confirms the same works via the command line
+    https://gitlab.com/graphviz/graphviz/-/issues/2397
+    """
+
+    source = 'digraph { a[label="foo\\\\\\"bar"]; }'
+
+    # run this through dot
+    output = dot("dot", source=source)
+
+    # the output should be valid dot
+    dot("svg", source=output)
+
+
 def test_changelog_dates():
     """
     Check the dates of releases in the changelog are correctly formatted
