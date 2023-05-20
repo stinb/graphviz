@@ -173,38 +173,3 @@ char *strip_dir(char *s){
   }
   return s;
 }
-
-void scale_to_box(double xmin, double ymin, double xmax, double ymax, int n, int dim, double *x){
-  double min[3], max[3], min0[3], ratio = 1;
-  int i, k;
-
-  for (i = 0; i < dim; i++) {
-    min[i] = x[i];
-    max[i] = x[i];
-  }
-
-  for (i = 0; i < n; i++){
-    for (k = 0; k < dim; k++) {
-      min[k] = fmin(x[i*dim+k], min[k]);
-      max[k] = fmax(x[i*dim+k], max[k]);
-    }
-  }
-
-  if (max[0] - min[0] != 0) {
-    ratio = (xmax-xmin)/(max[0] - min[0]);
-  }
-  if (max[1] - min[1] != 0) {
-    ratio = fmin(ratio, (ymax-ymin)/(max[1] - min[1]));
-  }
-  
-  min0[0] = xmin;
-  min0[1] = ymin;
-  min0[2] = 0;
-  for (i = 0; i < n; i++){
-    for (k = 0; k < dim; k++) {
-      x[i*dim+k] = min0[k] + (x[i*dim+k] - min[k])*ratio;
-    }
-  }
-  
-  
-}
