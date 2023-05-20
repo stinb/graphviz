@@ -346,7 +346,7 @@ static void hierachical_modularity_clustering(SparseMatrix A, int ncluster_targe
 
 
 
-void modularity_clustering(SparseMatrix A, int inplace, int ncluster_target,
+void modularity_clustering(SparseMatrix A, bool inplace, int ncluster_target,
 			   int *nclusters, int **assignment, double *modularity){
   /* find a clustering of vertices by maximize modularity
      A: symmetric square matrix n x n. If real value, value will be used as edges weights, otherwise edge weights are considered as 1.

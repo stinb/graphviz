@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -50,7 +52,7 @@ enum {CLUSTERING_MODULARITY = 0, CLUSTERING_MQ};
    .   If *assignment = NULL on entry, it will be allocated. Otherwise used.
    modularity: achieve modularity
 */
-void modularity_clustering(SparseMatrix A, int inplace, int maxcluster,
+void modularity_clustering(SparseMatrix A, bool inplace, int maxcluster,
 			   int *nclusters, int **assignment, double *modularity);
 
 #ifdef __cplusplus
