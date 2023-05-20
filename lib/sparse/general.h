@@ -96,8 +96,6 @@ void vector_float_take(int n, float *v, int m, int *p, float **u);
 void vector_ordering(int n, double *v, int **p);
 void vector_sort_int(int n, int *v);
 
-void vector_print(char *s, int n, double *x);
-
 #define MACHINEACC 1.0e-16
 #define SQRT_MACHINEACC 1.0e-8
 

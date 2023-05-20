@@ -75,16 +75,6 @@ double* vector_saxpy2(int n, double *x, double *y, double beta){
   return x;
 }
 
-void vector_print(char *s, int n, double *x){
-  int i;
-    printf("%s{",s); 
-    for (i = 0; i < n; i++) {
-      if (i > 0) printf(",");
-      printf("%f",x[i]); 
-    }
-    printf("}\n");
-}
-
 void vector_float_take(int n, float *v, int m, int *p, float **u){
   /* take m elements v[p[i]]],i=1,...,m and oput in u */
   int i;
