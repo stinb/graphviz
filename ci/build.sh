@@ -22,9 +22,7 @@ fi
 # Fedora ≥ 35, so suppress this rpmbuild check
 # https://gitlab.com/graphviz/graphviz/-/issues/2163
 if [ "${ID}" = "fedora" ]; then
-  if [ ${VERSION_ID} -ge 35 ]; then
-    export QA_RPATHS=$(( 0x0001 ))
-  fi
+  export QA_RPATHS=$(( 0x0001 ))
 fi
 
 META_DATA_DIR=Metadata/${ID}/${VERSION_ID}
