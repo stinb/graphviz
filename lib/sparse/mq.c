@@ -8,7 +8,7 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
-/* Modularity Quality definitation:
+/* Modularity Quality definition:
 
    We assume undirected graph. Directed graph should be converted by summing edge weights.
 
@@ -67,7 +67,7 @@
 
 static double get_mq(SparseMatrix A, int *assignment, int *ncluster0, double *mq_in0, double *mq_out0, double **dout0){
   /* given a symmetric matrix representation of a graph and an assignment of nodes into clusters, calculate the modularity quality.
-   assignment: assignmenet[i] gives the cluster assignment of node i. 0 <= assignment[i] < ncluster.
+   assignment: assignment[i] gives the cluster assignment of node i. 0 <= assignment[i] < ncluster.
    ncluster: number of clusters
    mq_in: the part of MQ to do with intra-cluster edges, before divide by 1/k
    mq_out: the part of MQ to do with inter-cluster edges, before divide by 1/(k*(k-1))
