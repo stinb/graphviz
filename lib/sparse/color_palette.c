@@ -33,15 +33,6 @@ char *color_palettes_get(char *color_palette_name){
   return NULL;
 }
 
-void color_palettes_name_print(FILE *fp){
-  int i;
-
-  for (i = 0; i < npalettes; i++){
-    if (i != 0)  fprintf(fp,", ");
-    fprintf(fp,"%s", color_palettes[i][0]);
-  }
-}
-
 int color_palettes_Q(const char *color_palette_name) {
   int i;
   for (i = 0; i < npalettes; i++){
