@@ -40,7 +40,7 @@ static Agglomerative_Ink_Bundling Agglomerative_Ink_Bundling_init(SparseMatrix A
   grid->R = NULL;
   grid->next = NULL;
   grid->edges = edges;
-  grid->delete_top_level_A = 0;
+  grid->delete_top_level_A = false;
   grid->total_ink = -1;
   if (level == 0){
     double total_ink = 0;
@@ -294,7 +294,7 @@ static Agglomerative_Ink_Bundling Agglomerative_Ink_Bundling_new(SparseMatrix A0
   grid = Agglomerative_Ink_Bundling_establish(grid, pick.data(), angle_param,
                                               angle);
 
-  if (A != A0) grid->delete_top_level_A = TRUE;/* be sure to clean up later */
+  if (A != A0) grid->delete_top_level_A = true; // be sure to clean up later
 
   return grid;
 }

@@ -169,7 +169,7 @@ static Multilevel_MQ_Clustering Multilevel_MQ_Clustering_init(SparseMatrix A, in
   grid->R = NULL;
   grid->next = NULL;
   grid->prev = NULL;
-  grid->delete_top_level_A = FALSE;
+  grid->delete_top_level_A = false;
   matching = grid->matching = gv_calloc(n, sizeof(double));
   grid->deg_intra = NULL;
   grid->dout = NULL;
@@ -525,7 +525,7 @@ static Multilevel_MQ_Clustering Multilevel_MQ_Clustering_new(SparseMatrix A0, in
 
   grid = Multilevel_MQ_Clustering_establish(grid, maxcluster);
 
-  if (A != A0) grid->delete_top_level_A = TRUE;/* be sure to clean up later */
+  if (A != A0) grid->delete_top_level_A = true; // be sure to clean up later
   return grid;
 }
 

@@ -26,7 +26,7 @@ struct Multilevel_Modularity_Clustering_struct {
   SparseMatrix R; 
   Multilevel_Modularity_Clustering next;
   Multilevel_Modularity_Clustering prev;
-  int delete_top_level_A;
+  bool delete_top_level_A;
   int *matching; /* dimension n. matching[i] is the clustering assignment of node i */
   double modularity;
   double deg_total; /* total edge weights, including self-edges */

@@ -33,7 +33,7 @@ static Multilevel_Modularity_Clustering Multilevel_Modularity_Clustering_init(Sp
   grid->R = NULL;
   grid->next = NULL;
   grid->prev = NULL;
-  grid->delete_top_level_A = FALSE;
+  grid->delete_top_level_A = false;
   grid->matching = MALLOC(sizeof(double) * n);
   grid->deg = NULL;
   grid->agglomerate_regardless = FALSE;
@@ -279,7 +279,7 @@ static Multilevel_Modularity_Clustering Multilevel_Modularity_Clustering_new(Spa
 
   grid = Multilevel_Modularity_Clustering_establish(grid, ncluster_target);
 
-  if (A != A0) grid->delete_top_level_A = TRUE;/* be sure to clean up later */
+  if (A != A0) grid->delete_top_level_A = true; // be sure to clean up later
   return grid;
 }
 

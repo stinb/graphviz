@@ -11,6 +11,7 @@
 #pragma once
 
 #include <sparse/SparseMatrix.h>
+#include <stdbool.h>
 
 typedef struct Multilevel_struct *Multilevel;
 
@@ -25,7 +26,7 @@ struct Multilevel_struct {
   double *node_weights;
   Multilevel next;
   Multilevel prev;
-  int delete_top_level_A;
+  bool delete_top_level_A;
 };
 
 enum {MAX_CLUSTER_SIZE = 4};

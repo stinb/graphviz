@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -24,7 +26,7 @@ struct Multilevel_MQ_Clustering_struct {
   SparseMatrix R; 
   Multilevel_MQ_Clustering next;
   Multilevel_MQ_Clustering prev;
-  int delete_top_level_A;
+  bool delete_top_level_A;
   int *matching; /* dimension n. matching[i] is the clustering assignment of node i */
 
   /*
