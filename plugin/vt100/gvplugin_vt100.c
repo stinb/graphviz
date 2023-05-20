@@ -1,6 +1,7 @@
 /// \file
 /// \brief Device that renders using ANSI terminal colors
 
+#include <assert.h>
 #include <gvc/gvplugin.h>
 #include <gvc/gvplugin_device.h>
 #include <limits.h>
@@ -53,9 +54,11 @@ static unsigned get_color(unsigned red, unsigned green, unsigned blue) {
   return winner;
 }
 
-static void process(GVJ_t *job) {
+static void process(GVJ_t *job, int color_depth) {
 
   unsigned char *data = (unsigned char *)job->imagedata;
+
+  assert(color_depth == 3 || color_depth == 24);
 
   for (unsigned y = 0; y < job->height; y += 2) {
     for (unsigned x = 0; x < job->width; ++x) {
@@ -71,8 +74,13 @@ static void process(GVJ_t *job) {
         unsigned blue = data[offset];
 
         // use this to select a foreground color
-        unsigned fg = get_color(red, green, blue);
-        gvprintf(job, "\033[3%um", fg);
+        if (color_depth == 3) {
+          unsigned fg = get_color(red, green, blue);
+          gvprintf(job, "\033[3%um", fg);
+        } else {
+          assert(color_depth == 24);
+          gvprintf(job, "\033[38;2;%u;%u;%um", red, green, blue);
+        }
       }
 
       {
@@ -88,8 +96,13 @@ static void process(GVJ_t *job) {
         }
 
         // use this to select a background color
-        unsigned bg = get_color(red, green, blue);
-        gvprintf(job, "\033[4%um", bg);
+        if (color_depth == 3) {
+          unsigned bg = get_color(red, green, blue);
+          gvprintf(job, "\033[4%um", bg);
+        } else {
+          assert(color_depth == 24);
+          gvprintf(job, "\033[48;2;%u;%u;%um", red, green, blue);
+        }
       }
 
       // print unicode “upper half block” to effectively do two rows of
@@ -100,8 +113,16 @@ static void process(GVJ_t *job) {
   }
 }
 
-static gvdevice_engine_t engine = {
-    .format = process,
+static void process3(GVJ_t *job) { process(job, 3); }
+
+static void process24(GVJ_t *job) { process(job, 24); }
+
+static gvdevice_engine_t engine3 = {
+    .format = process3,
+};
+
+static gvdevice_engine_t engine24 = {
+    .format = process24,
 };
 
 static gvdevice_features_t device_features = {
@@ -109,7 +130,8 @@ static gvdevice_features_t device_features = {
 };
 
 static gvplugin_installed_t device_types[] = {
-    {0, "vt100:cairo", 0, &engine, &device_features},
+    {8, "vt100:cairo", 0, &engine3, &device_features},
+    {1 << 24, "vt100-24bit:cairo", 0, &engine24, &device_features},
     {0},
 };
 
