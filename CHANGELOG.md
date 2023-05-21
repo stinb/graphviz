@@ -8,8 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- On non-Windows platforms, a new `-Tvt100` output format is available that does
-  rudimentary rendering to a terminal that supports ANSI escape sequences.
+- On non-Windows platforms, new `-Tvt100` and `-Tvt100-24bit` output formats are
+  available that do rudimentary rendering to a terminal that supports ANSI
+  escape sequences.
 - Some notes about the interaction with wide-oriented streams were added to the
   cgraph man page.
 
