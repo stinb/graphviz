@@ -89,8 +89,6 @@
 								</object>
 								<nil key="NSToolbarItemTarget"/>
 								<nil key="NSToolbarItemAction"/>
-								<string key="NSToolbarItemMinSize">{-2.7135e-19, -2.7135e-19}</string>
-								<string key="NSToolbarItemMaxSize">{-2.7135e-19, -2.7135e-19}</string>
 								<bool key="NSToolbarItemEnabled">YES</bool>
 								<bool key="NSToolbarItemAutovalidates">NO</bool>
 								<int key="NSToolbarItemTag">0</int>
@@ -111,8 +109,6 @@
 								</object>
 								<nil key="NSToolbarItemTarget"/>
 								<nil key="NSToolbarItemAction"/>
-								<string key="NSToolbarItemMinSize">{-2.7135e-19, -2.7135e-19}</string>
-								<string key="NSToolbarItemMaxSize">{-2.7135e-19, -2.7135e-19}</string>
 								<bool key="NSToolbarItemEnabled">YES</bool>
 								<bool key="NSToolbarItemAutovalidates">NO</bool>
 								<int key="NSToolbarItemTag">2</int>
@@ -133,8 +129,6 @@
 								</object>
 								<nil key="NSToolbarItemTarget"/>
 								<nil key="NSToolbarItemAction"/>
-								<string key="NSToolbarItemMinSize">{-2.7135e-19, -2.7135e-19}</string>
-								<string key="NSToolbarItemMaxSize">{-2.7135e-19, -2.7135e-19}</string>
 								<bool key="NSToolbarItemEnabled">YES</bool>
 								<bool key="NSToolbarItemAutovalidates">NO</bool>
 								<int key="NSToolbarItemTag">1</int>
