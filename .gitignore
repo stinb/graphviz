@@ -61,6 +61,7 @@ doc/schema/Makefile
 *.pc
 cmd/gvedit/gvedit.pro
 debian/changelog
+debian/libgv-php5.install
 macosx/Info.plist
 macosx/build/graphviz.pmdoc/01local.xml
 macosx/build/graphviz.pmdoc/02graphviz.xml
