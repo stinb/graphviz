@@ -32,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Setting `xdotversion` attributes that parse as greater than 17 (`xdotversion`
   is parsed as a series of digits, ignoring all non-digits) no longer causes an
   out of bounds read when rendering to xdot. #2390
+- Icon size in the macOS Graphviz.app has been fixed so icons are no longer
+  invisible.
 
 ## [8.0.5] – 2023-04-30
 
