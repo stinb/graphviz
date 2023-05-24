@@ -674,11 +674,15 @@ PHP extension for graphviz.
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/php.d/%{name}.ini
 %{php_extdir}/gv.so
+%if 0%{?fedora} < 38
 %{_datadir}/php*/*
+%endif
 %{_datadir}/graphviz/demo/*.php*
 %{_mandir}/man3/*.3php.*
 %exclude %{_libdir}/graphviz/php/*.so
+%if 0%{?fedora} < 38
 %exclude %{_libdir}/graphviz/php/*.php
+%endif
 
 #-- graphviz-lang-python3 rpm -------------------------------------------
 %if %{PYTHON3}

@@ -35,6 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   out of bounds read when rendering to xdot. #2390
 - Icon size in the macOS Graphviz.app has been fixed so icons are no longer
   invisible.
+- Compiling the portable source tarball on a machine with SWIG ≥ 4.1.0 no
+  longer fails due to missing PHP files. #2388
 
 ## [8.0.5] – 2023-04-30
 
