@@ -862,7 +862,6 @@ CFLAGS="$RPM_OPT_FLAGS" \
         --disable-dependency-tracking \
         --enable-sharp \
         --enable-guile \
-        --disable-io \
         --enable-java \
         --disable-d \
         --disable-javascript \
