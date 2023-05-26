@@ -23,7 +23,6 @@ extern int knownColorScheme(const char*);
 extern char *color_palettes[npalettes][2];
   /* return a list of rgb in hex form: "#ff0000,#00ff00,..." */
 extern char *color_palettes_get(char *color_palette_name);
-extern void color_palettes_name_print(FILE *fp);
 extern int color_palettes_Q(const char *color_palette_name);
 
 extern float palette_pastel[1001][3];

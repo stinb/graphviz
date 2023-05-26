@@ -96,8 +96,6 @@ void vector_float_take(int n, float *v, int m, int *p, float **u);
 void vector_ordering(int n, double *v, int **p);
 void vector_sort_int(int n, int *v);
 
-void vector_print(char *s, int n, double *x);
-
 #define MACHINEACC 1.0e-16
 #define SQRT_MACHINEACC 1.0e-8
 
@@ -112,8 +110,6 @@ double distance_cropped(double *x, int dim, int i, int j);
 double point_distance(double *p1, double *p2, int dim);
 
 char *strip_dir(char *s);
-
-void scale_to_box(double xmin, double ymin, double xmax, double ymax, int n, int dim, double *x);
 
 #ifdef __cplusplus
 }

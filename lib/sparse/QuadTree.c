@@ -15,6 +15,7 @@
 #include <math.h>
 #include <sparse/LinkedList.h>
 #include <sparse/QuadTree.h>
+#include <stdbool.h>
 
 extern double distance_cropped(double *x, int dim, int i, int j);
 
@@ -650,10 +651,9 @@ void QuadTree_print(FILE *fp, QuadTree q){
   }
 }
 
-
-
-
-static void QuadTree_get_nearest_internal(QuadTree qt, double *x, double *y, double *min, int *imin, int tentative){
+static void QuadTree_get_nearest_internal(QuadTree qt, double *x, double *y,
+                                          double *min, int *imin,
+                                          bool tentative) {
   /* get the nearest point years to {x[0], ..., x[dim]} and store in y.*/
   SingleLinkedList l;
   double *coord, dist;
@@ -706,6 +706,6 @@ void QuadTree_get_nearest(QuadTree qt, double *x, double *ymin, int *imin, doubl
 
   *min = -1;
 
-  QuadTree_get_nearest_internal(qt, x, ymin, min, imin, TRUE);
-  QuadTree_get_nearest_internal(qt, x, ymin, min, imin, FALSE);
+  QuadTree_get_nearest_internal(qt, x, ymin, min, imin, true);
+  QuadTree_get_nearest_internal(qt, x, ymin, min, imin, false);
 }

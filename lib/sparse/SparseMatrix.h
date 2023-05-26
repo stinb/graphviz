@@ -56,9 +56,6 @@ SparseMatrix SparseMatrix_from_coordinate_format_not_compacted(SparseMatrix A);
 SparseMatrix SparseMatrix_from_coordinate_arrays(int nz, int m, int n, int *irn, int *jcn, void *val, int type, size_t sz);
 SparseMatrix SparseMatrix_from_coordinate_arrays_not_compacted(int nz, int m, int n, int *irn, int *jcn, void *val, int type, size_t sz);
 
-
-void SparseMatrix_print(char *, SparseMatrix A);/*print to stdout in Mathematica format*/
-
 void SparseMatrix_export(FILE *f, SparseMatrix A);/* export into MM format except the header */
 
 void SparseMatrix_delete(SparseMatrix A);

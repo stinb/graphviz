@@ -8,7 +8,7 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
-/* Modularity Quality definitation:
+/* Modularity Quality definition:
 
    We assume undirected graph. Directed graph should be converted by summing edge weights.
 
@@ -67,7 +67,7 @@
 
 static double get_mq(SparseMatrix A, int *assignment, int *ncluster0, double *mq_in0, double *mq_out0, double **dout0){
   /* given a symmetric matrix representation of a graph and an assignment of nodes into clusters, calculate the modularity quality.
-   assignment: assignmenet[i] gives the cluster assignment of node i. 0 <= assignment[i] < ncluster.
+   assignment: assignment[i] gives the cluster assignment of node i. 0 <= assignment[i] < ncluster.
    ncluster: number of clusters
    mq_in: the part of MQ to do with intra-cluster edges, before divide by 1/k
    mq_out: the part of MQ to do with inter-cluster edges, before divide by 1/(k*(k-1))
@@ -169,7 +169,7 @@ static Multilevel_MQ_Clustering Multilevel_MQ_Clustering_init(SparseMatrix A, in
   grid->R = NULL;
   grid->next = NULL;
   grid->prev = NULL;
-  grid->delete_top_level_A = FALSE;
+  grid->delete_top_level_A = false;
   matching = grid->matching = gv_calloc(n, sizeof(double));
   grid->deg_intra = NULL;
   grid->dout = NULL;
@@ -234,10 +234,8 @@ static Multilevel_MQ_Clustering Multilevel_MQ_Clustering_establish(Multilevel_MQ
   int *ia = A->ia, *ja = A->ja;
   double amax = 0;
   double *deg_intra = grid->deg_intra, *wgt = grid->wgt;
-  double *deg_intra_new, *wgt_new = NULL;
   int i, j, k, jj, jc, jmax;
-  double *deg_inter, gain = 0, *dout = grid->dout, *dout_new, deg_in_i, deg_in_j, wgt_i, wgt_j, a_ij, dout_i, dout_j, dout_max = 0, wgt_jmax = 0;
-  int *mask;
+  double gain = 0, *dout = grid->dout, deg_in_i, deg_in_j, wgt_i, wgt_j, a_ij, dout_i, dout_j, dout_max = 0, wgt_jmax = 0;
   double maxgain = 0;
   double total_gain = 0;
 
@@ -247,11 +245,11 @@ static Multilevel_MQ_Clustering Multilevel_MQ_Clustering_establish(Multilevel_MQ
   mq_in = grid->mq_in;
   mq_out = grid->mq_out;
 
-  deg_intra_new = MALLOC(sizeof(double)*n);
-  wgt_new = MALLOC(sizeof(double)*n);
-  deg_inter = MALLOC(sizeof(double)*n);
-  mask = MALLOC(sizeof(int)*n);
-  dout_new = MALLOC(sizeof(double)*n);
+  double *deg_intra_new = gv_calloc(n, sizeof(double));
+  double *wgt_new = gv_calloc(n, sizeof(double));
+  double *deg_inter = gv_calloc(n, sizeof(double));
+  int *mask = gv_calloc(n, sizeof(int));
+  double *dout_new = gv_calloc(n, sizeof(double));
   for (i = 0; i < n; i++) mask[i] = -1;
 
   assert(n == A->n);
@@ -317,7 +315,7 @@ static Multilevel_MQ_Clustering Multilevel_MQ_Clustering_establish(Multilevel_MQ
       } else {
 	a_ij = deg_inter[jc];
 	wgt_j = wgt_new[jc];
-	deg_inter[jc] = -1; /* so that we do not redo the calulation when we hit another neighbor in cluster jc */
+	deg_inter[jc] = -1; // so that we do not redo the calculation when we hit another neighbor in cluster jc
 	deg_in_j = deg_intra_new[jc];
 	dout_j = dout_new[jc];
       }
@@ -481,12 +479,12 @@ static Multilevel_MQ_Clustering Multilevel_MQ_Clustering_establish(Multilevel_MQ
     grid->R = R;
     level++;
     cgrid = Multilevel_MQ_Clustering_init(cA, level); 
-    deg_intra_new = REALLOC(deg_intra_new, nc*sizeof(double));
-    wgt_new = REALLOC(wgt_new, nc*sizeof(double));
+    deg_intra_new = gv_recalloc(deg_intra_new, n, nc, sizeof(double));
+    wgt_new = gv_recalloc(wgt_new, n, nc, sizeof(double));
     cgrid->deg_intra = deg_intra_new;
     cgrid->mq = grid->mq + total_gain;
     cgrid->wgt = wgt_new;
-    dout_new =  REALLOC(dout_new, nc*sizeof(double));
+    dout_new = gv_recalloc(dout_new, n, nc, sizeof(double));
     cgrid->dout = dout_new;
 
     cgrid = Multilevel_MQ_Clustering_establish(cgrid, maxcluster);
@@ -525,7 +523,7 @@ static Multilevel_MQ_Clustering Multilevel_MQ_Clustering_new(SparseMatrix A0, in
 
   grid = Multilevel_MQ_Clustering_establish(grid, maxcluster);
 
-  if (A != A0) grid->delete_top_level_A = TRUE;/* be sure to clean up later */
+  if (A != A0) grid->delete_top_level_A = true; // be sure to clean up later
   return grid;
 }
 

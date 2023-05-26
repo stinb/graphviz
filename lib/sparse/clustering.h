@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -24,7 +26,7 @@ struct Multilevel_Modularity_Clustering_struct {
   SparseMatrix R; 
   Multilevel_Modularity_Clustering next;
   Multilevel_Modularity_Clustering prev;
-  int delete_top_level_A;
+  bool delete_top_level_A;
   int *matching; /* dimension n. matching[i] is the clustering assignment of node i */
   double modularity;
   double deg_total; /* total edge weights, including self-edges */
@@ -50,7 +52,7 @@ enum {CLUSTERING_MODULARITY = 0, CLUSTERING_MQ};
    .   If *assignment = NULL on entry, it will be allocated. Otherwise used.
    modularity: achieve modularity
 */
-void modularity_clustering(SparseMatrix A, int inplace, int maxcluster,
+void modularity_clustering(SparseMatrix A, bool inplace, int maxcluster,
 			   int *nclusters, int **assignment, double *modularity);
 
 #ifdef __cplusplus
