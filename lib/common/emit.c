@@ -1894,8 +1894,6 @@ static void emit_end_node(GVJ_t * job)
     pop_obj_state(job);
 }
 
-/* emit_node:
- */
 static void emit_node(GVJ_t * job, node_t * n)
 {
     GVC_t *gvc = job->gvc;
