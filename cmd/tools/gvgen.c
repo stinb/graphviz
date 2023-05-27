@@ -207,12 +207,7 @@ static int setTwoTwoOpt(char *s, opts_t* opts, int dflt)
     }
 
     s = next + 1;
-    d = readPos(s, &next);
-    if (d < 0) {
-	return d;
-    }
-    opts->parm2 = d;
-    return 0;
+    return readOne(s, &opts->parm2);
 }
 
 /* setTwoOpt:
