@@ -8,11 +8,15 @@
  * Contributors: Details at https://graphviz.org
  *************************************************************************/
 
+#include <assert.h>
 #include <cgraph/alloc.h>
+#include <cgraph/sort.h>
 #include <cgraph/stack.h>
+#include <limits.h>
 #include <neatogen/kkutils.h>
 #include <neatogen/closest.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 /*****************************************
@@ -24,8 +28,8 @@
 
 typedef struct {
     /* this structure represents two nodes in the 1-D layout */
-    int left;			/* the left node in the pair */
-    int right;			/* the right node in the pair */
+    size_t left;  ///< the left node in the pair
+    size_t right; ///< the right node in the pair
     double dist;		/* distance between the nodes in the layout */
 } Pair;
 
@@ -65,8 +69,8 @@ static bool pop(gv_stack_t *s, Pair *x) {
  */
 typedef struct {
     Pair *data;
-    int heapSize;
-    int maxSize;
+    size_t heapSize;
+    size_t maxSize;
 } PairHeap;
 
 #define left(i) (2*(i))
@@ -83,12 +87,11 @@ typedef struct {
 }
 #define assign(h,i,j) {h->data[i]=h->data[j]}
 
-static void heapify(PairHeap * h, int i)
-{
-    int l, r, largest;
+static void heapify(PairHeap *h, size_t i) {
+    size_t largest;
     while (1) {
-	l = left(i);
-	r = right(i);
+	size_t l = left(i);
+	size_t r = right(i);
 	if (insideHeap(h, l) && greaterPriority(h, l, i))
 	    largest = l;
 	else
@@ -108,23 +111,20 @@ static void freeHeap(PairHeap * h)
     free(h->data);
 }
 
-static void initHeap(PairHeap * h, double *place, int *ordering, int n)
-{
-    int i;
+static void initHeap(PairHeap *h, double *place, size_t *ordering, size_t n) {
     Pair edge;
-    int j;
 
-    h->heapSize = n - 1;
+    h->heapSize = n == 0 ? 0 : (n - 1);
     h->maxSize = h->heapSize;
     h->data = N_GNEW(h->maxSize, Pair);
 
-    for (i = 0; i < n - 1; i++) {
+    for (size_t i = 0; n != 0 && i < n - 1; i++) {
 	edge.left = ordering[i];
 	edge.right = ordering[i + 1];
 	edge.dist = place[ordering[i + 1]] - place[ordering[i]];
 	h->data[i] = edge;
     }
-    for (j = (n - 1) / 2; j >= 0; j--) {
+    for (size_t j = (n - 1) / 2; n != 0 && j != SIZE_MAX; j--) {
 	heapify(h, j);
     }
 }
@@ -143,7 +143,7 @@ static bool extractMax(PairHeap * h, Pair * max)
 
 static void insert(PairHeap * h, Pair edge)
 {
-    int i = h->heapSize;
+    size_t i = h->heapSize;
     if (h->heapSize == h->maxSize) {
 	h->maxSize *= 2;
 	h->data = realloc(h->data, h->maxSize * sizeof(Pair));
@@ -156,24 +156,37 @@ static void insert(PairHeap * h, Pair edge)
     }
 }
 
-static void find_closest_pairs(double *place, int n, int num_pairs,
+static int cmp(const void *a, const void *b, void *context) {
+  const size_t *x = a;
+  const size_t *y = b;
+  const double *place = context;
+
+  if (place[*x] < place[*y]) {
+    return -1;
+  }
+  if (place[*x] > place[*y]) {
+    return 1;
+  }
+  return 0;
+}
+
+static void find_closest_pairs(double *place, size_t n, int num_pairs,
                                gv_stack_t* pairs_stack) {
     /* Fill the stack 'pairs_stack' with 'num_pairs' closest pairs int the 1-D layout 'place' */
-    int i;
     PairHeap heap;
-    int *left = N_GNEW(n, int);
-    int *right = N_GNEW(n, int);
+    size_t *left = N_GNEW(n, size_t);
+    size_t *right = N_GNEW(n, size_t);
     Pair pair = {0}, new_pair;
 
     /* Order the nodes according to their place */
-    int *ordering = N_GNEW(n, int);
-    int *inv_ordering = N_GNEW(n, int);
+    size_t *ordering = N_GNEW(n, size_t);
+    size_t *inv_ordering = N_GNEW(n, size_t);
 
-    for (i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
 	ordering[i] = i;
     }
-    quicksort_place(place, ordering, n);
-    for (i = 0; i < n; i++) {
+    gv_sort(ordering, n, sizeof(ordering[0]), cmp, place);
+    for (size_t i = 0; i < n; i++) {
 	inv_ordering[ordering[i]] = i;
     }
 
@@ -181,28 +194,25 @@ static void find_closest_pairs(double *place, int n, int num_pairs,
     initHeap(&heap, place, ordering, n);
 
     /* store the leftmost and rightmost neighbors of each node that were entered into heap */
-    for (i = 1; i < n; i++) {
+    for (size_t i = 1; i < n; i++) {
 	left[ordering[i]] = ordering[i - 1];
     }
-    for (i = 0; i < n - 1; i++) {
+    for (size_t i = 0; n != 0 && i < n - 1; i++) {
 	right[ordering[i]] = ordering[i + 1];
     }
 
     /* extract the 'num_pairs' closest pairs */
-    for (i = 0; i < num_pairs; i++) {
-	int left_index;
-	int right_index;
-	int neighbor;
+    for (int i = 0; i < num_pairs; i++) {
 
 	if (!extractMax(&heap, &pair)) {
 	    break;		/* not enough pairs */
 	}
 	push(pairs_stack, pair);
 	/* insert to heap "descendant" pairs */
-	left_index = inv_ordering[pair.left];
-	right_index = inv_ordering[pair.right];
+	size_t left_index = inv_ordering[pair.left];
+	size_t right_index = inv_ordering[pair.right];
 	if (left_index > 0) {
-	    neighbor = ordering[left_index - 1];
+	    size_t neighbor = ordering[left_index - 1];
 	    if (inv_ordering[right[neighbor]] < right_index) {
 		/* we have a new pair */
 		new_pair.left = neighbor;
@@ -214,7 +224,7 @@ static void find_closest_pairs(double *place, int n, int num_pairs,
 	    }
 	}
 	if (right_index < n - 1) {
-	    neighbor = ordering[right_index + 1];
+	    size_t neighbor = ordering[right_index + 1];
 	    if (inv_ordering[left[neighbor]] > left_index) {
 		/* we have a new pair */
 		new_pair.left = pair.left;
@@ -251,7 +261,7 @@ static void add_edge(vtx_data * graph, int u, int v)
     }
 }
 
-static void construct_graph(int n, gv_stack_t *edges_stack,
+static void construct_graph(size_t n, gv_stack_t *edges_stack,
                             vtx_data **New_graph) {
     /* construct an unweighted graph using the edges 'edges_stack' */
     vtx_data *new_graph;
@@ -264,7 +274,7 @@ static void construct_graph(int n, gv_stack_t *edges_stack,
     int *edges = N_GNEW(new_nedges, int);
     float *weights = N_GNEW(new_nedges, float);
 
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
 	degrees[i] = 1;		/* save place for the self loop */
     }
     for (size_t i = 0; i < top; i++) {
@@ -279,11 +289,12 @@ static void construct_graph(int n, gv_stack_t *edges_stack,
     }
 
     *New_graph = new_graph = N_GNEW(n, vtx_data);
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
 	new_graph[i].nedges = 1;
 	new_graph[i].ewgts = weights;
 	new_graph[i].edges = edges;
-	*edges = i;		/* self loop for Lap */
+	assert(i <= INT_MAX);
+	*edges = (int)i; // self loop for Lap
 	*weights = 0;		/* self loop weight for Lap */
 	weights += degrees[i];
 	edges += degrees[i];	/* reserve space for possible more edges */
@@ -293,7 +304,9 @@ static void construct_graph(int n, gv_stack_t *edges_stack,
 
     /* add all edges from stack */
     while (pop(edges_stack, &pair)) {
-	add_edge(new_graph, pair.left, pair.right);
+	assert(pair.left <= INT_MAX);
+	assert(pair.right <= INT_MAX);
+	add_edge(new_graph, (int)pair.left, (int)pair.right);
     }
 }
 
@@ -302,7 +315,8 @@ closest_pairs2graph(double *place, int n, int num_pairs, vtx_data ** graph)
 {
     /* build a graph with with edges between the 'num_pairs' closest pairs in the 1-D space: 'place' */
     gv_stack_t pairs_stack = {0};
-    find_closest_pairs(place, n, num_pairs, &pairs_stack);
-    construct_graph(n, &pairs_stack, graph);
+    assert(n >= 0);
+    find_closest_pairs(place, (size_t)n, num_pairs, &pairs_stack);
+    construct_graph((size_t)n, &pairs_stack, graph);
     stack_reset(&pairs_stack);
 }
