@@ -3877,10 +3877,6 @@ static void init_bb_edge(edge_t *e)
     spl = ED_spl(e);
     if (spl)
         init_splines_bb(spl);
-
-//    lp = ED_label(e);
-//    if (lp)
-//        {}
 }
 
 static void init_bb_node(graph_t *g, node_t *n)
