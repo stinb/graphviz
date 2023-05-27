@@ -85,7 +85,6 @@ typedef struct {
         h->data[i]=h->data[j]; \
         h->data[j]=temp; \
 }
-#define assign(h,i,j) {h->data[i]=h->data[j]}
 
 static void heapify(PairHeap *h, size_t i) {
     size_t largest;
