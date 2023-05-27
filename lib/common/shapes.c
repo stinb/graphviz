@@ -4164,7 +4164,7 @@ static void cylinder_draw(GVJ_t * job, pointf * AF, int sides, int filled)
     vertices[6] = AF[6];
 
     gvrender_beziercurve(job, AF, sides, filled);
-    gvrender_beziercurve(job, vertices, 7, FALSE);
+    gvrender_beziercurve(job, vertices, 7, 0);
 }
 
 static char *side_port[] = { "s", "e", "n", "w" };

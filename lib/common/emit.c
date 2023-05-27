@@ -2122,7 +2122,7 @@ static int multicolor (GVJ_t * job, edge_t * e, char** styles, char* colors, int
 	    if (first) {
 		first = 0;
 		splitBSpline (&bz, s->t, &bz_l, &bz_r);
-		gvrender_beziercurve(job, bz_l.list, bz_l.size, FALSE);
+		gvrender_beziercurve(job, bz_l.list, bz_l.size, 0);
 		free (bz_l.list);
 		if (AEQ0(left)) {
 		    free (bz_r.list);
@@ -2130,7 +2130,7 @@ static int multicolor (GVJ_t * job, edge_t * e, char** styles, char* colors, int
 		}
 	    }
 	    else if (AEQ0(left)) {
-		gvrender_beziercurve(job, bz_r.list, bz_r.size, FALSE);
+		gvrender_beziercurve(job, bz_r.list, bz_r.size, 0);
 		free (bz_r.list);
 		break;
 	    }
@@ -2138,7 +2138,7 @@ static int multicolor (GVJ_t * job, edge_t * e, char** styles, char* colors, int
 		bz0 = bz_r;
 		splitBSpline(&bz0, s->t / (left + s->t), &bz_l, &bz_r);
 		free (bz0.list);
-		gvrender_beziercurve(job, bz_l.list, bz_l.size, FALSE);
+		gvrender_beziercurve(job, bz_l.list, bz_l.size, 0);
 		free (bz_l.list);
 	    }
 		
@@ -2365,7 +2365,7 @@ static void emit_edge_graphics(GVJ_t * job, edge_t * e, char** styles)
 			tmplist[j].x += offlist[j].x;
 			tmplist[j].y += offlist[j].y;
 		    }
-		    gvrender_beziercurve(job, tmplist, tmpspl.list[i].size, FALSE);
+		    gvrender_beziercurve(job, tmplist, tmpspl.list[i].size, 0);
 		}
 	    }
 	    if (bz.sflag) {
@@ -2412,7 +2412,7 @@ static void emit_edge_graphics(GVJ_t * job, edge_t * e, char** styles)
 	    }
 	    for (i = 0; i < ED_spl(e)->size; i++) {
 		bz = ED_spl(e)->list[i];
-		gvrender_beziercurve(job, bz.list, bz.size, FALSE);
+		gvrender_beziercurve(job, bz.list, bz.size, 0);
 		if (bz.sflag) {
 		    arrow_gen(job, EMIT_TDRAW, bz.sp, bz.list[0],
 		              arrowsize, penwidth, bz.sflag);
