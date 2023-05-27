@@ -144,8 +144,9 @@ static void insert(PairHeap * h, Pair edge)
 {
     size_t i = h->heapSize;
     if (h->heapSize == h->maxSize) {
-	h->maxSize *= 2;
-	h->data = realloc(h->data, h->maxSize * sizeof(Pair));
+	size_t newSize = h->maxSize * 2;
+	h->data = gv_recalloc(h->data, h->maxSize, newSize, sizeof(Pair));
+	h->maxSize = newSize;
     }
     h->heapSize++;
     h->data[i] = edge;
