@@ -115,15 +115,8 @@ static void initHeap(PairHeap * h, double *place, int *ordering, int n)
     int j;
 
     h->heapSize = n - 1;
-#ifdef REDO
-    if (h->heapSize > h->maxSize) {
-	h->maxSize = h->heapSize;
-	h->data = realloc(h->data, h->maxSize * sizeof(Pair));
-    }
-#else
     h->maxSize = h->heapSize;
     h->data = N_GNEW(h->maxSize, Pair);
-#endif
 
     for (i = 0; i < n - 1; i++) {
 	edge.left = ordering[i];
