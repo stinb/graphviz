@@ -133,15 +133,7 @@ static int readOne(char *s, int* ip)
  */
 static int setOne(char *s, opts_t* opts)
 {
-    int d;
-    char *next;
-
-    d = readPos(s, &next);
-    if (d > 0) {
-	opts->graphSize1 = d;
-	return 0;
-    }
-    else return d;
+  return readOne(s, &opts->graphSize1);
 }
 
 /* setTwo:
