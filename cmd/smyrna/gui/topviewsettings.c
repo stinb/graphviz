@@ -209,7 +209,6 @@ static void get_scalebtn_widget_to_attribute(char *attrib, char *widget_name,
 static void set_scalebtn_widget_to_attribute(char *attrib, char *widget_name) {
     char *buf;
     float value;
-    attrib = attrib + 13;
     buf = agget(view->g[view->activeGraph], attrib);
 
     if ((!buf) || (strcmp(buf, "") == 0))
@@ -274,7 +273,8 @@ void load_settings_from_graph(void) {
 		set_spinbtn_widget(sym->name + strlen("spin_button="),
 		  agget(view->systemGraphs.attrs_widgets, sym->name));
 	    if (startswith(sym->name, "scale_button"))
-		set_scalebtn_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
+		set_scalebtn_widget_to_attribute(sym->name + strlen("scale_button="),
+		  agget(view->systemGraphs.attrs_widgets, sym->name));
 
 	}
 }
