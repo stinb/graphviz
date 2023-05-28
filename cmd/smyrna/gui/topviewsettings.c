@@ -252,8 +252,7 @@ static void set_combobox_widget(char *attrib, char *widget_name) {
     }
 }
 
-static int get_combobox_widget_to_attribute(char *attrib,
-					    char *widget_name,
+static void get_combobox_widget_to_attribute(char *attrib, char *widget_name,
 					    Agraph_t * g)
 {
     char buf[25];
@@ -267,10 +266,6 @@ static int get_combobox_widget_to_attribute(char *attrib,
 
     snprintf(buf, sizeof(buf), "%d", value);
     agattr(g, AGRAPH, attrib, buf);
-    /* printf ("%s %f \n",attribute,value); */
-    return 1;
-
-
 }
 
 void load_settings_from_graph(void) {
