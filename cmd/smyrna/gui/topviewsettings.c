@@ -160,7 +160,6 @@ static void get_checkbox_widget_to_attribute(char *attrib, char *widget_name,
 {
     int value;
     char buf[100];
-    attrib = attrib + 10;
 
     value = (int) gtk_toggle_button_get_active((GtkToggleButton *)
 					       glade_xml_get_widget(xml,
@@ -294,7 +293,8 @@ void update_graph_from_settings(Agraph_t *g) {
 	    get_color_button_widget_to_attribute(sym->name + strlen("color_button="),
 	      agget(view->systemGraphs.attrs_widgets, sym->name), g);
 	if (startswith(sym->name, "check_box"))
-	   get_checkbox_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
+	   get_checkbox_widget_to_attribute(sym->name + strlen("check_box="),
+	     agget(view->systemGraphs.attrs_widgets, sym->name), g);
 	if (startswith(sym->name, "text_box"))
 	   get_text_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
 	if (startswith(sym->name, "combobox"))
