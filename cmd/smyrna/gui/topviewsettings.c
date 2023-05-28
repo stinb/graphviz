@@ -108,8 +108,6 @@ static void get_color_button_widget_to_attribute(char *attrib,
 static void get_text_widget_to_attribute(char *attrib, char *widget_name,
 					Agraph_t * g)
 {
-    attrib = attrib + 9;
-
     if (strlen(attrib) > 512)
 	return;
     agattr(g, AGRAPH, attrib, gtk_entry_get_text((GtkEntry*)
@@ -296,7 +294,8 @@ void update_graph_from_settings(Agraph_t *g) {
 	   get_checkbox_widget_to_attribute(sym->name + strlen("check_box="),
 	     agget(view->systemGraphs.attrs_widgets, sym->name), g);
 	if (startswith(sym->name, "text_box"))
-	   get_text_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
+	   get_text_widget_to_attribute(sym->name + strlen("text_box="),
+	     agget(view->systemGraphs.attrs_widgets, sym->name), g);
 	if (startswith(sym->name, "combobox"))
 	   get_combobox_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
 	if (startswith(sym->name, "spin_button"))
