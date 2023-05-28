@@ -23,4 +23,4 @@
     _BB void on_dlgSettings_close (GtkWidget * widget, gpointer user_data);
     extern void load_settings_from_graph(void);
     extern void update_graph_from_settings(Agraph_t *g);
-    extern int show_settings_form(void);
+    extern void show_settings_form(void);

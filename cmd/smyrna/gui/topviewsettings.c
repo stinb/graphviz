@@ -336,8 +336,7 @@ void update_graph_from_settings(Agraph_t *g) {
     }
 }
 
-int show_settings_form()
-{
+void show_settings_form() {
 
     if (view->activeGraph >= 0) {
 	load_settings_from_graph();
@@ -356,5 +355,4 @@ int show_settings_form()
 	gtk_dialog_run((GtkDialog *) dlg);
 	gtk_widget_hide((GtkWidget *) dlg);
     }
-    return 1;
 }
