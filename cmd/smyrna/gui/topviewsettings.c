@@ -188,7 +188,8 @@ static void set_spinbtn_widget(char *attrib, char *widget_name) {
 				  value);
     }
 }
-static int get_spinbtn_widget_to_attribute(char *attrib,
+
+static void get_spinbtn_widget_to_attribute(char *attrib,
 					   char *widget_name, Agraph_t * g)
 {
     float value;
@@ -200,7 +201,6 @@ static int get_spinbtn_widget_to_attribute(char *attrib,
 								   widget_name));
     snprintf(buf, sizeof(buf), "%f", value);
     agattr(g, AGRAPH, attrib, buf);
-    return 1;
 }
 static int get_scalebtn_widget_to_attribute(char *attrib,
 					    char *widget_name,
