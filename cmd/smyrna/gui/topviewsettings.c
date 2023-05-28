@@ -64,8 +64,7 @@ static void copy_attr(Agraph_t *destG, char *attrib, Agraph_t *g)
 }
 
 
-static int set_color_button_widget(char *attrib, char *widget_name)
-{
+static void set_color_button_widget(char *attrib, char *widget_name) {
     GdkColor color;
     gvcolor_t cl;
 
@@ -85,10 +84,8 @@ static int set_color_button_widget(char *attrib, char *widget_name)
 	gtk_color_button_set_color((GtkColorButton *)
 				   glade_xml_get_widget(xml, widget_name),
 				   &color);
-	return 1;
 
     }
-    return 0;
 }
 static int get_color_button_widget_to_attribute(char *attrib,
 						char *widget_name,
