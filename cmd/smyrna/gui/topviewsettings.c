@@ -116,8 +116,8 @@ static void get_text_widget_to_attribute(char *attrib, char *widget_name,
     agattr(g, AGRAPH, attrib, gtk_entry_get_text((GtkEntry*)
 			       glade_xml_get_widget(xml, widget_name)));
 }
-static int set_text_widget(char *attrib, char *widget_name)
-{
+
+static void set_text_widget(char *attrib, char *widget_name) {
     char *buf;
     attrib = attrib + 9;
 
@@ -131,10 +131,7 @@ static int set_text_widget(char *attrib, char *widget_name)
     if (buf) {
 	gtk_entry_set_text((GtkEntry *)
 			   glade_xml_get_widget(xml, widget_name), buf);
-
-	return 1;
     }
-    return 0;
 }
 static int set_checkbox_widget(char *attrib, char *widget_name)
 {
