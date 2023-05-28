@@ -170,8 +170,7 @@ static void get_checkbox_widget_to_attribute(char *attrib, char *widget_name,
     agattr(g, AGRAPH, attrib, buf);
 }
 
-static int set_spinbtn_widget(char *attrib, char *widget_name)
-{
+static void set_spinbtn_widget(char *attrib, char *widget_name) {
     char *buf;
     float value;
     attrib = attrib + 12;
@@ -187,9 +186,7 @@ static int set_spinbtn_widget(char *attrib, char *widget_name)
 	gtk_spin_button_set_value((GtkSpinButton *)
 				  glade_xml_get_widget(xml, widget_name),
 				  value);
-	return 1;
     }
-    return 0;
 }
 static int get_spinbtn_widget_to_attribute(char *attrib,
 					   char *widget_name, Agraph_t * g)
