@@ -11,6 +11,7 @@
 #include "topviewfuncs.h"
 #include "topviewsettings.h"
 #include "gui.h"
+#include <cgraph/startswith.h>
 #include <common/colorprocs.h>
 #include "viewport.h"
 
@@ -321,17 +322,17 @@ void update_graph_from_settings(Agraph_t *g) {
     Agsym_t* sym=NULL;
     while ((sym = agnxtattr(view->systemGraphs.attrs_widgets,AGRAPH, sym)))
     {
-	if(strncmp (sym->name,"color_button",strlen("color_button"))==0)
+	if (startswith(sym->name, "color_button"))
 	    get_color_button_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
-	if(strncmp (sym->name,"check_box",strlen("check_box"))==0)
+	if (startswith(sym->name, "check_box"))
 	   get_checkbox_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
-	if(strncmp (sym->name,"text_box",strlen("text_box"))==0)
+	if (startswith(sym->name, "text_box"))
 	   get_text_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
-	if(strncmp (sym->name,"combobox",strlen("combobox"))==0)
+	if (startswith(sym->name, "combobox"))
 	   get_combobox_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
-	if(strncmp (sym->name,"spin_button",strlen("spin_button"))==0)
+	if (startswith(sym->name, "spin_button"))
 	   get_spinbtn_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
-	if(strncmp (sym->name,"scale_button",strlen("scale_button"))==0)
+	if (startswith(sym->name, "scale_button"))
 	   get_scalebtn_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
     }
 }
