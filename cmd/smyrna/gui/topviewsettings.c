@@ -255,53 +255,59 @@ static void get_combobox_widget_to_attribute(char *attrib, char *widget_name,
 }
 
 void load_settings_from_graph(void) {
-    Agsym_t* sym=NULL;
-    while ((sym = agnxtattr(view->systemGraphs.attrs_widgets,AGRAPH, sym))) {
-	    if (startswith(sym->name, "color_button"))
-		set_color_button_widget(sym->name + strlen("color_button="),
-		  agget(view->systemGraphs.attrs_widgets, sym->name));
-	    if (startswith(sym->name, "check_box"))
-		set_checkbox_widget(sym->name + strlen("check_box="),
-		  agget(view->systemGraphs.attrs_widgets, sym->name));
-	    if (startswith(sym->name, "text_box"))
-		set_text_widget(sym->name + strlen("text_box="),
-		  agget(view->systemGraphs.attrs_widgets, sym->name));
-	    if (startswith(sym->name, "combobox"))
-		set_combobox_widget(sym->name + strlen("combobox="),
-		  agget(view->systemGraphs.attrs_widgets, sym->name));
-	    if (startswith(sym->name, "spin_button"))
-		set_spinbtn_widget(sym->name + strlen("spin_button="),
-		  agget(view->systemGraphs.attrs_widgets, sym->name));
-	    if (startswith(sym->name, "scale_button"))
-		set_scalebtn_widget_to_attribute(sym->name + strlen("scale_button="),
-		  agget(view->systemGraphs.attrs_widgets, sym->name));
-
-	}
+  Agsym_t *sym = NULL;
+  while ((sym = agnxtattr(view->systemGraphs.attrs_widgets, AGRAPH, sym))) {
+    if (startswith(sym->name, "color_button"))
+      set_color_button_widget(
+          sym->name + strlen("color_button="),
+          agget(view->systemGraphs.attrs_widgets, sym->name));
+    if (startswith(sym->name, "check_box"))
+      set_checkbox_widget(sym->name + strlen("check_box="),
+                          agget(view->systemGraphs.attrs_widgets, sym->name));
+    if (startswith(sym->name, "text_box"))
+      set_text_widget(sym->name + strlen("text_box="),
+                      agget(view->systemGraphs.attrs_widgets, sym->name));
+    if (startswith(sym->name, "combobox"))
+      set_combobox_widget(sym->name + strlen("combobox="),
+                          agget(view->systemGraphs.attrs_widgets, sym->name));
+    if (startswith(sym->name, "spin_button"))
+      set_spinbtn_widget(sym->name + strlen("spin_button="),
+                         agget(view->systemGraphs.attrs_widgets, sym->name));
+    if (startswith(sym->name, "scale_button"))
+      set_scalebtn_widget_to_attribute(
+          sym->name + strlen("scale_button="),
+          agget(view->systemGraphs.attrs_widgets, sym->name));
+  }
 }
 
 void update_graph_from_settings(Agraph_t *g) {
-    Agsym_t* sym=NULL;
-    while ((sym = agnxtattr(view->systemGraphs.attrs_widgets,AGRAPH, sym)))
-    {
-	if (startswith(sym->name, "color_button"))
-	    get_color_button_widget_to_attribute(sym->name + strlen("color_button="),
-	      agget(view->systemGraphs.attrs_widgets, sym->name), g);
-	if (startswith(sym->name, "check_box"))
-	   get_checkbox_widget_to_attribute(sym->name + strlen("check_box="),
-	     agget(view->systemGraphs.attrs_widgets, sym->name), g);
-	if (startswith(sym->name, "text_box"))
-	   get_text_widget_to_attribute(sym->name + strlen("text_box="),
-	     agget(view->systemGraphs.attrs_widgets, sym->name), g);
-	if (startswith(sym->name, "combobox"))
-	   get_combobox_widget_to_attribute(sym->name + strlen("combobox="),
-	     agget(view->systemGraphs.attrs_widgets, sym->name), g);
-	if (startswith(sym->name, "spin_button"))
-	   get_spinbtn_widget_to_attribute(sym->name + strlen("spin_button="),
-	     agget(view->systemGraphs.attrs_widgets, sym->name), g);
-	if (startswith(sym->name, "scale_button"))
-	   get_scalebtn_widget_to_attribute(sym->name + strlen("scale_button="),
-	     agget(view->systemGraphs.attrs_widgets, sym->name), g);
-    }
+  Agsym_t *sym = NULL;
+  while ((sym = agnxtattr(view->systemGraphs.attrs_widgets, AGRAPH, sym))) {
+    if (startswith(sym->name, "color_button"))
+      get_color_button_widget_to_attribute(
+          sym->name + strlen("color_button="),
+          agget(view->systemGraphs.attrs_widgets, sym->name), g);
+    if (startswith(sym->name, "check_box"))
+      get_checkbox_widget_to_attribute(
+          sym->name + strlen("check_box="),
+          agget(view->systemGraphs.attrs_widgets, sym->name), g);
+    if (startswith(sym->name, "text_box"))
+      get_text_widget_to_attribute(
+          sym->name + strlen("text_box="),
+          agget(view->systemGraphs.attrs_widgets, sym->name), g);
+    if (startswith(sym->name, "combobox"))
+      get_combobox_widget_to_attribute(
+          sym->name + strlen("combobox="),
+          agget(view->systemGraphs.attrs_widgets, sym->name), g);
+    if (startswith(sym->name, "spin_button"))
+      get_spinbtn_widget_to_attribute(
+          sym->name + strlen("spin_button="),
+          agget(view->systemGraphs.attrs_widgets, sym->name), g);
+    if (startswith(sym->name, "scale_button"))
+      get_scalebtn_widget_to_attribute(
+          sym->name + strlen("scale_button="),
+          agget(view->systemGraphs.attrs_widgets, sym->name), g);
+  }
 }
 
 void show_settings_form(void) {
