@@ -229,7 +229,6 @@ static void set_scalebtn_widget_to_attribute(char *attrib, char *widget_name) {
 static void set_combobox_widget(char *attrib, char *widget_name) {
     char *buf;
     int value;
-    attrib = attrib + 9;
     buf = agget(view->g[view->activeGraph], attrib);
     if ((!buf) || (strcmp(buf, "") == 0))
     {
@@ -270,7 +269,8 @@ void load_settings_from_graph(void) {
 		set_text_widget(sym->name + strlen("text_box="),
 		  agget(view->systemGraphs.attrs_widgets, sym->name));
 	    if (startswith(sym->name, "combobox"))
-		set_combobox_widget(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
+		set_combobox_widget(sym->name + strlen("combobox="),
+		  agget(view->systemGraphs.attrs_widgets, sym->name));
 	    if (startswith(sym->name, "spin_button"))
 		set_spinbtn_widget(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
 	    if (startswith(sym->name, "scale_button"))
