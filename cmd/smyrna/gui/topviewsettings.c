@@ -190,7 +190,6 @@ static void get_spinbtn_widget_to_attribute(char *attrib,
 {
     float value;
     char buf[25];
-    attrib = attrib + 12;
 
     value = (float) gtk_spin_button_get_value((GtkSpinButton *)
 					      glade_xml_get_widget(xml,
@@ -298,7 +297,8 @@ void update_graph_from_settings(Agraph_t *g) {
 	   get_combobox_widget_to_attribute(sym->name + strlen("combobox="),
 	     agget(view->systemGraphs.attrs_widgets, sym->name), g);
 	if (startswith(sym->name, "spin_button"))
-	   get_spinbtn_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
+	   get_spinbtn_widget_to_attribute(sym->name + strlen("spin_button="),
+	     agget(view->systemGraphs.attrs_widgets, sym->name), g);
 	if (startswith(sym->name, "scale_button"))
 	   get_scalebtn_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
     }
