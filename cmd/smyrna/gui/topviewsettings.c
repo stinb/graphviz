@@ -297,8 +297,8 @@ static int get_combobox_widget_to_attribute(char *attrib,
 
 
 }
-int load_settings_from_graph(void)
-{
+
+void load_settings_from_graph(void) {
     Agsym_t* sym=NULL;
     while ((sym = agnxtattr(view->systemGraphs.attrs_widgets,AGRAPH, sym))) {
 	    if(strncmp (sym->name,"color_button",strlen("color_button"))==0)
@@ -315,7 +315,6 @@ int load_settings_from_graph(void)
 		set_scalebtn_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
 
 	}
-    return 1;
 }
 
 void update_graph_from_settings(Agraph_t *g) {
