@@ -336,7 +336,7 @@ void update_graph_from_settings(Agraph_t *g) {
     }
 }
 
-void show_settings_form() {
+void show_settings_form(void) {
 
     if (view->activeGraph >= 0) {
 	load_settings_from_graph();
