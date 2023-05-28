@@ -318,8 +318,7 @@ int load_settings_from_graph(void)
     return 1;
 }
 
-int update_graph_from_settings(Agraph_t * g)
-{
+void update_graph_from_settings(Agraph_t *g) {
     Agsym_t* sym=NULL;
     while ((sym = agnxtattr(view->systemGraphs.attrs_widgets,AGRAPH, sym)))
     {
@@ -336,8 +335,6 @@ int update_graph_from_settings(Agraph_t * g)
 	if(strncmp (sym->name,"scale_button",strlen("scale_button"))==0)
 	   get_scalebtn_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
     }
-
-    return 1;
 }
 
 int show_settings_form()
