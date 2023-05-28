@@ -69,7 +69,6 @@ static void set_color_button_widget(char *attrib, char *widget_name) {
     gvcolor_t cl;
 
     char *buf;
-    attrib = attrib + 13;
     buf = agget(view->g[view->activeGraph], attrib);
     if ((!buf) || (strcmp(buf, "") == 0))
     {
@@ -264,7 +263,8 @@ void load_settings_from_graph(void) {
     Agsym_t* sym=NULL;
     while ((sym = agnxtattr(view->systemGraphs.attrs_widgets,AGRAPH, sym))) {
 	    if (startswith(sym->name, "color_button"))
-		set_color_button_widget(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
+		set_color_button_widget(sym->name + strlen("color_button="),
+		  agget(view->systemGraphs.attrs_widgets, sym->name));
 	    if (startswith(sym->name, "check_box"))
 		set_checkbox_widget(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
 	    if (startswith(sym->name, "text_box"))
