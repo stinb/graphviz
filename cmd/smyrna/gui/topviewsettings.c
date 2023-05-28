@@ -133,8 +133,8 @@ static void set_text_widget(char *attrib, char *widget_name) {
 			   glade_xml_get_widget(xml, widget_name), buf);
     }
 }
-static int set_checkbox_widget(char *attrib, char *widget_name)
-{
+
+static void set_checkbox_widget(char *attrib, char *widget_name) {
     char *buf;
     int value;
     attrib = attrib + 10;
@@ -153,11 +153,7 @@ static int set_checkbox_widget(char *attrib, char *widget_name)
 				     glade_xml_get_widget(xml,
 							  widget_name),
 				     value);
-	return 1;
     }
-    return 0;
-
-
 }
 
 static int get_checkbox_widget_to_attribute(char *attrib,
