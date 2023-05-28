@@ -94,7 +94,6 @@ static void get_color_button_widget_to_attribute(char *attrib,
 {
     GdkColor color;
     char buf[256];
-    attrib = attrib + 13;
 
     gtk_color_button_get_color((GtkColorButton *)
 			       glade_xml_get_widget(xml, widget_name),
@@ -292,7 +291,8 @@ void update_graph_from_settings(Agraph_t *g) {
     while ((sym = agnxtattr(view->systemGraphs.attrs_widgets,AGRAPH, sym)))
     {
 	if (startswith(sym->name, "color_button"))
-	    get_color_button_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
+	    get_color_button_widget_to_attribute(sym->name + strlen("color_button="),
+	      agget(view->systemGraphs.attrs_widgets, sym->name), g);
 	if (startswith(sym->name, "check_box"))
 	   get_checkbox_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
 	if (startswith(sym->name, "text_box"))
