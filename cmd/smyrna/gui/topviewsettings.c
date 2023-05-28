@@ -202,7 +202,6 @@ static void get_scalebtn_widget_to_attribute(char *attrib, char *widget_name,
 {
     float value;
     char buf[25];
-    attrib = attrib + 13;
 
     value = (float) gtk_range_get_value((GtkRange *)
 					glade_xml_get_widget(xml,
@@ -300,7 +299,8 @@ void update_graph_from_settings(Agraph_t *g) {
 	   get_spinbtn_widget_to_attribute(sym->name + strlen("spin_button="),
 	     agget(view->systemGraphs.attrs_widgets, sym->name), g);
 	if (startswith(sym->name, "scale_button"))
-	   get_scalebtn_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name),g);
+	   get_scalebtn_widget_to_attribute(sym->name + strlen("scale_button="),
+	     agget(view->systemGraphs.attrs_widgets, sym->name), g);
     }
 }
 
