@@ -156,8 +156,7 @@ static void set_checkbox_widget(char *attrib, char *widget_name) {
     }
 }
 
-static int get_checkbox_widget_to_attribute(char *attrib,
-					    char *widget_name,
+static void get_checkbox_widget_to_attribute(char *attrib, char *widget_name,
 					    Agraph_t * g)
 {
     int value;
@@ -169,7 +168,6 @@ static int get_checkbox_widget_to_attribute(char *attrib,
 								    widget_name));
     snprintf(buf, sizeof(buf), "%d", value);
     agattr(g, AGRAPH, attrib, buf);
-   return 1;
 }
 
 static int set_spinbtn_widget(char *attrib, char *widget_name)
