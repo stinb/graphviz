@@ -115,7 +115,6 @@ static void get_text_widget_to_attribute(char *attrib, char *widget_name,
 
 static void set_text_widget(char *attrib, char *widget_name) {
     char *buf;
-    attrib = attrib + 9;
 
     buf = agget(view->g[view->activeGraph], attrib);
     if ((!buf) || (strcmp(buf, "") == 0))
@@ -268,7 +267,8 @@ void load_settings_from_graph(void) {
 		set_checkbox_widget(sym->name + strlen("check_box="),
 		  agget(view->systemGraphs.attrs_widgets, sym->name));
 	    if (startswith(sym->name, "text_box"))
-		set_text_widget(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
+		set_text_widget(sym->name + strlen("text_box="),
+		  agget(view->systemGraphs.attrs_widgets, sym->name));
 	    if (startswith(sym->name, "combobox"))
 		set_combobox_widget(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
 	    if (startswith(sym->name, "spin_button"))
