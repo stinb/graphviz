@@ -105,16 +105,16 @@ static void get_color_button_widget_to_attribute(char *attrib,
 	    (int) ((float) color.blue / 65535.0 * 255.0));
     agattr(g, AGRAPH, attrib, buf);
 }
-static int get_text_widget_to_attribute(char *attrib, char *widget_name,
+
+static void get_text_widget_to_attribute(char *attrib, char *widget_name,
 					Agraph_t * g)
 {
     attrib = attrib + 9;
 
     if (strlen(attrib) > 512)
-	return 0;
+	return;
     agattr(g, AGRAPH, attrib, gtk_entry_get_text((GtkEntry*)
 			       glade_xml_get_widget(xml, widget_name)));
-    return 1;
 }
 static int set_text_widget(char *attrib, char *widget_name)
 {
