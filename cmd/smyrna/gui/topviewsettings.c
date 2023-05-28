@@ -320,13 +320,12 @@ void show_settings_form(void) {
 				  glade_xml_get_widget(xml, "dlgSettings"),
 				  1);
     } else {
-	GtkMessageDialog *dlg;
-	dlg = (GtkMessageDialog *) gtk_message_dialog_new(NULL,
+	void *dlg = gtk_message_dialog_new(NULL,
 							  GTK_DIALOG_MODAL,
 							  GTK_MESSAGE_QUESTION,
 							  GTK_BUTTONS_OK,
 							  "No active graph");
-	gtk_dialog_run((GtkDialog *) dlg);
-	gtk_widget_hide((GtkWidget *) dlg);
+	gtk_dialog_run(dlg);
+	gtk_widget_hide(dlg);
     }
 }
