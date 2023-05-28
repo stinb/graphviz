@@ -302,17 +302,17 @@ static int get_combobox_widget_to_attribute(char *attrib,
 void load_settings_from_graph(void) {
     Agsym_t* sym=NULL;
     while ((sym = agnxtattr(view->systemGraphs.attrs_widgets,AGRAPH, sym))) {
-	    if(strncmp (sym->name,"color_button",strlen("color_button"))==0)
+	    if (startswith(sym->name, "color_button"))
 		set_color_button_widget(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
-	    if(strncmp (sym->name,"check_box",strlen("check_box"))==0)
+	    if (startswith(sym->name, "check_box"))
 		set_checkbox_widget(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
-    	    if(strncmp (sym->name,"text_box",strlen("text_box"))==0)
+	    if (startswith(sym->name, "text_box"))
 		set_text_widget(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
-	    if(strncmp (sym->name,"combobox",strlen("combobox"))==0)
+	    if (startswith(sym->name, "combobox"))
 		set_combobox_widget(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
-	    if(strncmp (sym->name,"spin_button",strlen("spin_button"))==0)
+	    if (startswith(sym->name, "spin_button"))
 		set_spinbtn_widget(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
-	    if(strncmp (sym->name,"scale_button",strlen("scale_button"))==0)
+	    if (startswith(sym->name, "scale_button"))
 		set_scalebtn_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
 
 	}
