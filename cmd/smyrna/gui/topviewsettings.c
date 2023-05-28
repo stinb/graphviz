@@ -235,8 +235,7 @@ static void set_scalebtn_widget_to_attribute(char *attrib, char *widget_name) {
     }
 }
 
-static int set_combobox_widget(char *attrib, char *widget_name)
-{
+static void set_combobox_widget(char *attrib, char *widget_name) {
     char *buf;
     int value;
     attrib = attrib + 9;
@@ -250,11 +249,7 @@ static int set_combobox_widget(char *attrib, char *widget_name)
 	value = atoi(buf);
 	gtk_combo_box_set_active((GtkComboBox *)
 				 glade_xml_get_widget(xml, widget_name), value);
-
-	return 1;
     }
-
-    return 0;
 }
 
 static int get_combobox_widget_to_attribute(char *attrib,
