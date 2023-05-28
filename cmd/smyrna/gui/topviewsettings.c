@@ -87,7 +87,8 @@ static void set_color_button_widget(char *attrib, char *widget_name) {
 
     }
 }
-static int get_color_button_widget_to_attribute(char *attrib,
+
+static void get_color_button_widget_to_attribute(char *attrib,
 						char *widget_name,
 						Agraph_t * g)
 {
@@ -103,7 +104,6 @@ static int get_color_button_widget_to_attribute(char *attrib,
 	    (int) ((float) color.green / 65535.0 * 255.0),
 	    (int) ((float) color.blue / 65535.0 * 255.0));
     agattr(g, AGRAPH, attrib, buf);
-    return 1;
 }
 static int get_text_widget_to_attribute(char *attrib, char *widget_name,
 					Agraph_t * g)
