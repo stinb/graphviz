@@ -166,7 +166,6 @@ static void get_checkbox_widget_to_attribute(char *attrib, char *widget_name,
 static void set_spinbtn_widget(char *attrib, char *widget_name) {
     char *buf;
     float value;
-    attrib = attrib + 12;
 
     buf = agget(view->g[view->activeGraph], attrib);
     if ((!buf) || (strcmp(buf, "") == 0))
@@ -272,7 +271,8 @@ void load_settings_from_graph(void) {
 		set_combobox_widget(sym->name + strlen("combobox="),
 		  agget(view->systemGraphs.attrs_widgets, sym->name));
 	    if (startswith(sym->name, "spin_button"))
-		set_spinbtn_widget(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
+		set_spinbtn_widget(sym->name + strlen("spin_button="),
+		  agget(view->systemGraphs.attrs_widgets, sym->name));
 	    if (startswith(sym->name, "scale_button"))
 		set_scalebtn_widget_to_attribute(sym->name, agget(view->systemGraphs.attrs_widgets,sym->name));
 
