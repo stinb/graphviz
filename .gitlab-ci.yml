@@ -304,22 +304,6 @@ fedora38-build:
     variables:
       IMAGE: fedora38
 
-ubuntu-18.04-build:
-    <<: *deb_build_definition
-    needs:
-        - job: docker_build_ubuntu-18.04
-          artifacts: false
-        - job: portable-source
-          artifacts: true
-    before_script:
-        # Make Python.h findable
-        - export C_INCLUDE_PATH="/usr/include/python3.6m"
-        - export CPLUS_INCLUDE_PATH="/usr/include/python3.6m"
-    tags:
-        - linux
-    variables:
-      IMAGE: ubuntu-18.04
-
 ubuntu-20.04-debug-build:
     <<: *deb_build_definition
     needs:
@@ -698,23 +682,6 @@ windows-cygwin-build-using-autogen:
     except:
         - tags
 
-ubuntu-18.04-cmake-build:
-    <<: *deb_build_definition
-    needs:
-        - job: docker_build_ubuntu-18.04
-          artifacts: false
-    before_script:
-        - export build_system="cmake"
-        - export PATH=/opt/cmake/bin:${PATH}
-        # fail on any compiler warnings
-        - export CFLAGS=-Werror
-        - export CXXFLAGS=-Werror
-        - export CMAKE_OPTIONS="-Dwith_smyrna=ON"
-    tags:
-        - linux
-    variables:
-      IMAGE: ubuntu-18.04
-
 ubuntu-20.04-cmake-build:
     <<: *deb_build_definition
     needs:
@@ -1069,18 +1036,6 @@ meta-data:
     except:
         - tags
 
-ubuntu-18.04-test:
-    <<: *linux_test_definition
-    before_script:
-        - export build_system="autotools"
-    needs:
-        - job: "ubuntu-18.04-build"
-          artifacts: true
-    tags:
-        - linux
-    variables:
-      IMAGE: ubuntu-18.04
-
 ubuntu-20.04-test:
     <<: *linux_test_definition
     before_script:
@@ -1196,20 +1151,6 @@ macos-autotools-test:
     only:
         variables:
           - $ENABLE_GRAPHVIZ_MACOS_CI
-
-ubuntu-18.04-cmake-test:
-    <<: *linux_test_definition
-    before_script:
-        - export build_system="cmake"
-        - export PATH=/opt/cmake/bin:${PATH}
-        - python3 gen_version.py --output GRAPHVIZ_VERSION
-    needs:
-        - job: "ubuntu-18.04-cmake-build"
-          artifacts: true
-    tags:
-        - linux
-    variables:
-      IMAGE: ubuntu-18.04
 
 ubuntu-20.04-cmake-test:
     <<: *linux_test_definition
