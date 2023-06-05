@@ -8,17 +8,13 @@ stages:
 
 portable-source:
     # Doesn't have to wait for all the previous stages, only a docker image of
-    # ubuntu-18.04 is required
+    # ubuntu-20.04 is required
     needs:
-      - docker_build_ubuntu-18.04
+      - docker_build_ubuntu-20.04
     stage: source
     tags:
         - linux
-    image: "$CI_REGISTRY_IMAGE/ubuntu-18.04:$CI_COMMIT_SHA"
-    before_script:
-        # Make Python.h findable
-        - export C_INCLUDE_PATH="/usr/include/python3.6m"
-        - export CPLUS_INCLUDE_PATH="/usr/include/python3.6m"
+    image: "$CI_REGISTRY_IMAGE/ubuntu-20.04:$CI_COMMIT_SHA"
     script:
         - ./autogen.sh
         - ./configure --enable-man-pdfs
@@ -1431,11 +1427,6 @@ docker_build_fedora38:
   variables:
     IMAGE: fedora38
 
-docker_build_ubuntu-18.04:
-  <<: *docker_build_definition
-  variables:
-    IMAGE: ubuntu-18.04
-
 docker_build_ubuntu-20.04:
   <<: *docker_build_definition
   variables:
@@ -1483,13 +1474,6 @@ docker_push_fedora38:
     IMAGE: fedora38
   needs:
     - docker_build_fedora38
-
-docker_push_ubuntu-18.04:
-  <<: *docker_push_definition
-  variables:
-    IMAGE: ubuntu-18.04
-  needs:
-    - docker_build_ubuntu-18.04
 
 docker_push_ubuntu-20.04:
   <<: *docker_push_definition
