@@ -495,11 +495,14 @@ else
     ])
     AX_COMPARE_VERSION([$SWIG_VERSION], [lt], [4.1.0], [
       SWIG_PHP_DATA=gv.php
+      SWIG_PHP_DATA_TO_PACKAGE=usr/share/php/gv.php
     ], [
       # SWIG ≥ 4.1.0 no longer generates any PHP code for the bindings
       SWIG_PHP_DATA=
+      SWIG_PHP_DATA_TO_PACKAGE=
     ])
     AC_SUBST([SWIG_PHP_DATA])
+    AC_SUBST([SWIG_PHP_DATA_TO_PACKAGE])
     if test "x$SWIG" = "x"; then
       AC_MSG_WARN([The version of swig is too old.])
       use_swig="No (swig too old)"
@@ -2309,6 +2312,7 @@ AM_CONDITIONAL(HAVE_CRITERION, test "$use_criterion" = "Yes")
 #	tests/regression_tests/vuln/Makefile was removed
 AC_CONFIG_FILES(Makefile
 	debian/changelog
+	debian/libgv-php5.install
 	doc/Makefile
 	doc/info/Makefile
 	doc/schema/Makefile
