@@ -7,8 +7,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/lib/pathplan \
 	-I$(top_srcdir)/lib/pack \
 	-I$(top_srcdir)/lib/gvc \
-	-I$(top_srcdir)/lib/common \
-	$(EXPAT_INCLUDES)
+	-I$(top_srcdir)/lib/common
 
 noinst_HEADERS = colortbl.h colorxlate.h convert.h mmio.h matrix_market.h \
 	graph_generator.h gml2gv.h gmlparse.h openFile.h
@@ -62,6 +61,7 @@ endif
 	(cd $(DESTDIR)$(bindir); rm -f gxl2dot$(EXEEXT);)
 
 gxl2gv_SOURCES = cvtgxl.c gv2gxl.c gxl2gv.c
+gxl2gv_CPPFLAGS = $(AM_CPPFLAGS) $(EXPAT_CFLAGS)
 
 gxl2gv_LDADD = \
 	$(top_builddir)/lib/gvc/libgvc.la \
@@ -196,6 +196,7 @@ gml2gv_LDADD = \
 
 
 graphml2gv_SOURCES = graphml2gv.c
+graphml2gv_CPPFLAGS = $(AM_CPPFLAGS) $(EXPAT_CFLAGS)
 
 graphml2gv_LDADD = \
 	$(top_builddir)/lib/ingraphs/libingraphs_C.la \
