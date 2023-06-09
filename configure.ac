@@ -1339,51 +1339,10 @@ AC_ARG_WITH(expat,
 if test "x$with_expat" != "xyes"; then
   use_expat="No (disabled)"
 else
-
-  save_CPPFLAGS=$CPPFLAGS
-  save_LDFLAGS=$LDFLAGS
-  AC_PATH_PROG(EXPAT_CONFIG,expat-config)
-  if test -n "$EXPAT_CONFIG"; then
-	EXPAT_INCLUDES=`$EXPAT_CONFIG --cflags`
-	EXPAT_PREFIX=`$EXPAT_CONFIG --prefix`
-	if test "${EXPAT_PREFIX}/lib" != "/usr/lib" ; then
-		EXPAT_LIBS="-L${EXPAT_PREFIX}/lib"
-	fi
-  else
-	EXPAT_INCLUDES=""
-	EXPAT_LIBS=""
-  fi
-  AC_ARG_WITH(expatincludedir,
-    [AS_HELP_STRING([--with-expatincludedir=DIR],[use EXPAT includes from DIR])],
-    [EXPAT_INCLUDES="-I$withval"])
-  CPPFLAGS="$CPPFLAGS $EXPAT_INCLUDES"
-  EXPAT_LIBDIR="/usr/lib$LIBPOSTFIX"
-  AC_ARG_WITH(expatlibdir,
-    [AS_HELP_STRING([--with-expatlibdir=DIR],[use EXPAT libraries from DIR])],
-    [EXPAT_LIBDIR="$withval"])
-  if test "$EXPAT_LIBDIR" != "/usr/lib"; then
-	  EXPAT_LIBS="-L$EXPAT_LIBDIR"
-	  LDFLAGS="$LDFLAGS $EXPAT_LIBS"
-  fi
-  AC_CHECK_HEADERS([expat.h],
-    [],
-    [use_expat="No (missing header)"
-     AC_MSG_WARN(Optional expat library not available - missing headers)],
-    [])
-  AC_CHECK_LIB(expat,main,
-    [EXPAT_LIBS="$EXPAT_LIBS -lexpat"],
-    [use_expat="No (missing library)"
-     AC_MSG_WARN(Optional expat library not available)],
-    [])
-  LDFLAGS=$save_LDFLAGS
-  CPPFLAGS=$save_CPPFLAGS
-fi
-if test "x$use_expat" = "x"; then
   use_expat="Yes"
+  PKG_CHECK_MODULES([EXPAT], [expat])
   AC_DEFINE_UNQUOTED(HAVE_EXPAT,1,
     [Define if you have the expat library])
-  AC_SUBST([EXPAT_INCLUDES])
-  AC_SUBST([EXPAT_LIBS])
 fi
 
 dnl -----------------------------------

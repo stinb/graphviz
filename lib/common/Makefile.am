@@ -9,7 +9,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/lib/xdot \
 	-I$(top_srcdir)/lib/pathplan \
 	-I$(top_srcdir)/lib/cgraph \
-	-I$(top_srcdir)/lib/cdt $(GD_INCLUDES) $(EXPAT_INCLUDES) $(Z_INCLUDES)
+	-I$(top_srcdir)/lib/cdt $(GD_INCLUDES) $(Z_INCLUDES)
 
 if WITH_WIN32
 AM_CFLAGS = -DGVC_EXPORTS
@@ -30,8 +30,9 @@ libcommon_C_la_SOURCES = arrows.c colxlate.c ellipse.c textspan.c textspan_lut.c
 	timing.c labels.c ns.c shapes.c utils.c geom.c taper.c \
 	output.c emit.c xml.c \
 	color_names
+libcommon_C_la_CPPFLAGS = $(AM_CPPFLAGS) $(EXPAT_CFLAGS)
 libcommon_C_la_LIBADD = \
-	$(top_builddir)/lib/xdot/libxdot.la
+	$(top_builddir)/lib/xdot/libxdot.la $(EXPAT_LIBS)
 
 colxlate.o colxlate.lo : colortbl.h
 
