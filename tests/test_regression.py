@@ -2827,7 +2827,6 @@ def test_2397_1():
 
 
 @pytest.mark.skipif(shutil.which("shellcheck") is None, reason="shellcheck unavailable")
-@pytest.mark.xfail(strict=True)
 def test_2404():
     """
     shell syntax used by gvmap should be correct

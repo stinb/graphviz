@@ -37,6 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   invisible.
 - Compiling the portable source tarball on a machine with SWIG ≥ 4.1.0 no
   longer fails due to missing PHP files. #2388
+- Syntax for a loop in `gvmap.sh` has been corrected. This was a regression in
+  Graphviz 2.50.0. #2404
 
 ## [8.0.5] – 2023-04-30
 
