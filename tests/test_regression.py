@@ -31,7 +31,6 @@ from gvtest import (  # pylint: disable=wrong-import-position
     gvpr,
     is_64bit,
     is_mingw,
-    is_python36,
     remove_xtype_warnings,
     run_c,
     which,
@@ -2442,7 +2441,6 @@ def test_2282():
     json.loads(output)
 
 
-@pytest.mark.skipif(is_python36(), reason=".='text' XPath syntax not supported")
 def test_2283():
     """
     `beautify=true` should correctly space nodes
