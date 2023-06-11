@@ -66,7 +66,7 @@ extern "C" {
 	void (*free_layout) (void *layout);   /* FIXME - this is ugly */
 	double yoffset_layout, yoffset_centerline;
  	pointf size;
-	char just;	/* 'l' 'n' 'r' */ /* FIXME */
+	char just; ///< 'l' 'n' 'r'
     } textspan_t;
 
 #ifdef __cplusplus

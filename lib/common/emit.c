@@ -347,7 +347,7 @@ static void map_point(GVJ_t *job, pointf pf)
 	    obj->url_map_n = 4;
 	}
 	free(obj->url_map_p);
-	obj->url_map_p = p = N_NEW(obj->url_map_n, pointf);
+	obj->url_map_p = p = gv_calloc(obj->url_map_n, sizeof(pointf));
 	P2RECT(pf, p, FUZZ, FUZZ);
 	if (! (flags & GVRENDER_DOES_TRANSFORM))
 	    gvrender_ptf_A(job, p, p, 2);
@@ -485,7 +485,7 @@ static int parseSegs(char *clrs, int nseg, colorsegs_t *psegs) {
     }
 
     segs.base = colors;
-    segs.segs = s = N_NEW(nseg+1,colorseg_t);
+    segs.segs = s = gv_calloc(nseg + 1, sizeof(colorseg_t));
     for (color = strtok(colors, ":"); color; color = strtok(0, ":")) {
 	if ((v = getSegLen (color)) >= 0) {
 	    double del = v - left;
@@ -672,7 +672,7 @@ void emit_map_rect(GVJ_t *job, boxf b)
 	    obj->url_map_n = 4;
 	}
 	free(obj->url_map_p);
-	obj->url_map_p = p = N_NEW(obj->url_map_n, pointf);
+	obj->url_map_p = p = gv_calloc(obj->url_map_n, sizeof(pointf));
 	p[0] = b.LL;
 	p[1] = b.UR;
 	if (! (flags & GVRENDER_DOES_TRANSFORM))
@@ -698,7 +698,7 @@ static void map_label(GVJ_t *job, textlabel_t *lab)
 	    obj->url_map_n = 4;
 	}
 	free(obj->url_map_p);
-	obj->url_map_p = p = N_NEW(obj->url_map_n, pointf);
+	obj->url_map_p = p = gv_calloc(obj->url_map_n, sizeof(pointf));
 	P2RECT(lab->pos, p, lab->dimen.x / 2., lab->dimen.y / 2.);
 	if (! (flags & GVRENDER_DOES_TRANSFORM))
 	    gvrender_ptf_A(job, p, p, 2);
@@ -747,9 +747,8 @@ static bool isFilled(node_t * n)
 static pointf *pEllipse(double a, double b, size_t np) {
     double theta = 0.0;
     double deltheta = 2 * M_PI / (double)np;
-    pointf *ps;
 
-    ps = N_NEW(np, pointf);
+    pointf *ps = gv_calloc(np, sizeof(pointf));
     for (size_t i = 0; i < np; i++) {
         ps[i].x = a * cos(theta);
         ps[i].y = b * sin(theta);
@@ -833,7 +832,7 @@ typedef struct segitem_s {
 
 static segitem_t* appendSeg (pointf p, segitem_t* lp)
 {
-    segitem_t* s = GNEW(segitem_t);
+    segitem_t* s = gv_alloc(sizeof(segitem_t));
     INIT_SEG (p, s);
     lp->next = s;
     return s;
@@ -960,7 +959,7 @@ static void mkSegPts (segitem_t* prv, segitem_t* cur, segitem_t* nxt,
  */
 static void map_output_bspline (pointf **pbs, int **pbs_n, int *pbs_poly_n, bezier* bp, double w2)
 {
-    segitem_t* segl = GNEW(segitem_t);
+    segitem_t* segl = gv_alloc(sizeof(segitem_t));
     segitem_t* segp = segl;
     segitem_t* segprev;
     segitem_t* segnext;
@@ -1814,7 +1813,7 @@ static void emit_begin_node(GVJ_t * job, node_t * n)
             if (poly->peripheries == 0 && !filled) {
                 obj->url_map_shape = MAP_RECTANGLE;
                 nump = 2;
-                p = N_NEW(nump, pointf);
+                p = gv_calloc(nump, sizeof(pointf));
                 P2RECT(coord, p, ND_lw(n), ND_ht(n) / 2.0 );
             }
             /* circle or ellipse */
@@ -1822,7 +1821,7 @@ static void emit_begin_node(GVJ_t * job, node_t * n)
                 if (poly->regular) {
                     obj->url_map_shape = MAP_CIRCLE;
                     nump = 2;              /* center of circle and top right corner of bb */
-                    p = N_NEW(nump, pointf);
+                    p = gv_calloc(nump, sizeof(pointf));
                     p[0].x = coord.x;
                     p[0].y = coord.y;
 		    /* even vertices contain LL corner of bb */
@@ -1851,7 +1850,7 @@ static void emit_begin_node(GVJ_t * job, node_t * n)
                 if (poly->sides >= 0 && (size_t)poly->sides >= nump) {
                     assert(poly->sides >= 0);
                     size_t delta = (size_t)poly->sides / nump;
-                    p = N_NEW(nump, pointf);
+                    p = gv_calloc(nump, sizeof(pointf));
                     for (size_t i = 0, j = 0; j < nump; i += delta, j++) {
                         p[j].x = coord.x + vertices[i + offset].x;
                         p[j].y = coord.y + vertices[i + offset].y;
@@ -1859,7 +1858,7 @@ static void emit_begin_node(GVJ_t * job, node_t * n)
                 } else {
                     assert(sides >= 0);
                     nump = (size_t)sides;
-                    p = N_NEW(nump, pointf);
+                    p = gv_calloc(nump, sizeof(pointf));
                     for (size_t i = 0; i < nump; i++) {
                         p[i].x = coord.x + vertices[i + offset].x;
                         p[i].y = coord.y + vertices[i + offset].y;
@@ -1873,7 +1872,7 @@ static void emit_begin_node(GVJ_t * job, node_t * n)
              */
             obj->url_map_shape = MAP_RECTANGLE;
             nump = 2;
-            p = N_NEW(nump, pointf);
+            p = gv_calloc(nump, sizeof(pointf));
             p[0].x = coord.x - ND_lw(n);
             p[0].y = coord.y - (ND_ht(n) / 2);
             p[1].x = coord.x + ND_rw(n);
@@ -1895,8 +1894,6 @@ static void emit_end_node(GVJ_t * job)
     pop_obj_state(job);
 }
 
-/* emit_node:
- */
 static void emit_node(GVJ_t * job, node_t * n)
 {
     GVC_t *gvc = job->gvc;
@@ -2036,21 +2033,20 @@ static double approxLen (pointf* pts)
 static void splitBSpline (bezier* bz, float t, bezier* left, bezier* right)
 {
     int i, j, k, cnt = (bz->size - 1)/3;
-    double* lens;
     double last, len, sum;
     pointf* pts;
     float r;
 
     if (cnt == 1) {
 	left->size = 4;
-	left->list = N_NEW(4, pointf);
+	left->list = gv_calloc(4, sizeof(pointf));
 	right->size = 4;
-	right->list = N_NEW(4, pointf);
+	right->list = gv_calloc(4, sizeof(pointf));
 	Bezier (bz->list, 3, t, left->list, right->list);
 	return;
     }
     
-    lens = N_NEW(cnt, double);
+    double* lens = gv_calloc(cnt, sizeof(double));
     sum = 0;
     pts = bz->list;
     for (i = 0; i < cnt; i++) {
@@ -2067,9 +2063,9 @@ static void splitBSpline (bezier* bz, float t, bezier* left, bezier* right)
     }
 
     left->size = 3*(i+1) + 1;
-    left->list = N_NEW(left->size,pointf);
+    left->list = gv_calloc(left->size, sizeof(pointf));
     right->size = 3*(cnt-i) + 1;
-    right->list = N_NEW(right->size,pointf);
+    right->list = gv_calloc(right->size, sizeof(pointf));
     for (j = 0; j < left->size; j++)
 	left->list[j] = bz->list[j];
     k = j - 4;
@@ -2123,7 +2119,7 @@ static int multicolor (GVJ_t * job, edge_t * e, char** styles, char* colors, int
 	    if (first) {
 		first = 0;
 		splitBSpline (&bz, s->t, &bz_l, &bz_r);
-		gvrender_beziercurve(job, bz_l.list, bz_l.size, FALSE);
+		gvrender_beziercurve(job, bz_l.list, bz_l.size, 0);
 		free (bz_l.list);
 		if (AEQ0(left)) {
 		    free (bz_r.list);
@@ -2131,7 +2127,7 @@ static int multicolor (GVJ_t * job, edge_t * e, char** styles, char* colors, int
 		}
 	    }
 	    else if (AEQ0(left)) {
-		gvrender_beziercurve(job, bz_r.list, bz_r.size, FALSE);
+		gvrender_beziercurve(job, bz_r.list, bz_r.size, 0);
 		free (bz_r.list);
 		break;
 	    }
@@ -2139,7 +2135,7 @@ static int multicolor (GVJ_t * job, edge_t * e, char** styles, char* colors, int
 		bz0 = bz_r;
 		splitBSpline(&bz0, s->t / (left + s->t), &bz_l, &bz_r);
 		free (bz0.list);
-		gvrender_beziercurve(job, bz_l.list, bz_l.size, FALSE);
+		gvrender_beziercurve(job, bz_l.list, bz_l.size, 0);
 		free (bz_l.list);
 	    }
 		
@@ -2308,14 +2304,14 @@ static void emit_edge_graphics(GVJ_t * job, edge_t * e, char** styles)
 	else if (numc) {
 	    /* calculate and save offset vector spline and initialize first offset spline */
 	    tmpspl.size = offspl.size = ED_spl(e)->size;
-	    offspl.list = malloc(sizeof(bezier) * offspl.size);
-	    tmpspl.list = malloc(sizeof(bezier) * tmpspl.size);
+	    offspl.list = gv_calloc(offspl.size, sizeof(bezier));
+	    tmpspl.list = gv_calloc(tmpspl.size, sizeof(bezier));
 	    numc2 = (2 + numc) / 2.0;
 	    for (i = 0; i < offspl.size; i++) {
 		bz = ED_spl(e)->list[i];
 		tmpspl.list[i].size = offspl.list[i].size = bz.size;
-		offlist = offspl.list[i].list = malloc(sizeof(pointf) * bz.size);
-		tmplist = tmpspl.list[i].list = malloc(sizeof(pointf) * bz.size);
+		offlist = offspl.list[i].list = gv_calloc(bz.size, sizeof(pointf));
+		tmplist = tmpspl.list[i].list = gv_calloc(bz.size, sizeof(pointf));
 		pf3 = bz.list[0];
 		for (j = 0; j < bz.size - 1; j += 3) {
 		    pf0 = pf3;
@@ -2366,7 +2362,7 @@ static void emit_edge_graphics(GVJ_t * job, edge_t * e, char** styles)
 			tmplist[j].x += offlist[j].x;
 			tmplist[j].y += offlist[j].y;
 		    }
-		    gvrender_beziercurve(job, tmplist, tmpspl.list[i].size, FALSE);
+		    gvrender_beziercurve(job, tmplist, tmpspl.list[i].size, 0);
 		}
 	    }
 	    if (bz.sflag) {
@@ -2413,7 +2409,7 @@ static void emit_edge_graphics(GVJ_t * job, edge_t * e, char** styles)
 	    }
 	    for (i = 0; i < ED_spl(e)->size; i++) {
 		bz = ED_spl(e)->list[i];
-		gvrender_beziercurve(job, bz.list, bz.size, FALSE);
+		gvrender_beziercurve(job, bz.list, bz.size, 0);
 		if (bz.sflag) {
 		    arrow_gen(job, EMIT_TDRAW, bz.sp, bz.list[0],
 		              arrowsize, penwidth, bz.sflag);
@@ -3145,7 +3141,7 @@ static void init_job_viewport(GVJ_t * job, graph_t * g)
 
     /* user can override */
     if ((str = agget(g, "viewport"))) {
-        nodename = malloc(strlen(str)+1);
+        nodename = gv_alloc(strlen(str) + 1);
 	rv = sscanf(str, "%lf,%lf,%lf,\'%[^\']\'", &X, &Y, &Z, nodename);
 	if (rv == 4) {
 	    n = agfindnode(g->root, nodename);
@@ -3383,7 +3379,7 @@ static void emit_page(GVJ_t * job, graph_t * g)
 		obj->url_map_shape = MAP_POLYGON;
 		nump = 4;
 	    }
-	    p = N_NEW(nump, pointf);
+	    p = gv_calloc(nump, sizeof(pointf));
 	    p[0] = job->pageBox.LL;
 	    p[1] = job->pageBox.UR;
 	    if (! (flags & (GVRENDER_DOES_MAP_RECTANGLE)))
@@ -3881,10 +3877,6 @@ static void init_bb_edge(edge_t *e)
     spl = ED_spl(e);
     if (spl)
         init_splines_bb(spl);
-
-//    lp = ED_label(e);
-//    if (lp)
-//        {}
 }
 
 static void init_bb_node(graph_t *g, node_t *n)
