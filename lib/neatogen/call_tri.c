@@ -9,7 +9,7 @@
  *************************************************************************/
 
 #include "config.h"
-
+#include <cgraph/alloc.h>
 #include <sparse/SparseMatrix.h>
 #include <common/memory.h>
 #include <neatogen/delaunay.h>
@@ -22,8 +22,8 @@ SparseMatrix call_tri(int n, double *x) {
     SparseMatrix A;
     SparseMatrix B;
     int* edgelist = NULL;
-    double* xv = N_GNEW(n, double);
-    double* yv = N_GNEW(n, double);
+    double* xv = gv_calloc(n, sizeof(double));
+    double* yv = gv_calloc(n, sizeof(double));
     int numberofedges = 0;
 
     for (i = 0; i < n; i++) {
@@ -63,14 +63,13 @@ SparseMatrix call_tri(int n, double *x) {
 
 SparseMatrix call_tri2(int n, int dim, double * xx)
 {
-    double *x, *y;
     v_data *delaunay;
     int i, j;
     SparseMatrix A;
     SparseMatrix B;
     double one = 1;
-    x = N_GNEW(n, double);
-    y = N_GNEW(n, double);
+    double *x = gv_calloc(n, sizeof(double));
+    double *y = gv_calloc(n, sizeof(double));
 
     for (i = 0; i < n; i++) {
 	x[i] = xx[dim * i];

@@ -18,29 +18,28 @@
  *                          or &#[0-9]*;        (e.g. &#38; )
  *                          or &#x[0-9a-fA-F]*; (e.g. &#x6C34; )
  */
-static bool xml_isentity(const char *s)
-{
-    s++;			/* already known to be '&' */
-    if (*s == ';') { // '&;' is not a valid entity
-	return false;
-    }
-    if (*s == '#') {
-	s++;
-	if (*s == 'x' || *s == 'X') {
-	    s++;
-	    while (isxdigit((int)*s))
-		s++;
-	} else {
-	    while (isdigit((int)*s))
-		s++;
-	}
-    } else {
-	while (isalpha_no_locale(*s))
-	    s++;
-    }
-    if (*s == ';')
-	return true;
+static bool xml_isentity(const char *s) {
+  s++;             /* already known to be '&' */
+  if (*s == ';') { // '&;' is not a valid entity
     return false;
+  }
+  if (*s == '#') {
+    s++;
+    if (*s == 'x' || *s == 'X') {
+      s++;
+      while (isxdigit((int)*s))
+        s++;
+    } else {
+      while (isdigit((int)*s))
+        s++;
+    }
+  } else {
+    while (isalpha_no_locale(*s))
+      s++;
+  }
+  if (*s == ';')
+    return true;
+  return false;
 }
 
 /** XML-escape a character
@@ -114,8 +113,10 @@ static int xml_core(char previous, const char **current, xml_flags_t flags,
     //   └────────────────┴───────────────┴────────┴────────┴────────┴────────┘
     //
     // from which we can calculate the byte length of the current character
-    size_t length =
-        (uc >> 5) == 6 ? 2 : (uc >> 4) == 14 ? 3 : (uc >> 3) == 30 ? 4 : 0;
+    size_t length = (uc >> 5) == 6    ? 2
+                    : (uc >> 4) == 14 ? 3
+                    : (uc >> 3) == 30 ? 4
+                                      : 0;
 
     // was the length malformed or is the follow on sequence truncated?
     bool is_invalid = length == 0;
