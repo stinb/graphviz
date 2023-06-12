@@ -82,6 +82,7 @@ python3-pytest \
 python3-setuptools \
 gcovr \
 lcov \
+shellcheck \
 # Libraries used in test
 catch2 \
 libboost-dev \

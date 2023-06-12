@@ -2826,6 +2826,16 @@ def test_2397_1():
     dot("svg", source=output)
 
 
+@pytest.mark.skipif(shutil.which("shellcheck") is None, reason="shellcheck unavailable")
+def test_2404():
+    """
+    shell syntax used by gvmap should be correct
+    https://gitlab.com/graphviz/graphviz/-/issues/2404
+    """
+    gvmap_sh = Path(__file__).parent / "../cmd/gvmap/gvmap.sh"
+    subprocess.check_call(["shellcheck", "-S", "error", gvmap_sh])
+
+
 def test_changelog_dates():
     """
     Check the dates of releases in the changelog are correctly formatted
