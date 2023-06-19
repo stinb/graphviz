@@ -265,6 +265,8 @@ extern "C" {
 
 typedef enum {NATIVEFONTS,PSFONTS,SVGFONTS} fontname_kind;
 
+/// @addtogroup cgraph_graph
+/// @{
     typedef struct Agraphinfo_t {
 	Agrec_t hdr;
 	/* to generate code */
@@ -395,7 +397,10 @@ typedef enum {NATIVEFONTS,PSFONTS,SVGFONTS} fontname_kind;
 #define GD_spring(g) (((Agraphinfo_t*)AGDATA(g))->spring)
 #define GD_sum_t(g) (((Agraphinfo_t*)AGDATA(g))->sum_t)
 #define GD_t(g) (((Agraphinfo_t*)AGDATA(g))->t)
+/// @}
 
+/// @addtogroup cgraph_node
+/// @{
     typedef struct Agnodeinfo_t {
 	Agrec_t hdr;
 	shape_desc *shape;
@@ -525,7 +530,10 @@ typedef enum {NATIVEFONTS,PSFONTS,SVGFONTS} fontname_kind;
 #define ND_width(n) (((Agnodeinfo_t*)AGDATA(n))->width)
 #define ND_xsize(n) (ND_lw(n)+ND_rw(n))
 #define ND_ysize(n) (ND_ht(n))
+/// @}
 
+/// @addtogroup cgraph_edge
+/// @{
     typedef struct Agedgeinfo_t {
 	Agrec_t hdr;
 	splines *spl;
@@ -587,13 +595,19 @@ typedef enum {NATIVEFONTS,PSFONTS,SVGFONTS} fontname_kind;
 #define ED_xpenalty(e) (((Agedgeinfo_t*)AGDATA(e))->xpenalty)
 #define ED_dist(e) (((Agedgeinfo_t*)AGDATA(e))->dist)
 #define ED_weight(e) (((Agedgeinfo_t*)AGDATA(e))->weight)
+/// @}
 
 #define ag_xget(x,a) agxget(x,a)
 #define SET_RANKDIR(g,rd) (GD_rankdir2(g) = rd)
+/// @ingroup cgraph_edge
 #define agfindedge(g,t,h) (agedge(g,t,h,NULL,0))
+/// @ingroup cgraph_node
 #define agfindnode(g,n) (agnode(g,n,0))
+/// @ingroup cgraph_graph
 #define agfindgraphattr(g,a) (agattr(g,AGRAPH,a,NULL))
+/// @ingroup cgraph_node
 #define agfindnodeattr(g,a) (agattr(g,AGNODE,a,NULL))
+/// @ingroup cgraph_edge
 #define agfindedgeattr(g,a) (agattr(g,AGEDGE,a,NULL))
 
     typedef struct {
