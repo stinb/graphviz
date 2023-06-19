@@ -1,3 +1,7 @@
+/// @file
+/// @brief demonstrates usage of @ref gvContext, @ref agread, @ref gvLayout,
+/// @ref gvRender, @ref gvFreeLayout and @ref agclose
+
 /*************************************************************************
  * Copyright (c) 2011 AT&T Intellectual Property
  * All rights reserved. This program and the accompanying materials
