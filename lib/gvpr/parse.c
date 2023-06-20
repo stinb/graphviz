@@ -456,7 +456,6 @@ bindAction(case_t cs, char *action, int aline, char **ap, int *lp)
  */
 parse_prog *parseProg(char *input, int isFile)
 {
-    parse_prog *prog;
     Sfio_t *str;
     char *mode;
     char *guard = NULL;
@@ -477,7 +476,7 @@ parse_prog *parseProg(char *input, int isFile)
 
     
     lineno = col0 = startLine = kwLine = 1;
-    prog = newof(0, parse_prog, 1, 0);
+    parse_prog *prog = calloc(1, sizeof(parse_prog));
     if (!prog) {
 	error(ERROR_ERROR, "parseProg: out of memory");
 	return NULL;

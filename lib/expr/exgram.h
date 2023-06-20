@@ -29,7 +29,7 @@ extern "C" {
 
 #include <cgraph/agxbuf.h>
 #include <expr/exlib.h>
-#include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define ex_lex()		extoken_fn(expr.program)
@@ -556,7 +556,7 @@ qualify(Exref_t* ref, Exid_t* sym)
 	snprintf(s, len, "%s.%s", ref->symbol->name, sym->name);
 	if (!(x = dtmatch(expr.program->symbols, s)))
 	{
-		if ((x = newof(0, Exid_t, 1, strlen(s) - EX_NAMELEN + 1)))
+		if ((x = calloc(1, sizeof(Exid_t) + strlen(s) - EX_NAMELEN + 1)))
 		{
 			memcpy(x, sym, sizeof(Exid_t) - EX_NAMELEN);
 			strcpy(x->name, s);
@@ -823,7 +823,7 @@ int expush(Expr_t *p, const char *name, int line, Sfio_t *fp) {
 	char*		s;
 	char			buf[PATH_MAX];
 
-	if (!(in = newof(0, Exinput_t, 1, 0)))
+	if (!(in = calloc(1, sizeof(Exinput_t))))
 	{
 		exnospace();
 		return -1;

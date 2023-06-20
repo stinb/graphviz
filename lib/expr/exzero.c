@@ -21,9 +21,7 @@
  * return 0 value for type
  */
 
-Extype_t
-exzero(int type)
-{
+Extype_t exzero(long int type) {
 	Extype_t	v = {0};
 
 	switch (type)

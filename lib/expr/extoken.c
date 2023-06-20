@@ -19,8 +19,8 @@
 #include <cgraph/agxbuf.h>
 #include <ctype.h>
 #include <expr/exlib.h>
-#include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #if defined(TRACE_lex) && TRACE_lex
@@ -628,7 +628,7 @@ extoken_fn(Expr_t* ex)
 					dtview(ex->symbols, v);
 				if (!ex_lval.id)
 				{
-					if (!(ex_lval.id = newof(0, Exid_t, 1, strlen(s) - EX_NAMELEN + 1)))
+					if (!(ex_lval.id = calloc(1, sizeof(Exid_t) + strlen(s) - EX_NAMELEN + 1)))
 					{
 						exnospace();
 						goto eof;

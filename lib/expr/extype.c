@@ -24,9 +24,7 @@
  * return C type name for type
  */
 
-char*
-extype(int type)
-{
+char *extype(long int type) {
 	switch (type)
 	{
 	case FLOATING:

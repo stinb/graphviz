@@ -36,8 +36,8 @@
 #include <assert.h>
 #include <ctype.h>
 #include <expr/exop.h>
-#include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ast/ast.h>
 
@@ -217,7 +217,7 @@ action		:	LABEL ':' {
 				$1->lex = PROCEDURE;
 				expr.procedure = $1->value = exnewnode(expr.program, PROCEDURE, 1, $1->type, NULL, NULL);
 				expr.procedure->type = INTEGER;
-				if (!(disc = newof(0, Dtdisc_t, 1, 0)))
+				if (!(disc = calloc(1, sizeof(Dtdisc_t))))
 					exnospace();
 				disc->key = offsetof(Exid_t, name);
 				if (expr.assigned && !streq($1->name, "begin"))
@@ -402,11 +402,10 @@ statement	:	'{' statement_list '}'
 switch_list	:	/* empty */
 		{
 			Switch_t*		sw;
-			int				n;
 
 			if (expr.swstate)
 			{
-				if (!(sw = newof(0, Switch_t, 1, 0)))
+				if (!(sw = calloc(1, sizeof(Switch_t))))
 				{
 					exnospace();
 					sw = &swstate;
@@ -421,8 +420,8 @@ switch_list	:	/* empty */
 			sw->lastcase = 0;
 			sw->defcase = 0;
 			sw->def = 0;
-			n = 8;
-			if (!(sw->base = newof(0, Extype_t*, n, 0)))
+			size_t n = 8;
+			if (!(sw->base = calloc(n, sizeof(Extype_t*))))
 			{
 				exnospace();
 				n = 0;
@@ -436,7 +435,6 @@ switch_list	:	/* empty */
 switch_item	:	case_list statement_list
 		{
 			Switch_t*	sw = expr.swstate;
-			int			n;
 
 			$$ = exnewnode(expr.program, CASE, 1, 0, $2, NULL);
 			if (sw->cur > sw->base)
@@ -446,7 +444,7 @@ switch_item	:	case_list statement_list
 				else
 					sw->firstcase = $$;
 				sw->lastcase = $$;
-				n = sw->cur - sw->base;
+				size_t n = (size_t)(sw->cur - sw->base);
 				sw->cur = sw->base;
 				$$->data.select.constant = exalloc(expr.program, (n + 1) * sizeof(Extype_t*));
 				memcpy($$->data.select.constant, sw->base, n * sizeof(Extype_t*));
@@ -471,12 +469,10 @@ case_list	:	case_item
 
 case_item	:	CASE constant ':'
 		{
-			int	n;
-
 			if (expr.swstate->cur >= expr.swstate->last)
 			{
-				n = expr.swstate->cur - expr.swstate->base;
-				if (!(expr.swstate->base = newof(expr.swstate->base, Extype_t*, 2 * n, 0)))
+				size_t n = (size_t)(expr.swstate->cur - expr.swstate->base);
+				if (!(expr.swstate->base = realloc(expr.swstate->base, sizeof(Extype_t*) * 2 * n)))
 				{
 					exerror("too many case labels for switch");
 					n = 0;
@@ -533,7 +529,7 @@ dcl_item	:	dcl_name {checkName ($1); expr.id=$1;} array initialize
 				{
 					Dtdisc_t*	disc;
 
-					if (!(disc = newof(0, Dtdisc_t, 1, 0)))
+					if (!(disc = calloc(1, sizeof(Dtdisc_t))))
 						exnospace();
 					if ($3 == INTEGER) {
 						disc->key = offsetof(Exassoc_t, key);
@@ -1235,7 +1231,7 @@ initialize	:	assign
 				if (expr.procedure)
 					exerror("%s: nested function definitions not supported", expr.id->name);
 				expr.procedure = exnewnode(expr.program, PROCEDURE, 1, expr.declare, NULL, NULL);
-				if (!(disc = newof(0, Dtdisc_t, 1, 0)))
+				if (!(disc = calloc(1, sizeof(Dtdisc_t))))
 					exnospace();
 				disc->key = offsetof(Exid_t, name);
 				if (!streq(expr.id->name, "begin"))

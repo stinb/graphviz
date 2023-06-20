@@ -22,6 +22,7 @@
 #endif
 
 #include <expr/exlib.h>
+#include <stdlib.h>
 #include <string.h>
 
 /*
@@ -34,7 +35,7 @@ exopen(Exdisc_t* disc)
 	Expr_t*	program;
 	Exid_t*	sym;
 
-	if (!(program = newof(0, Expr_t, 1, 0)))
+	if (!(program = calloc(1, sizeof(Expr_t))))
 		return 0;
 	program->symdisc.key = offsetof(Exid_t, name);
 	if (!(program->symbols = dtopen(&program->symdisc, Dtset)) ||
