@@ -1,7 +1,7 @@
 /**
  * @file
  * @brief Graphviz context library
- * @ingroup public_apis
+ * @ingroup gvc_api
  */
 
 /*************************************************************************
@@ -36,6 +36,10 @@ extern "C" {
 #ifndef GVC_API
 #define GVC_API /* nothing */
 #endif
+
+/// @defgroup gvc_api Graphviz context library (GVC) API
+/// @ingroup public_apis
+/// @{
 	
 #define LAYOUT_DONE(g) (agbindrec(g, "Agraphinfo_t", 0, TRUE) && GD_drawing(g))
 
@@ -121,6 +125,8 @@ GVC_API void gvAddLibrary(GVC_t *gvc, gvplugin_library_t *lib);
  * @param g  graph to be transformed.
  */
 GVC_API int gvToolTred(graph_t *g);
+
+/// @}
 
 #undef GVC_API
 

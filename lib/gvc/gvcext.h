@@ -1,5 +1,5 @@
 /// @file
-/// @ingroup public_apis
+/// @ingroup gvc_api
 /*************************************************************************
  * Copyright (c) 2011 AT&T Intellectual Property 
  * All rights reserved. This program and the accompanying materials
@@ -34,7 +34,7 @@ extern "C" {
 
     typedef struct GVJ_s GVJ_t;
     typedef struct GVG_s GVG_t;
-    typedef struct GVC_s GVC_t;
+    typedef struct GVC_s GVC_t; ///< graphviz context
 
     typedef struct {
 	const char *name;
