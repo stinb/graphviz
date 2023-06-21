@@ -1,6 +1,7 @@
 /**
  * @file
  * @brief graph pattern scanning and processing language API, main function @ref gvpr
+ * @ingroup public_apis
  */
 /*************************************************************************
  * Copyright (c) 2011 AT&T Intellectual Property 

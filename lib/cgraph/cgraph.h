@@ -1,11 +1,13 @@
 /**
  * @file
  * @brief abstract graph C library, @ref cgraph_api
+ * @ingroup cgraph_api
  *
  * [man 3 cgraph](https://graphviz.org/pdf/cgraph.3.pdf)
  *
  * @defgroup cgraph_api Cgraph API
  * @brief Abstract graph C library
+ * @ingroup public_apis
  *
  * Main types @ref Agraph_t, @ref Agnode_t, @ref Agedge_t.
  * @{

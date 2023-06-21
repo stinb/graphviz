@@ -1,6 +1,7 @@
 /**
  * @file
  * @brief support for connected components
+ * @ingroup public_apis
  */
 
 /*************************************************************************

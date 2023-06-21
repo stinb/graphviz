@@ -1,6 +1,7 @@
 /**
  * @file
  * @brief container data types API
+ * @ingroup public_apis
  */
 
 #pragma once

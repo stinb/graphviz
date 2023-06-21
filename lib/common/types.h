@@ -1,6 +1,7 @@
 /**
  * @file
  * @brief graphs, nodes and edges info: Agraphinfo_t, Agnodeinfo_t and Agedgeinfo_t
+ * @ingroup public_apis
  */
 
 /*************************************************************************
@@ -602,3 +603,4 @@ typedef enum {NATIVEFONTS,PSFONTS,SVGFONTS} fontname_kind;
 #ifdef __cplusplus
 }
 #endif
+/// @defgroup public_apis Graphviz public APIs
