@@ -83,7 +83,6 @@ typedef struct Agattr_s Agattr_t;       ///< string attribute container
 typedef struct Agcbdisc_s Agcbdisc_t;   ///< client event callbacks
 typedef struct Agcbstack_s Agcbstack_t; ///< enclosing state for cbdisc
 typedef struct Agclos_s Agclos_t;       ///< common fields for graph/subgs
-typedef struct Agrec_s Agrec_t;         ///< generic runtime record
 typedef struct Agdatadict_s Agdatadict_t; ///< set of dictionaries per graph
 typedef struct Agedgepair_s Agedgepair_t; ///< the edge object
 typedef struct Agsubnode_s Agsubnode_t;
@@ -91,22 +90,30 @@ typedef struct Agsubnode_s Agsubnode_t;
 
 /** @addtogroup cgraph_attr
  *  @{
+ *
+ *  @defgroup cgraph_rec records
+ *  @brief These records are attached by client programs dynamically at runtime.
+ *  @{
+ *
+ *  A unique string ID (stored in @ref Agrec_s.name) must be given
+ *  to each record attached to the same object.
+ *  Cgraph has functions to create, search for, and delete these records.
+ *  The records are maintained in a circular list,
+ *  with @ref Agobj_s.data pointing somewhere in the list.
+ *  The search function @ref aggetrec has an option to lock this pointer on a given record.
+ *  The application must be written so only one such lock is outstanding at a time.
  */
-/** @brief Header of a user record.
 
-These records are attached by client programs
-dynamically at runtime.  A unique string ID must be given to each record
-attached to the same object.  Cgraph has functions to create, search for,
-and delete these records.   The records are maintained in a circular list,
-with obj->data pointing somewhere in the list.  The search function has
-an option to lock this pointer on a given record.  The application must
-be written so only one such lock is outstanding at a time. */
+typedef struct Agrec_s Agrec_t;
+///< generic header of @ref Agattr_s, @ref Agdatadict_s and user records
 
+/// implementation of @ref Agrec_t
 struct Agrec_s {
     char *name;
     Agrec_t *next;
     /* following this would be any programmer-defined data */
 };
+/// @}
 
 /** @brief Object tag for graphs, nodes, and edges.
 
@@ -407,11 +414,15 @@ CGRAPH_API Agsym_t *agattrsym(void *obj, char *name);
 CGRAPH_API Agsym_t *agnxtattr(Agraph_t * g, int kind, Agsym_t * attr);
 CGRAPH_API int      agcopyattr(void *oldobj, void *newobj);
 
-/// @defgroup cgraph_rec records
+/// @addtogroup cgraph_rec
 /// @{
 CGRAPH_API void *agbindrec(void *obj, const char *name, unsigned int recsize,
 		       int move_to_front);
+///< attach a new record of the given size to the object.
+
 CGRAPH_API Agrec_t *aggetrec(void *obj, const char *name, int move_to_front);
+///< find record in circular list and do optional move-to-front and lock
+
 CGRAPH_API int agdelrec(void *obj, const char *name);
 CGRAPH_API void aginit(Agraph_t * g, int kind, const char *rec_name,
                        int rec_size, int move_to_front);
