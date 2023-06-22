@@ -55,15 +55,24 @@ extern "C" {
 
 /// @endcond
 
+/// @defgroup cgraph_other other
+/// @{
 typedef uint64_t IDTYPE;
 
 /* forward struct type declarations */
 typedef struct Agtag_s Agtag_t;
 typedef struct Agobj_s Agobj_t;         ///< generic object header
+/// @}
+/// @ingroup cgraph_graph
 typedef struct Agraph_s Agraph_t;       ///< graph, subgraph (or hyperedge)
+/// @ingroup cgraph_node
 typedef struct Agnode_s Agnode_t;       ///< node (atom)
+/// @ingroup cgraph_edge
 typedef struct Agedge_s Agedge_t;       ///< node pair
+/// @ingroup cgraph_graph
 typedef struct Agdesc_s Agdesc_t;       ///< graph descriptor
+/// @addtogroup cgraph_other
+/// @{
 typedef struct Agmemdisc_s Agmemdisc_t; ///< memory allocator
 typedef struct Agiddisc_s Agiddisc_t;   ///< object ID allocator
 typedef struct Agiodisc_s Agiodisc_t;   ///< IO services
@@ -78,7 +87,11 @@ typedef struct Agrec_s Agrec_t;         ///< generic runtime record
 typedef struct Agdatadict_s Agdatadict_t; ///< set of dictionaries per graph
 typedef struct Agedgepair_s Agedgepair_t; ///< the edge object
 typedef struct Agsubnode_s Agsubnode_t;
+/// @}
 
+/** @addtogroup cgraph_attr
+ *  @{
+ */
 /** @brief Header of a user record.
 
 These records are attached by client programs
@@ -127,6 +140,10 @@ struct Agobj_s {
 #define AGSEQ(obj)		(AGTAG(obj).seq)
 #define AGATTRWF(obj)		(AGTAG(obj).attrwf)
 #define AGDATA(obj)		(((Agobj_t*)(obj))->data)
+/// @}
+
+/// @addtogroup cgraph_node
+/// @{
 
 /** @brief This is the node struct allocated per graph (or subgraph).
 
@@ -148,7 +165,10 @@ struct Agnode_s {
     Agraph_t *root;
     Agsubnode_t mainsub;	/* embedded for main graph */
 };
+/// @}
 
+/// @addtogroup cgraph_edge
+/// @{
 struct Agedge_s {
     Agobj_t base;
     Dtlink_t id_link;		/* main graph only */
@@ -159,7 +179,10 @@ struct Agedge_s {
 struct Agedgepair_s {
     Agedge_t out, in;
 };
+/// @}
 
+/// @addtogroup cgraph_graph
+/// @{
 struct Agdesc_s {		/* graph descriptor */
     unsigned directed:1;	/* if edges are asymmetric */
     unsigned strict:1;		/* if multi-edges forbidden */
@@ -170,6 +193,7 @@ struct Agdesc_s {		/* graph descriptor */
     unsigned has_attrs:1;	/* if string attr tables should be initialized */
     unsigned has_cmpnd:1;	/* if may contain collapsed nodes */
 };
+/// @}
 
 /** @defgroup cgraph_disc disciplines
  *  @brief disciplines for external resources needed by libgraph
@@ -223,6 +247,9 @@ CGRAPH_API extern Agiodisc_t AgIoDisc;
 CGRAPH_API extern Agdisc_t AgDefaultDisc;
 /// @}
 
+/** @defgroup cgraph_graph graphs
+ *  @{
+ */
 struct Agdstate_s {
     void *mem;
     void *id;
@@ -291,6 +318,7 @@ CGRAPH_API int agisdirected(Agraph_t * g);
 CGRAPH_API int agisundirected(Agraph_t * g);
 CGRAPH_API int agisstrict(Agraph_t * g);
 CGRAPH_API int agissimple(Agraph_t * g);
+/// @}
 
 /// @defgroup cgraph_node nodes
 /// @{
@@ -379,6 +407,8 @@ CGRAPH_API Agsym_t *agattrsym(void *obj, char *name);
 CGRAPH_API Agsym_t *agnxtattr(Agraph_t * g, int kind, Agsym_t * attr);
 CGRAPH_API int      agcopyattr(void *oldobj, void *newobj);
 
+/// @defgroup cgraph_rec records
+/// @{
 CGRAPH_API void *agbindrec(void *obj, const char *name, unsigned int recsize,
 		       int move_to_front);
 CGRAPH_API Agrec_t *aggetrec(void *obj, const char *name, int move_to_front);
@@ -386,6 +416,7 @@ CGRAPH_API int agdelrec(void *obj, const char *name);
 CGRAPH_API void aginit(Agraph_t * g, int kind, const char *rec_name,
                        int rec_size, int move_to_front);
 CGRAPH_API void agclean(Agraph_t * g, int kind, char *rec_name);
+/// @}
 
 CGRAPH_API char *agget(void *obj, char *name);
 CGRAPH_API char *agxget(void *obj, Agsym_t * sym);
@@ -455,6 +486,8 @@ CGRAPH_API agusererrf agseterrf(agusererrf);
 
 #undef PRINTF_LIKE
 
+/// @addtogroup cgraph_other
+/// @{
 /* data access macros */
 /* this assumes that e[0] is out and e[1] is inedge, see edgepair in edge.c  */
 #define AGIN2OUT(e)		((e)-1)
@@ -473,11 +506,15 @@ CGRAPH_API agusererrf agseterrf(agusererrf);
 
 #define TAILPORT_ID		"tailport"
 #define HEADPORT_ID		"headport"
+/// @}
 
+/// @addtogroup cgraph_graph
+/// @{
 CGRAPH_API extern Agdesc_t Agdirected;
 CGRAPH_API extern Agdesc_t Agstrictdirected;
 CGRAPH_API extern Agdesc_t Agundirected;
 CGRAPH_API extern Agdesc_t Agstrictundirected;
+/// @}
 
 /// @defgroup cgraph_fast fast graphs
 /// @{
