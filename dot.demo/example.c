@@ -1,3 +1,7 @@
+/// @file
+/// @brief small example, demonstrates usage of @ref agopen, @ref agnode,
+/// @ref agedge, @ref agsafeset and @ref agwrite
+
 #include <graphviz/gvc.h>
 #include <stdio.h>
 #include <stdlib.h>

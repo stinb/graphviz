@@ -1,3 +1,7 @@
+/// @file
+/// @brief demonstrates usage of @ref aginit, @ref ccomps, @ref nodeInduce,
+/// @ref pack_graph and @ref agdelete
+
 /*************************************************************************
  * Copyright (c) 2011 AT&T Intellectual Property
  * All rights reserved. This program and the accompanying materials
