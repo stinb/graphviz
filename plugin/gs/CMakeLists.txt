@@ -1,6 +1,3 @@
-find_package(GS)
-find_package(PANGOCAIRO)
-
 if(GS_FOUND AND PANGOCAIRO_FOUND)
 
   add_library(gvplugin_gs SHARED
