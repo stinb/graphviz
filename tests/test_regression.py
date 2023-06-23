@@ -29,7 +29,6 @@ from gvtest import (  # pylint: disable=wrong-import-position
     ROOT,
     dot,
     gvpr,
-    is_64bit,
     is_mingw,
     remove_xtype_warnings,
     run_c,
@@ -727,11 +726,6 @@ def test_1449():
     assert stderr.strip() == "", "SVG color scheme use caused warnings"
 
 
-@pytest.mark.xfail(
-    not is_64bit() and is_mingw(),
-    strict=True,
-    reason="https://gitlab.com/graphviz/graphviz/-/issues/1554",
-)
 def test_1554():
     """
     small distances between nodes should not cause a crash in majorization

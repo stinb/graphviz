@@ -8,7 +8,7 @@ if(WIN32)
   find_library(GTS_LIBRARY NAMES gts)
   find_library(GLIB_LIBRARY NAMES glib-2.0)
 
-  find_program(GTS_RUNTIME_LIBRARY gts.dll)
+  find_program(GTS_RUNTIME_LIBRARY NAMES gts.dll libgts-0-7-5.dll)
   find_program(GLIB_RUNTIME_LIBRARY NAMES glib-2.dll libglib-2.0-0.dll)
 
   find_package_handle_standard_args(GTS DEFAULT_MSG
