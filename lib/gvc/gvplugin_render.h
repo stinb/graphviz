@@ -1,5 +1,5 @@
 /// @file
-/// @ingroup public_apis
+/// @ingroup plugin_api
 /*************************************************************************
  * Copyright (c) 2011 AT&T Intellectual Property 
  * All rights reserved. This program and the accompanying materials
@@ -20,6 +20,7 @@
 extern "C" {
 #endif
 
+    /// @ingroup plugin_api
     struct gvrender_engine_s {
 	void (*begin_job) (GVJ_t * job);
 	void (*end_job) (GVJ_t * job);

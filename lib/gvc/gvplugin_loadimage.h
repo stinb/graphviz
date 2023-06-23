@@ -1,5 +1,5 @@
 /// @file
-/// @ingroup public_apis
+/// @ingroup plugin_api
 /*************************************************************************
  * Copyright (c) 2011 AT&T Intellectual Property 
  * All rights reserved. This program and the accompanying materials
@@ -21,6 +21,8 @@
 extern "C" {
 #endif
 
+/// @cond
+
 #ifdef GVDLL
 #ifdef GVC_EXPORTS
 #define GVPLUGIN_LOADIMAGE_API __declspec(dllexport)
@@ -33,12 +35,19 @@ extern "C" {
 #define GVPLUGIN_LOADIMAGE_API /* nothing */
 #endif
 
+/// @endcond
+
+/// @ingroup plugin_api
+/// @{
+
 GVPLUGIN_LOADIMAGE_API bool gvusershape_file_access(usershape_t *us);
 GVPLUGIN_LOADIMAGE_API void gvusershape_file_release(usershape_t *us);
 
     struct gvloadimage_engine_s {
 	void (*loadimage) (GVJ_t *job, usershape_t *us, boxf b, bool filled);
     };
+
+/// @}
 
 #undef GVPLUGIN_LOADIMAGE_API
 

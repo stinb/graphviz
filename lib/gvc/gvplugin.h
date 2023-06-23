@@ -1,5 +1,8 @@
 /// @file
+/// @ingroup plugin_api
+/// @defgroup plugin_api Plugin API
 /// @ingroup public_apis
+/// @{
 /*************************************************************************
  * Copyright (c) 2011 AT&T Intellectual Property 
  * All rights reserved. This program and the accompanying materials
@@ -28,6 +31,7 @@ extern "C" {
  *          type      - e.g. "png", "ps"
  */
 
+/// ingroup plugin_api
     typedef struct {
 	int id;         /* an id that is only unique within a package 
 			of plugins of the same api.
@@ -54,6 +58,7 @@ extern "C" {
 					no pathname */
 	gvplugin_api_t *apis;
     } gvplugin_library_t;
+/// @}
 
 #ifdef __cplusplus
 }
