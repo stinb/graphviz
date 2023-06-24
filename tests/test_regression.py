@@ -29,7 +29,6 @@ from gvtest import (  # pylint: disable=wrong-import-position
     ROOT,
     dot,
     gvpr,
-    is_mingw,
     remove_xtype_warnings,
     run_c,
     which,
@@ -874,9 +873,6 @@ def test_1724():
     assert ret != -signal.SIGSEGV, "Graphviz segfaulted"
 
 
-@pytest.mark.xfail(
-    is_mingw(), reason="https://gitlab.com/graphviz/graphviz/-/issues/2408", strict=True
-)
 def test_1767():
     """
     using the Pango plugin multiple times should produce consistent results
@@ -1320,9 +1316,6 @@ def test_1909():
     assert output == "// begin\n" "digraph bug {\n" "	a -> b;\n" "	b -> c;\n" "}\n"
 
 
-@pytest.mark.xfail(
-    is_mingw(), reason="https://gitlab.com/graphviz/graphviz/-/issues/2408", strict=True
-)
 def test_1910():
     """
     Repeatedly using agmemread() should have consistent results
@@ -1497,9 +1490,6 @@ def test_1990():
     subprocess.check_call(["circo", "-Tsvg", "-o", os.devnull, input])
 
 
-@pytest.mark.xfail(
-    is_mingw(), reason="https://gitlab.com/graphviz/graphviz/-/issues/2408", strict=True
-)
 def test_2057():
     """
     gvToolTred should be usable by user code
@@ -2110,9 +2100,6 @@ def test_user_shapes():
     assert '<image xlink:href="usershape.svg" width="62px" height="44px" ' in output
 
 
-@pytest.mark.xfail(
-    is_mingw(), reason="https://gitlab.com/graphviz/graphviz/-/issues/2408", strict=True
-)
 def test_xdot_json():
     """
     check the output of xdot’s JSON API
@@ -2381,9 +2368,6 @@ def test_2270(tmp_path: Path):
     assert output.exists(), "-O resulted in an unexpected output filename"
 
 
-@pytest.mark.xfail(
-    is_mingw(), reason="https://gitlab.com/graphviz/graphviz/-/issues/2408", strict=True
-)
 def test_2272():
     """
     using `agmemread` with an unterminated string should not fail assertions
