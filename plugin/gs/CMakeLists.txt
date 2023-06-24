@@ -1,6 +1,3 @@
-find_package(GS)
-find_package(PANGOCAIRO)
-
 if(GS_FOUND AND PANGOCAIRO_FOUND)
 
   add_library(gvplugin_gs SHARED
@@ -23,7 +20,9 @@ if(GS_FOUND AND PANGOCAIRO_FOUND)
   )
 
   target_link_libraries(gvplugin_gs
+    gvc
     ${GS_LIBRARIES}
+    ${CAIRO_LINK_LIBRARIES}
     ${PANGOCAIRO_LINK_LIBRARIES}
   )
 
