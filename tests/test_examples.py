@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 sys.path.append(os.path.dirname(__file__))
-from gvtest import is_mingw, run_c, which  # pylint: disable=wrong-import-position
+from gvtest import run_c, which  # pylint: disable=wrong-import-position
 
 
 @pytest.mark.parametrize(
@@ -20,9 +20,6 @@ from gvtest import is_mingw, run_c, which  # pylint: disable=wrong-import-positi
 @pytest.mark.skipif(
     os.getenv("build_system") == "msbuild",
     reason="Windows MSBuild release does not contain any header files (#1777)",
-)
-@pytest.mark.xfail(
-    is_mingw(), reason="https://gitlab.com/graphviz/graphviz/-/issues/2408", strict=True
 )
 def test_compile_example(src):
     """try to compile the example"""

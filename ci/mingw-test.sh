@@ -29,7 +29,8 @@ DIR_LABS="/c/Graphviz"
 
 # needed to find headers and libs at compile time. Must use absolute
 # Windows path for libs (why?)
-export CFLAGS="-I$DIR_LABS/include -L$DIR_WABS/lib"
+export CFLAGS="-I$DIR_LABS/include"
+export LDFLAGS="-L$DIR_LABS/lib"
 
 # needed to find e.g. libgvc.dll at run time. Windows does not use
 # LD_LIBRARY_PATH. Must be the logical directory
