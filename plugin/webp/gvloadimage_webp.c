@@ -23,7 +23,7 @@
 #include <cairo.h>
 #include <webp/decode.h>
 
-#ifdef _WIN32 //*dependencies
+#ifdef _MSC_VER //*dependencies
     #pragma comment( lib, "gvc.lib" )
     #pragma comment( lib, "glib-2.0.lib" )
     #pragma comment( lib, "pango-1.0.lib" )
