@@ -29,7 +29,7 @@
 #include <cgraph/exit.h>
 
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #pragma comment( lib, "cgraph.lib" )
 #pragma comment( lib, "gvc.lib" )
 #pragma comment( lib, "ingraphs.lib" )
