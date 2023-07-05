@@ -790,7 +790,7 @@ int initHTMLlexer(char *src, agxbuf * xb, htmlenv_t *env)
 #endif
 }
 
-int clearHTMLlexer()
+int clearHTMLlexer(void)
 {
 #ifdef HAVE_EXPAT
     int rv = state.error ? 3 : state.warn;
@@ -917,7 +917,7 @@ static void protect_rsqb(agxbuf *xb) {
 }
 #endif
 
-int htmllineno()
+int htmllineno(void)
 {
 #ifdef HAVE_EXPAT
     return XML_GetCurrentLineNumber(state.parser);
@@ -1059,7 +1059,7 @@ static void printTok(int tok)
 
 #endif
 
-int htmllex()
+int htmllex(void)
 {
 #ifdef HAVE_EXPAT
     static char *begin_html = "<HTML>";

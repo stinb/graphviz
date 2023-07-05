@@ -21,7 +21,7 @@ double deltax,			/* xmax - xmin */
 size_t nsites;
 int sqrt_nsites;
 
-void geominit()
+void geominit(void)
 {
     double sn;
 

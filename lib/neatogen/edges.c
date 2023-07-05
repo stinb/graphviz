@@ -20,7 +20,7 @@ double pxmin, pxmax, pymin, pymax;	/* clipping window */
 static int nedges;
 static Freelist efl;
 
-void edgeinit()
+void edgeinit(void)
 {
     freeinit(&efl, sizeof(Edge));
     nedges = 0;

@@ -36,7 +36,7 @@ void InitRect(Rect_t * r)
 | Return a rect whose first low side is higher than its opposite side -
 | interpreted as an undefined rect.
 -----------------------------------------------------------------------------*/
-Rect_t NullRect()
+Rect_t NullRect(void)
 {
     Rect_t r = {{0}};
 

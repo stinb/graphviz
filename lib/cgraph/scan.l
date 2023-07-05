@@ -261,9 +261,9 @@ void aagerror(const char *str)
     BEGIN(INITIAL);
 }
 /* must be here to see flex's macro defns */
-void aglexeof() { unput(GRAPH_EOF_TOKEN); }
+void aglexeof(void) { unput(GRAPH_EOF_TOKEN); }
 
-void aglexbad() { YY_FLUSH_BUFFER; }
+void aglexbad(void) { YY_FLUSH_BUFFER; }
 
 #ifndef YY_CALL_ONLY_ARG
 # define YY_CALL_ONLY_ARG void

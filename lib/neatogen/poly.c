@@ -30,7 +30,7 @@ static Point *tp1 = NULL;
 static Point *tp2 = NULL;
 static Point *tp3 = NULL;
 
-void polyFree()
+void polyFree(void)
 {
     maxcnt = 0;
     free(tp1);

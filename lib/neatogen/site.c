@@ -19,14 +19,14 @@ Site *bottomsite;
 static Freelist sfl;
 static size_t nvertices;
 
-void siteinit()
+void siteinit(void)
 {
     freeinit(&sfl, sizeof(Site));
     nvertices = 0;
 }
 
 
-Site *getsite()
+Site *getsite(void)
 {
     return getfree(&sfl);
 }

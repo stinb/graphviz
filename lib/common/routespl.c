@@ -232,7 +232,7 @@ simpleSplineRoute (pointf tp, pointf hp, Ppoly_t poly, int* n_spl_pts,
  * Allows recursive calls to dot
  */
 int
-routesplinesinit()
+routesplinesinit(void)
 {
     if (++routeinit > 1) return 0;
 #ifdef DEBUG
@@ -245,7 +245,7 @@ routesplinesinit()
     return 0;
 }
 
-void routesplinesterm()
+void routesplinesterm(void)
 {
     if (--routeinit > 0) return;
     if (Verbose)

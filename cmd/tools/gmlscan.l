@@ -130,12 +130,12 @@ void gmlerror(const char *str)
     agerr(AGWARN, " %s in line %d near '%s'\n", str,line_num,yytext);
 }
 
-int gmlerrors()
+int gmlerrors(void)
 {
     return errors;
 }
  
-void gmllexeof() { unput(GRAPH_EOF_TOKEN); }
+void gmllexeof(void) { unput(GRAPH_EOF_TOKEN); }
 
 #ifndef YY_CALL_ONLY_ARG
 # define YY_CALL_ONLY_ARG void

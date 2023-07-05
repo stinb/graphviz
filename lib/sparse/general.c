@@ -19,7 +19,7 @@
 double _statistics[10];
 #endif
 
-double drand(){
+double drand(void){
   return rand()/(double) RAND_MAX;
 }
 

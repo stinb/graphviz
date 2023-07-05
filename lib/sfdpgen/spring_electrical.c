@@ -30,7 +30,7 @@
 
 #define PI M_PI
 
-spring_electrical_control spring_electrical_control_new(){
+spring_electrical_control spring_electrical_control_new(void){
   spring_electrical_control ctrl;
   ctrl = gv_alloc(sizeof(struct spring_electrical_control_struct));
   ctrl->p = AUTOP;/*a negativve number default to -1. repulsive force = dist^p */
