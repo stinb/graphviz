@@ -58,7 +58,7 @@ static Dtdisc_t ELDisc = {
     (Dtevent_f) 0
 };
 
-edgelist *init_edgelist()
+edgelist *init_edgelist(void)
 {
     edgelist *list = dtopen(&ELDisc, Dtoset);
     return list;

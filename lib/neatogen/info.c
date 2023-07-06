@@ -17,7 +17,7 @@
 Info_t *nodeInfo;		/* Array of node info */
 static Freelist pfl;
 
-void infoinit()
+void infoinit(void)
 {
     freeinit(&pfl, sizeof(PtItem));
 }

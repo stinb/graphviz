@@ -16,7 +16,7 @@
 #include	<stddef.h>
 #include	<string.h>
 
-nodelist_t *mkNodelist()
+nodelist_t *mkNodelist(void)
 {
     nodelist_t *list = gv_alloc(sizeof(nodelist_t));
     return list;

@@ -359,7 +359,7 @@ static void appendnode(char *name, char *port, char *sport)
 clean up S->subg in closesubg() because S->subg might be needed
 to construct edges.  these are the sort of notes you write to yourself
 in the future. */
-static void endnode()
+static void endnode(void)
 {
 	item	*ptr;
 
@@ -527,7 +527,7 @@ static void startgraph(char *name, bool directed, bool strict)
 	agstrfree(NULL,name);
 }
 
-static void endgraph()
+static void endgraph(void)
 {
 	aglexeof();
 	aginternalmapclearlocalnames(G);
@@ -542,7 +542,7 @@ static void opensubg(char *name)
 	agstrfree(G,name);
 }
 
-static void closesubg()
+static void closesubg(void)
 {
 	Agraph_t *subg = S->g;
   --SubgraphDepth;
@@ -551,7 +551,7 @@ static void closesubg()
 	assert(subg);
 }
 
-static void freestack()
+static void freestack(void)
 {
 	while (S) {
 		deletelist(&(S->nodelist));

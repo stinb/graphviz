@@ -48,7 +48,7 @@ void RTreeLeafListFree(LeafList_t * llp)
     return;
 }
 
-RTree_t *RTreeOpen()
+RTree_t *RTreeOpen(void)
 {
     RTree_t *rtp;
 

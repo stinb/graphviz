@@ -22,14 +22,14 @@ static int ELhashsize;
 static Halfedge **ELhash;
 static int ntry, totalsearch;
 
-void ELcleanup()
+void ELcleanup(void)
 {
     freeinit(&hfl, sizeof **ELhash);
     free(ELhash);
     ELhash = NULL;
 }
 
-void ELinitialize()
+void ELinitialize(void)
 {
     int i;
 

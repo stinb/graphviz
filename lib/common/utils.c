@@ -484,7 +484,7 @@ void gvToggle(int s)
 #endif
 }
 
-int test_toggle()
+int test_toggle(void)
 {
     return Tflag;
 }

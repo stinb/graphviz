@@ -38,7 +38,7 @@ agerrlevel_t agseterr(agerrlevel_t lvl)
     return oldv;
 }
 
-char *aglasterr()
+char *aglasterr(void)
 {
     if (!agerrout)
 	return 0;
@@ -173,9 +173,9 @@ void agwarningf(const char *fmt, ...)
     va_end(args);
 }
 
-int agerrors() { return agmaxerr; }
+int agerrors(void) { return agmaxerr; }
 
-int agreseterrors() 
+int agreseterrors(void)
 { 
     int rc = agmaxerr;
     agmaxerr = 0;
