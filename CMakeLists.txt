@@ -264,12 +264,12 @@ if(use_coverage)
 endif()
 
 # ============================ Packaging information ===========================
-include(InstallRequiredSystemLibraries)
-include(package_info)
-include(CPack)
+#include(InstallRequiredSystemLibraries)
+#include(package_info)
+#include(CPack)
 
 # ==================================== Test ====================================
-include(CTest)
+#include(CTest)
 
 # ======================= Specify subdirectories to build ======================
 add_subdirectory(contrib/diffimg)
