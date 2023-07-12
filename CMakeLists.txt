@@ -23,7 +23,7 @@ if(WIN32)
   # CMake build system does not currently support building static
   # libraries, so the GVDLL symbol can be unconditionally set until
   # such support is introduced.
-  add_definitions(-DGVDLL)
+  #add_definitions(-DGVDLL)
 
   option(install_win_dependency_dlls "Install 3rd party dependencies" ON)
 endif()

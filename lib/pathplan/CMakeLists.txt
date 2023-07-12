@@ -1,6 +1,6 @@
 add_definitions(-DPATHPLAN_EXPORTS)
 
-add_library(pathplan SHARED
+add_library(pathplan STATIC
   # Header files
   pathgeom.h
   pathplan.h

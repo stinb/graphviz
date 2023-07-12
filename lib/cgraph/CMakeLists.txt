@@ -9,7 +9,7 @@ if(WIN32 AND NOT MINGW)
   add_definitions(-DYY_NO_UNISTD_H)
 endif()
 
-add_library(cgraph SHARED
+add_library(cgraph STATIC
   # Header files
   agxbuf.h
   alloc.h

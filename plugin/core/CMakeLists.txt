@@ -1,4 +1,4 @@
-add_library(gvplugin_core SHARED
+add_library(gvplugin_core STATIC
   # Header files
   ps.h
 
