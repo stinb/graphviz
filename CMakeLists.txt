@@ -48,8 +48,10 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # ============================= Build dependencies =============================
-find_package(BISON 3.0 REQUIRED)
-find_package(FLEX REQUIRED)
+if(FALSE)
+  find_package(BISON 3.0 REQUIRED)
+  find_package(FLEX REQUIRED)
+endif()
 find_program(GIT git)
 if(NOT GIT)
   message(FATAL_ERROR "git not found")

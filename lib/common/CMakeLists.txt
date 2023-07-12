@@ -1,5 +1,9 @@
-BISON_TARGET(HTMLparse ${CMAKE_CURRENT_SOURCE_DIR}/htmlparse.y
-                       ${CMAKE_CURRENT_BINARY_DIR}/htmlparse.c)
+if(FALSE)
+  BISON_TARGET(HTMLparse ${CMAKE_CURRENT_SOURCE_DIR}/htmlparse.y
+                         ${CMAKE_CURRENT_BINARY_DIR}/htmlparse.c)
+else()
+  set(BISON_HTMLparse_OUTPUTS htmlparse.c htmlparse.h)
+endif()
 
 add_definitions(-DGVC_EXPORTS)
 

@@ -1,8 +1,13 @@
-BISON_TARGET(Grammar ${CMAKE_CURRENT_SOURCE_DIR}/grammar.y
-                     ${CMAKE_CURRENT_BINARY_DIR}/grammar.c)
-FLEX_TARGET(Scan ${CMAKE_CURRENT_SOURCE_DIR}/scan.l
-                 ${CMAKE_CURRENT_BINARY_DIR}/scan.c)
-ADD_FLEX_BISON_DEPENDENCY(Scan Grammar)
+if(FALSE)
+  BISON_TARGET(Grammar ${CMAKE_CURRENT_SOURCE_DIR}/grammar.y
+                       ${CMAKE_CURRENT_BINARY_DIR}/grammar.c)
+  FLEX_TARGET(Scan ${CMAKE_CURRENT_SOURCE_DIR}/scan.l
+                   ${CMAKE_CURRENT_BINARY_DIR}/scan.c)
+  ADD_FLEX_BISON_DEPENDENCY(Scan Grammar)
+else()
+  set(BISON_Grammar_OUTPUTS grammar.c grammar.h)
+  set(FLEX_Scan_OUTPUTS scan.c)
+endif()
 
 add_definitions(-DEXPORT_CGRAPH -DEXPORT_CGHDR)
 if(WIN32 AND NOT MINGW)

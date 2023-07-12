@@ -1,9 +1,13 @@
-BISON_TARGET(
-  Exparse
-  ${CMAKE_CURRENT_SOURCE_DIR}/exparse.y
-  ${CMAKE_CURRENT_BINARY_DIR}/exparse.c
-  COMPILE_FLAGS "--yacc -Wno-yacc --defines --debug --verbose"
-)
+if(FALSE)
+  BISON_TARGET(
+    Exparse
+    ${CMAKE_CURRENT_SOURCE_DIR}/exparse.y
+    ${CMAKE_CURRENT_BINARY_DIR}/exparse.c
+    COMPILE_FLAGS "--yacc -Wno-yacc --defines --debug --verbose"
+  )
+else()
+  set(BISON_Exparse_OUTPUTS exparse.c exparse.h)
+endif()
 
 add_library(expr STATIC
   # Header files
