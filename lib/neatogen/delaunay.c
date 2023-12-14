@@ -556,7 +556,8 @@ freeSurface (surface_t* s)
     free (s->faces);
     free (s->neigh);
 }
-#elif defined(HAVE_TRIANGLE)
+#elif defined(HAVE_TRIANGLE) || defined(HAVE_LINKED_TRI)
+#if defined(HAVE_TRIANGLE)
 #define TRILIBRARY
 #include <triangle.c>
 #include <assert.h>
@@ -706,6 +707,7 @@ delaunay_tri (double *x, double *y, int n, int* nedges)
     free (out.normlist);
     return out.edgelist;
 }
+#endif
 
 static v_data *delaunay_triangulation(double *x, double *y, int n) {
     v_data *delaunay;
@@ -743,6 +745,7 @@ static v_data *delaunay_triangulation(double *x, double *y, int n) {
     return delaunay;
 }
 
+#if defined(HAVE_TRIANGLE)
 surface_t* 
 mkSurface (double *x, double *y, int n, int* segs, int nsegs)
 {
@@ -756,6 +759,7 @@ freeSurface (surface_t* s)
     agerr (AGERR, "freeSurface not yet implemented using Triangle library\n");
     assert (0);
 }
+#endif
 #else
 static char* err = "Graphviz built without any triangulation library\n";
 int* get_triangles (double *x, int n, int* tris)

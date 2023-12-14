@@ -541,7 +541,7 @@ static int _spline_edges(graph_t * g, expand_t* pmargin, int edgetype)
     int useEdges = Nop > 1;
     int legal = 0;
 
-#ifdef HAVE_GTS
+#if defined(HAVE_GTS) || defined(HAVE_LINKED_TRI)
     router_t* rtr = 0;
 #endif
     
@@ -608,7 +608,7 @@ static int _spline_edges(graph_t * g, expand_t* pmargin, int edgetype)
 	    else if (n == head) {    /* self arc */
 		makeSelfArcs(e, GD_nodesep(g->root));
 	    } else if (vconfig) { /* EDGETYPE_SPLINE or EDGETYPE_PLINE */
-#ifdef HAVE_GTS
+#if defined(HAVE_GTS)|| defined(HAVE_LINKED_TRI)
 		if (ED_count(e) > 1 || BOUNDARY_PORT(e)) {
 		    int fail = 0;
 		    if (ED_path(e).pn == 2 && !BOUNDARY_PORT(e))
@@ -641,7 +641,7 @@ static int _spline_edges(graph_t * g, expand_t* pmargin, int edgetype)
 	}
     }
 
-#ifdef HAVE_GTS
+#if defined(HAVE_GTS) || defined(HAVE_LINKED_TRI)
     if (rtr)
 	freeRouter (rtr);
 #endif
